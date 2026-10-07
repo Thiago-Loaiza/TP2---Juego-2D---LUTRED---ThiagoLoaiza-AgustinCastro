@@ -9,6 +9,9 @@ public class AnimatedSprite : Sprite
     private TimeSpan _elapsed;
     private Animation _animation;
 
+    public bool IsLooping { get; set; } = true;
+    public bool IsFinished { get; private set; }
+
     public Animation Animation
     {
         get => _animation;
@@ -20,6 +23,7 @@ public class AnimatedSprite : Sprite
             _animation = value;
             _currentFrame = 0;
             _elapsed = TimeSpan.Zero;
+            IsFinished = false;
 
             Region = _animation.Frames[0];
         }
@@ -33,11 +37,21 @@ public class AnimatedSprite : Sprite
 
     public void Update(GameTime gameTime)
     {
+        if (IsFinished)
+            return;
+
         _elapsed += gameTime.ElapsedGameTime;
 
         while (_elapsed >= _animation.Delay)
         {
             _elapsed -= _animation.Delay;
+
+            if (!IsLooping && _currentFrame == _animation.Frames.Count - 1)
+            {
+                IsFinished = true;
+                _elapsed = TimeSpan.Zero;
+                return;
+            }
 
             _currentFrame =
                 (_currentFrame + 1) % _animation.Frames.Count;

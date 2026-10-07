@@ -13,12 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Music/And the rest was silence - Grace OST.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Music/And the rest was silence - Grace OST.mp3;Music/And the rest was silence - Grace OST
-
 #begin Effects/EstrellaParry-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -40,16 +34,23 @@
 /processorParam:Version=3.8.5.1
 /build:Fonts/PMingLiU Regular/PMingLiU Regular.ttf;Fonts/PMingLiU Regular/PMingLiU Regular
 
-#begin SFX/Sinner/Caminata.MP3
+#begin Music/And the rest was silence - Grace OST.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/And the rest was silence - Grace OST.mp3;Music/And the rest was silence - Grace OST
+
+#begin SFX/Sinner/Caminata.MP3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:SFX/Sinner/Caminata.MP3;SFX/Sinner/Caminata
 
 #begin SFX/Sinner/Parry.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:SFX/Sinner/Parry.mp3;SFX/Sinner/Parry
