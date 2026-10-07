@@ -142,6 +142,16 @@
         "runtime": {
           "lib/netcoreapp2.0/_._": {}
         }
+      },
+      "LutredLibrary/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/LutredLibrary.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LutredLibrary.dll": {}
+        }
       }
     }
   },
@@ -301,28 +311,34 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "LutredLibrary/1.0.0": {
+      "type": "project",
+      "path": "../../LutredLibrary/LutredLibrary.csproj",
+      "msbuildProject": "../../LutredLibrary/LutredLibrary.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net9.0": [
+      "LutredLibrary >= 1.0.0",
       "MonoGame.Content.Builder.Task >= 3.8.*",
       "MonoGame.Framework.DesktopGL >= 3.8.*"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\alumno.ET26\\.nuget\\packages\\": {}
+    "C:\\Users\\juanl\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\alumno.ET26\\Desktop\\Juego\\1\\1.csproj",
+      "projectUniqueName": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
       "projectName": "1",
-      "projectPath": "C:\\Users\\alumno.ET26\\Desktop\\Juego\\1\\1.csproj",
-      "packagesPath": "C:\\Users\\alumno.ET26\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\alumno.ET26\\Desktop\\Juego\\1\\obj\\",
+      "projectPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+      "packagesPath": "C:\\Users\\juanl\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\alumno.ET26\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\juanl\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -336,7 +352,11 @@
         "net9.0": {
           "framework": "net9.0",
           "targetAlias": "net9.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
+              "projectPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -379,6 +399,10 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[9.0.17, 9.0.17]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
             "version": "[9.0.17, 9.0.17]"
           },
           {
