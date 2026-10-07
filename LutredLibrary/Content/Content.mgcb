@@ -13,3 +13,10 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin ../../Juego/1/Content/Music/And the rest was silence - Grace OST.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:../../Juego/1/Content/Music/And the rest was silence - Grace OST.mp3;And the rest was silence - Grace OST.mp3
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Sinner/Caminata.MP3</SourceFile>
+  <SourceTime>2026-10-06T21:12:34.7599312-03:00</SourceTime>
+  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Sinner/Caminata.xnb</DestFile>
+  <DestTime>2026-10-06T23:03:01.7524283-03:00</DestTime>
+  <Importer>Mp3Importer</Importer>
+  <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
+  <Processor>SongProcessor</Processor>
+  <ProcessorTime>2026-08-14T18:50:10-03:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Parameters>
+    <Key>Version</Key>
+    <Value>3.8.5.1</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput>
+    <string>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Sinner/Caminata.ogg</string>
+  </BuildOutput>
+</PipelineBuildEvent>
