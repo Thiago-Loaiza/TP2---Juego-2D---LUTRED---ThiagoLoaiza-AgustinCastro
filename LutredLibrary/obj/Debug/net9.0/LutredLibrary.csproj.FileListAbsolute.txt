@@ -1,0 +1,13 @@
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.deps.json
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.dll
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.pdb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.csproj.AssemblyReference.cache
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.AssemblyInfoInputs.cache
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.AssemblyInfo.cs
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.csproj.CoreCompileInputs.cache
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.sourcelink.json
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.dll
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\refint\LutredLibrary.dll
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.pdb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\ref\LutredLibrary.dll

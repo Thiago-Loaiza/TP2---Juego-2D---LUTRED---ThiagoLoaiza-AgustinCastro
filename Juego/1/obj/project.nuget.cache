@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "u1+Fdy1rd58=",
+  "dgSpecHash": "22skgXmbvcM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+  "projectFilePath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\juanl\\.nuget\\packages\\monogame.content.builder.task\\3.8.5.1\\monogame.content.builder.task.3.8.5.1.nupkg.sha512",
     "C:\\Users\\juanl\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.5.1\\monogame.framework.desktopgl.3.8.5.1.nupkg.sha512",

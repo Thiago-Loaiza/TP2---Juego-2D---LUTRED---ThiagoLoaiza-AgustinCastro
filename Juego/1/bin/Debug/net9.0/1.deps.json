@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v9.0": {
       "1/1.0.0": {
         "dependencies": {
+          "LutredLibrary": "1.0.0",
           "MonoGame.Framework.DesktopGL": "3.8.5.1"
         },
         "runtime": {
@@ -127,6 +128,14 @@
             "fileVersion": "0.10.4.0"
           }
         }
+      },
+      "LutredLibrary/1.0.0": {
+        "runtime": {
+          "LutredLibrary.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -163,6 +172,11 @@
       "sha512": "sha512-WYnil3DhQHzjCY0dM9I2B3r1vWip90AOuQd25KE4NrjPQBg0tBJFluRLm5YPnO5ZLDmwrfosY8jCQGQRmWI/Pg==",
       "path": "nvorbis/0.10.4",
       "hashPath": "nvorbis.0.10.4.nupkg.sha512"
+    },
+    "LutredLibrary/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }
