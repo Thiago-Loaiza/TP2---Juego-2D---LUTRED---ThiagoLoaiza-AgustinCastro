@@ -74,6 +74,8 @@ public class Sinner
         _sprite = new AnimatedSprite(
             _animaciones[_animacionActual]
         );
+        _sprite.Origin = new Vector2(150,150);
+        _sprite.Scale = new Vector2(0.5f);
         SoundEffect sonido = content.Load<SoundEffect>(
             "SFX/Sinner/Caminata"
         );
@@ -95,9 +97,10 @@ public class Sinner
             50,
             50
         ));
+        _efectoParry.Position = Position;
         _efectoParry.IsLooping = false;
         _efectoParry.Origin = new Vector2(25, 25);
-        _efectoParry.Scale = new Vector2(2f);
+        _efectoParry.Scale = new Vector2(0.7f, 0.7f);
         _tecladoAnterior = Keyboard.GetState();
     }
 
@@ -225,7 +228,7 @@ public class Sinner
         _sprite.Draw(spriteBatch);
         if (_haciendoParry && !_efectoParry.IsFinished)
         {
-            _efectoParry.Position = Position + new Vector2(150, 150);
+            _efectoParry.Position = Position;
             _efectoParry.Draw(spriteBatch);
         }
     }
