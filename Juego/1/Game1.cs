@@ -18,6 +18,10 @@ public class Game1 : Core
     protected override void Initialize()
     {
         base.Initialize();
+        _sinner.Position = new Vector2(
+            GraphicsDevice.Viewport.Width,
+            GraphicsDevice.Viewport.Height
+        ) * 0.5f;
     }
 
     protected override void LoadContent()
@@ -32,7 +36,6 @@ public class Game1 : Core
 
         _sinner = new Sinner();
         _sinner.LoadContent(Content);
-        _sinner.Position = new Vector2(490, 210);
 
         base.LoadContent();
     }
