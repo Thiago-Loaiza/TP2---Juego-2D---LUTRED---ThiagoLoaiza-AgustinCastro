@@ -136,3 +136,5 @@ c:\Users\alumno.ET26\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastr
 c:\Users\alumno.ET26\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\obj\Debug\net9.0\1.pdb
 c:\Users\alumno.ET26\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\obj\Debug\net9.0\1.genruntimeconfig.cache
 c:\Users\alumno.ET26\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\obj\Debug\net9.0\ref\1.dll
+c:\Users\alumno.ET26\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Sinner\SinnerRun-Sheet.xnb
+c:\Users\alumno.ET26\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Sinner\SinnerRunUP-Sheet.xnb

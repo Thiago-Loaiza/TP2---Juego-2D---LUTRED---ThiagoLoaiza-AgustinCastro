@@ -16,7 +16,7 @@ public enum SinnerAnimation
     CaminataArriba,
     Parry,
     Correr,
-    CorrerAbajo
+    CorrerArriba
 }
 
 public class Sinner
@@ -78,9 +78,9 @@ public class Sinner
             0.12
         );
 
-        _animaciones[SinnerAnimation.CorrerAbajo] = CrearAnimacion(
+        _animaciones[SinnerAnimation.CorrerArriba] = CrearAnimacion(
             content,
-            "Sprites/Sinner/SinnerRun-Sheet",
+            "Sprites/Sinner/SinnerRunUP-Sheet",
             10,
             0.12
         );
@@ -151,7 +151,6 @@ public class Sinner
 
     public void CambiarAnimacion(SinnerAnimation animacion)
     {
-        // Evita reiniciar la misma animación en cada Update.
         if (_animacionActual == animacion)
             return;
 
@@ -191,69 +190,67 @@ public class Sinner
             _efectoParry.Update(gameTime);
             return;
         }
+
         Vector2 direccion = Vector2.Zero;
 
-        if (teclado.IsKeyDown(Keys.A))
-            direccion.X -= 1 ;
+        if (teclado.IsKeyDown(Keys.A)) direccion.X -= 1;
+        if (teclado.IsKeyDown(Keys.D)) direccion.X += 1;
+        if (teclado.IsKeyDown(Keys.W)) direccion.Y -= 1;
+        if (teclado.IsKeyDown(Keys.S)) direccion.Y += 1;
 
-        if (teclado.IsKeyDown(Keys.D))
-            direccion.X += 1 ;
-
-        if (teclado.IsKeyDown(Keys.W))
-            direccion.Y -= 1 ;
-
-        if (teclado.IsKeyDown(Keys.S))
-            direccion.Y += 1 ;
-
-        float multiplicadorSprint = 1.0f;
-
-        if (teclado.IsKeyDown(Keys.LeftShift))
-        {
-            if(teclado.IsKeyDown(Keys.A) || teclado.IsKeyDown(Keys.D))
-            {
-                CambiarAnimacion(SinnerAnimation.Correr);
-            }
-            if(teclado.IsKeyDown(Keys.W) || teclado.IsKeyDown(Keys.S))
-            {
-                CambiarAnimacion(SinnerAnimation.CorrerAbajo);
-            }
-            multiplicadorSprint = 2.5f;
-        }
-
-        
         if (direccion != Vector2.Zero)
         {
             if (_sonidoCaminata.State != SoundState.Playing)
                 _sonidoCaminata.Play();
+
             direccion.Normalize();
 
-            float segundos =
-                (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float multiplicadorSprint = 1.0f;
 
+            if (teclado.IsKeyDown(Keys.LeftShift))
+            {
+                multiplicadorSprint = 2.5f;
+                if (teclado.IsKeyDown(Keys.W) || teclado.IsKeyDown(Keys.S))
+                {
+                    CambiarAnimacion(SinnerAnimation.CorrerArriba);
+                }
+                else
+                {
+                    CambiarAnimacion(SinnerAnimation.Correr);
+                }
+            }
+            else
+            {
+                if (direccion.Y != 0)
+                {
+                    CambiarAnimacion(SinnerAnimation.CaminataArriba);
+                }
+                else
+                {
+                    CambiarAnimacion(SinnerAnimation.Caminata);
+                }
+            }
+
+            // Aplicar movimiento físico
+            float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Position += direccion * (Velocidad * multiplicadorSprint) * segundos;
 
+            // Voltear el sprite horizontalmente
             if (direccion.X < 0)
                 _sprite.Effects = SpriteEffects.FlipHorizontally;
             else if (direccion.X > 0)
                 _sprite.Effects = SpriteEffects.None;
-
-            if (direccion.Y != 0)
-            {
-                CambiarAnimacion(SinnerAnimation.CaminataArriba);
-            }
-            else
-            {
-                CambiarAnimacion(SinnerAnimation.Caminata);
-            }
         }
         else
         {
+            // Si no se está tocando ninguna tecla de dirección, va a Reposo (incluso si hunde Shift)
             _sonidoCaminata.Stop();
             CambiarAnimacion(SinnerAnimation.Reposo);
         }
 
         _sprite.Update(gameTime);
     }
+
     public void Draw(SpriteBatch spriteBatch)
     {
         _sprite.Draw(spriteBatch);
@@ -262,6 +259,7 @@ public class Sinner
             _efectoParry.Position = Position;
             _efectoParry.Draw(spriteBatch);
         }
+        
     }
 
     public void UnloadContent()

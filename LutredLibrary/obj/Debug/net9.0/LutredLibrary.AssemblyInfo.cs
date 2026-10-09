@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LutredLibrary")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+982705cd9696007676601023eb6a6522f75de23e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8c761c4de9d1b1580155e4e4b4054945755f22f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("LutredLibrary")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LutredLibrary")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

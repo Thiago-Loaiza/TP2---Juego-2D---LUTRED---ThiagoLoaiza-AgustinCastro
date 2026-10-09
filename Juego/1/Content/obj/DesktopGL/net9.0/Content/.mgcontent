@@ -12,6 +12,8 @@
     <File>c:/Users/alumno.ET26/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Duck/DuckSpriteSheet.png</File>
     <File>c:/Users/alumno.ET26/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/Sinner-Sheet.png</File>
     <File>c:/Users/alumno.ET26/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/SinnerParryFront-Sheet.png</File>
+    <File>c:/Users/alumno.ET26/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/SinnerRun-Sheet.png</File>
+    <File>c:/Users/alumno.ET26/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/SinnerRunUP-Sheet.png</File>
     <File>c:/Users/alumno.ET26/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/SinnerWalk-Sheet.png</File>
     <File>c:/Users/alumno.ET26/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/SinnerWalkUP-Sheet.png</File>
   </SourceFiles>
@@ -24,6 +26,8 @@
     <File>Sprites/Enemies/Duck/DuckSpriteSheet</File>
     <File>Sprites/Sinner/Sinner-Sheet</File>
     <File>Sprites/Sinner/SinnerParryFront-Sheet</File>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File>Sprites/Sinner/SinnerWalk-Sheet</File>
     <File>Sprites/Sinner/SinnerWalkUP-Sheet</File>
   </DestFiles>
