@@ -14,7 +14,9 @@ public enum SinnerAnimation
     Reposo,
     Caminata,
     CaminataArriba,
-    Parry
+    Parry,
+    Correr,
+    CorrerAbajo
 }
 
 public class Sinner
@@ -67,6 +69,20 @@ public class Sinner
             "Sprites/Sinner/SinnerParryFront-Sheet",
             5,
             SegundosPorFrameParry
+        );
+
+        _animaciones[SinnerAnimation.Correr] = CrearAnimacion(
+            content,
+            "Sprites/Sinner/SinnerRun-Sheet",
+            8,
+            0.12
+        );
+
+        _animaciones[SinnerAnimation.CorrerAbajo] = CrearAnimacion(
+            content,
+            "Sprites/Sinner/SinnerRun-Sheet",
+            10,
+            0.12
         );
 
         _animacionActual = SinnerAnimation.Reposo;
@@ -175,21 +191,36 @@ public class Sinner
             _efectoParry.Update(gameTime);
             return;
         }
-
         Vector2 direccion = Vector2.Zero;
 
         if (teclado.IsKeyDown(Keys.A))
-            direccion.X -= 1;
+            direccion.X -= 1 ;
 
         if (teclado.IsKeyDown(Keys.D))
-            direccion.X += 1;
+            direccion.X += 1 ;
 
         if (teclado.IsKeyDown(Keys.W))
-            direccion.Y -= 1;
+            direccion.Y -= 1 ;
 
         if (teclado.IsKeyDown(Keys.S))
-            direccion.Y += 1;
+            direccion.Y += 1 ;
 
+        float multiplicadorSprint = 1.0f;
+
+        if (teclado.IsKeyDown(Keys.LeftShift))
+        {
+            if(teclado.IsKeyDown(Keys.A) || teclado.IsKeyDown(Keys.D))
+            {
+                CambiarAnimacion(SinnerAnimation.Correr);
+            }
+            if(teclado.IsKeyDown(Keys.W) || teclado.IsKeyDown(Keys.S))
+            {
+                CambiarAnimacion(SinnerAnimation.CorrerAbajo);
+            }
+            multiplicadorSprint = 2.5f;
+        }
+
+        
         if (direccion != Vector2.Zero)
         {
             if (_sonidoCaminata.State != SoundState.Playing)
@@ -199,7 +230,7 @@ public class Sinner
             float segundos =
                 (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Position += direccion * Velocidad * segundos;
+            Position += direccion * (Velocidad * multiplicadorSprint) * segundos;
 
             if (direccion.X < 0)
                 _sprite.Effects = SpriteEffects.FlipHorizontally;
