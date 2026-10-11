@@ -1,0 +1,13 @@
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\CodexMomentum\LutredLibrary.deps.json
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\CodexMomentum\LutredLibrary.dll
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\CodexMomentum\LutredLibrary.pdb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\LutredLibrary.csproj.AssemblyReference.cache
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\LutredLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\LutredLibrary.AssemblyInfoInputs.cache
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\LutredLibrary.AssemblyInfo.cs
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\LutredLibrary.csproj.CoreCompileInputs.cache
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\LutredLibrary.sourcelink.json
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\LutredLibrary.dll
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\refint\LutredLibrary.dll
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\LutredLibrary.pdb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\CodexMomentum\ref\LutredLibrary.dll

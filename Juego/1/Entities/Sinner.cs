@@ -28,7 +28,14 @@ public class Sinner
     private bool _haciendoParry;
     private const double SegundosPorFrameParry = 0.05;
     private const float Velocidad = 220f;
+    private const float MultiplicadorSprint = 2.5f;
+    private const float Aceleracion = 1800f;
+    private const float Frenado = 2200f;
+    private Vector2 _velocidadActual;
     private AnimatedSprite _sprite;
+
+    // La futura mejora puede desactivar la inercia sin cambiar los controles.
+    public bool UsarInercia { get; set; } = true;
 
     private readonly Dictionary<SinnerAnimation, Animation>
         _animaciones = new();
@@ -176,6 +183,7 @@ public class Sinner
         if (parryPresionado && !_haciendoParry)
         {
             _haciendoParry = true;
+            _velocidadActual = Vector2.Zero;
             _sonidoCaminata.Stop();
             _sprite.IsLooping = false;
             CambiarAnimacion(SinnerAnimation.Parry);
@@ -199,18 +207,41 @@ public class Sinner
         if (teclado.IsKeyDown(Keys.S)) direccion.Y += 1;
 
         if (direccion != Vector2.Zero)
-        {
-            if (_sonidoCaminata.State != SoundState.Playing)
-                _sonidoCaminata.Play();
-
             direccion.Normalize();
 
-            float multiplicadorSprint = 1.0f;
+        float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        bool corriendo = teclado.IsKeyDown(Keys.LeftShift);
+        Vector2 velocidadObjetivo = direccion * Velocidad
+            * (corriendo ? MultiplicadorSprint : 1f);
 
-            if (teclado.IsKeyDown(Keys.LeftShift))
+        if (UsarInercia)
+        {
+            bool reduciendoVelocidad = velocidadObjetivo.LengthSquared()
+                < _velocidadActual.LengthSquared();
+            float cambioPorSegundo = reduciendoVelocidad ? Frenado : Aceleracion;
+            _velocidadActual = AcercarVelocidad(
+                _velocidadActual, velocidadObjetivo, cambioPorSegundo * segundos);
+        }
+        else
+        {
+            _velocidadActual = velocidadObjetivo;
+        }
+
+        Position += _velocidadActual * segundos;
+
+        if (_velocidadActual != Vector2.Zero)
+        {
+            _sonidoCaminata.Pitch =
+            _velocidadActual.LengthSquared() > Velocidad * Velocidad
+                ? 0.5f
+                : 0f;
+
+        if (_sonidoCaminata.State != SoundState.Playing)
+            _sonidoCaminata.Play();
+
+            if (_velocidadActual.LengthSquared() > Velocidad * Velocidad)
             {
-                multiplicadorSprint = 2.5f;
-                if (teclado.IsKeyDown(Keys.W) || teclado.IsKeyDown(Keys.S))
+                if (_velocidadActual.Y != 0)
                 {
                     CambiarAnimacion(SinnerAnimation.CorrerArriba);
                 }
@@ -221,7 +252,7 @@ public class Sinner
             }
             else
             {
-                if (direccion.Y != 0)
+                if (_velocidadActual.Y != 0)
                 {
                     CambiarAnimacion(SinnerAnimation.CaminataArriba);
                 }
@@ -231,24 +262,31 @@ public class Sinner
                 }
             }
 
-            // Aplicar movimiento físico
-            float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Position += direccion * (Velocidad * multiplicadorSprint) * segundos;
-
-            // Voltear el sprite horizontalmente
-            if (direccion.X < 0)
+            if (_velocidadActual.X < 0)
                 _sprite.Effects = SpriteEffects.FlipHorizontally;
-            else if (direccion.X > 0)
+            else if (_velocidadActual.X > 0)
                 _sprite.Effects = SpriteEffects.None;
         }
         else
         {
-            // Si no se está tocando ninguna tecla de dirección, va a Reposo (incluso si hunde Shift)
             _sonidoCaminata.Stop();
             CambiarAnimacion(SinnerAnimation.Reposo);
         }
 
         _sprite.Update(gameTime);
+    }
+
+    private static Vector2 AcercarVelocidad(
+        Vector2 actual, Vector2 objetivo, float cambioMaximo)
+    {
+        Vector2 diferencia = objetivo - actual;
+        float distancia = diferencia.Length();
+
+        // Llegar exactamente al objetivo evita oscilar o deslizarse para siempre.
+        if (distancia <= cambioMaximo || distancia == 0f)
+            return objetivo;
+
+        return actual + diferencia / distancia * cambioMaximo;
     }
 
     public void Draw(SpriteBatch spriteBatch)
