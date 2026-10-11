@@ -100,7 +100,7 @@ public class Sinner
         _sprite.Origin = new Vector2(150,150);
         _sprite.Scale = new Vector2(0.5f);
         SoundEffect sonido = content.Load<SoundEffect>(
-            "SFX/Sinner/Caminata"
+            "SFX/Entities/Sinner/Caminata"
         );
 
         _sonidoCaminata = sonido.CreateInstance();
@@ -108,7 +108,7 @@ public class Sinner
         _sonidoCaminata.Volume = 0.4f;
 
         _sonidoParry = content.Load<SoundEffect>(
-            "SFX/Sinner/Parry"
+            "SFX/Entities/Sinner/Parry"
         ).CreateInstance();
         _sonidoParry.Volume = 0.6f;
 

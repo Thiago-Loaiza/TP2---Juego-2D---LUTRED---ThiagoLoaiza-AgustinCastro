@@ -29,4 +29,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\LutredLibrary\LutredLibrary.csproj" />
   </ItemGroup>
+  <Target Name="SyncGameContent" BeforeTargets="RunContentBuilder"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\Tools\Sync-Content.ps1&quot;"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
 </Project>
