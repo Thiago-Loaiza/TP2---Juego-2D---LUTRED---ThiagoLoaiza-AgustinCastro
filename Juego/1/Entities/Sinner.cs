@@ -23,6 +23,7 @@ public class Sinner
 {
     private SoundEffectInstance _sonidoCaminata;
     private SoundEffectInstance _sonidoParry;
+    private SoundEffectInstance _sonidoParryExitoso;
     private AnimatedSprite _efectoParry;
     private KeyboardState _tecladoAnterior;
     private bool _haciendoParry;
@@ -36,6 +37,9 @@ public class Sinner
 
     // La futura mejora puede desactivar la inercia sin cambiar los controles.
     public bool UsarInercia { get; set; } = true;
+    public bool HaciendoParry => _haciendoParry;
+    public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
+    public CirculoColision ColisionParry => new(Colision.Centro, 28f);
 
     private readonly Dictionary<SinnerAnimation, Animation>
         _animaciones = new();
@@ -111,6 +115,11 @@ public class Sinner
             "SFX/Entities/Sinner/Parry"
         ).CreateInstance();
         _sonidoParry.Volume = 0.6f;
+
+        _sonidoParryExitoso = content.Load<SoundEffect>(
+            "SFX/Entities/Sinner/ParryExitoso"
+        ).CreateInstance();
+        _sonidoParryExitoso.Volume = 0.6f;
 
         _efectoParry = new AnimatedSprite(CrearAnimacion(
             content,
@@ -304,5 +313,19 @@ public class Sinner
     {
         _sonidoCaminata.Dispose();
         _sonidoParry.Dispose();
+        _sonidoParryExitoso.Dispose();
+    }
+
+    public void ConfirmarParry()
+    {
+        _sonidoParryExitoso.Stop();
+        _sonidoParryExitoso.Play();
+    }
+
+    public void DetenerSonidos()
+    {
+        _sonidoCaminata.Stop();
+        _sonidoParry.Stop();
+        _sonidoParryExitoso.Stop();
     }
 }

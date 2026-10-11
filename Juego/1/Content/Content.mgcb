@@ -179,3 +179,30 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/Sinner/SinnerWalkUP-Sheet.png
+
+#begin Sprites/UI/DeatchScreen/DeathScreen-Eye-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/DeatchScreen/DeathScreen-Eye-Sheet.png
+
+#begin Sprites/UI/DeatchScreen/DeathScreen-Flower-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/DeatchScreen/DeathScreen-Flower-Sheet.png
+
+#begin Sprites/UI/DeatchScreen/DeathScreen-Line-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/DeatchScreen/DeathScreen-Line-Sheet.png
