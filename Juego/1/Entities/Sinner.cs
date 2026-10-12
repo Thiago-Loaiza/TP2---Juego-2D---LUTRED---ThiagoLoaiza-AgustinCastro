@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using LutredLibrary.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Audio;
+using _1.Colisiones;
 
 namespace _1.Entities;
 
@@ -174,7 +175,7 @@ public class Sinner
         _sprite.Animation = _animaciones[animacion];
     }
 
-    public void Update(GameTime gameTime)
+    public void Update(GameTime gameTime, IReadOnlyList<ColisionSolida> obstaculos = null)
     {
         KeyboardState teclado = Keyboard.GetState();
 
@@ -192,8 +193,6 @@ public class Sinner
         if (parryPresionado && !_haciendoParry)
         {
             _haciendoParry = true;
-            _velocidadActual = Vector2.Zero;
-            _sonidoCaminata.Stop();
             _sprite.IsLooping = false;
             CambiarAnimacion(SinnerAnimation.Parry);
             _efectoParry.Animation = _efectoParry.Animation;
@@ -201,13 +200,7 @@ public class Sinner
             _sonidoParry.Play();
         }
 
-        if (_haciendoParry)
-        {
-            _sprite.Update(gameTime);
-            _efectoParry.Update(gameTime);
-            return;
-        }
-
+        // El parry cambia la animacion, pero no interrumpe el movimiento.
         Vector2 direccion = Vector2.Zero;
 
         if (teclado.IsKeyDown(Keys.A)) direccion.X -= 1;
@@ -236,7 +229,18 @@ public class Sinner
             _velocidadActual = velocidadObjetivo;
         }
 
-        Position += _velocidadActual * segundos;
+        Vector2 movimiento = _velocidadActual * segundos;
+        if (obstaculos != null)
+        {
+            Vector2 permitido = ResolutorMovimiento.Limitar(Colision, movimiento, obstaculos);
+            // Quitar la velocidad contra la pared evita acumular inercia.
+            if (permitido.X != movimiento.X)
+                _velocidadActual.X = 0f;
+            if (permitido.Y != movimiento.Y)
+                _velocidadActual.Y = 0f;
+            movimiento = permitido;
+        }
+        Position += movimiento;
 
         if (_velocidadActual != Vector2.Zero)
         {
@@ -245,29 +249,23 @@ public class Sinner
                 ? 0.5f
                 : 0f;
 
-        if (_sonidoCaminata.State != SoundState.Playing)
-            _sonidoCaminata.Play();
+            if (_sonidoCaminata.State != SoundState.Playing)
+                _sonidoCaminata.Play();
 
-            if (_velocidadActual.LengthSquared() > Velocidad * Velocidad)
+            // Mantener la animacion de parry hasta terminar, aun caminando.
+            if (!_haciendoParry)
             {
-                if (_velocidadActual.Y != 0)
+                if (_velocidadActual.LengthSquared() > Velocidad * Velocidad)
                 {
-                    CambiarAnimacion(SinnerAnimation.CorrerArriba);
+                    CambiarAnimacion(_velocidadActual.Y != 0
+                        ? SinnerAnimation.CorrerArriba
+                        : SinnerAnimation.Correr);
                 }
                 else
                 {
-                    CambiarAnimacion(SinnerAnimation.Correr);
-                }
-            }
-            else
-            {
-                if (_velocidadActual.Y != 0)
-                {
-                    CambiarAnimacion(SinnerAnimation.CaminataArriba);
-                }
-                else
-                {
-                    CambiarAnimacion(SinnerAnimation.Caminata);
+                    CambiarAnimacion(_velocidadActual.Y != 0
+                        ? SinnerAnimation.CaminataArriba
+                        : SinnerAnimation.Caminata);
                 }
             }
 
@@ -279,10 +277,13 @@ public class Sinner
         else
         {
             _sonidoCaminata.Stop();
-            CambiarAnimacion(SinnerAnimation.Reposo);
+            if (!_haciendoParry)
+                CambiarAnimacion(SinnerAnimation.Reposo);
         }
 
         _sprite.Update(gameTime);
+        if (_haciendoParry)
+            _efectoParry.Update(gameTime);
     }
 
     private static Vector2 AcercarVelocidad(
