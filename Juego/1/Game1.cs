@@ -1,18 +1,18 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
+using Gum.Forms;
+using Gum.Forms.Controls;
 using LutredLibrary;
-using _1.Entities;
+using LutredLibrary.Scenes;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
+using MonoGameGum;
+using _1.Scenes;
 
 namespace _1;
 
 public class Game1 : Core
 {
-    private Sinner _sinner;
-    private Duck _duck;
-    private PantallaDerrota _pantallaDerrota;
-    private bool _derrotado;
+    private Escena _escenaActual;
+    private Escena _escenaPendiente;
 
     public Game1() : base("LUTRED", 1280, 720, false)
     {
@@ -21,110 +21,64 @@ public class Game1 : Core
     protected override void Initialize()
     {
         base.Initialize();
-        _sinner.Position = new Vector2(
-            GraphicsDevice.Viewport.Width,
-            GraphicsDevice.Viewport.Height
-        ) * 0.5f;
-        _duck.Position = _sinner.Position + new Vector2(360f, 0f);
+
+        GumService.Default.Initialize(this, DefaultVisualsVersion.V3);
+        GumService.Default.ContentLoader.XnaContentManager = Content;
+        GumService.Default.CanvasWidth = GraphicsDevice.Viewport.Width;
+        GumService.Default.CanvasHeight = GraphicsDevice.Viewport.Height;
+        FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
+        FrameworkElement.GamePadsForUiControl.AddRange(GumService.Default.Gamepads);
+
+        CambiarEscena(new Inicio(CambiarEscena));
+        AplicarCambioDeEscena();
     }
 
-    protected override void LoadContent()
+    public void CambiarEscena(Escena escena)
     {
-        Song musica = Content.Load<Song>(
-            "Music/And the rest was silence - Grace OST"
-        );
-
-        MediaPlayer.IsRepeating = true;
-        MediaPlayer.Volume = 0.3f;
-        MediaPlayer.Play(musica);
-
-        _sinner = new Sinner();
-        _sinner.LoadContent(Content);
-
-        _duck = new Duck();
-        _duck.LoadContent(Content);
-        _pantallaDerrota = new PantallaDerrota();
-        _pantallaDerrota.LoadContent(Content);
-
-        base.LoadContent();
+        _escenaPendiente?.Dispose();
+        _escenaPendiente = escena;
     }
 
-    protected override void UnloadContent()
+    private void AplicarCambioDeEscena()
     {
-        _sinner?.UnloadContent();
-        _duck?.UnloadContent();
-        MediaPlayer.Stop();
-        base.UnloadContent();
+        if (_escenaPendiente == null)
+            return;
+
+        // Cambiar despues de procesar la entrada evita modificar la UI en su Click.
+        _escenaActual?.Dispose();
+        GumService.Default.Root.Children.Clear();
+        _escenaActual = _escenaPendiente;
+        _escenaPendiente = null;
+        _escenaActual.Initialize();
     }
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back
-            == ButtonState.Pressed
+        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
             || Keyboard.GetState().IsKeyDown(Keys.Escape))
         {
             Exit();
+            return;
         }
 
-        if (_derrotado)
-        {
-            _pantallaDerrota.Update(gameTime);
-        }
-        else
-        {
-            Vector2 centroAnteriorSinner = _sinner.Colision.Centro;
-            Vector2 posicionAnteriorDuck = _duck.Position;
-            bool estabaRebotando = _duck.Rebotando;
-            _sinner.Update(gameTime);
-            _duck.Update(gameTime, _sinner.Colision.Centro);
-
-            // El parry se resuelve antes del contacto que provoca la derrota.
-            if (_sinner.HaciendoParry
-                && _sinner.ColisionParry.SeCruzan(centroAnteriorSinner,
-                    _duck.Colision, posicionAnteriorDuck))
-            {
-                // Un mismo rebote no debe repetir el sonido en cada actualizacion.
-                if (!estabaRebotando)
-                {
-                    _duck.Rebotar(_sinner.ColisionParry.Centro,
-                        _sinner.ColisionParry.Radio, posicionAnteriorDuck);
-                    _sinner.ConfirmarParry();
-                }
-            }
-            else if (_sinner.Colision.SeCruzan(centroAnteriorSinner,
-                    _duck.Colision, posicionAnteriorDuck))
-            {
-                _derrotado = true;
-                MediaPlayer.Stop();
-                _sinner.DetenerSonidos();
-                _duck.DetenerSonidos();
-                _pantallaDerrota.Mostrar();
-            }
-        }
-
+        _escenaActual.Update(gameTime);
+        GumService.Default.Update(gameTime);
+        AplicarCambioDeEscena();
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(_derrotado ? Color.Black : Color.White);
-
-        SpriteBatch.Begin(
-            samplerState: SamplerState.PointClamp
-        );
-
-        if (_derrotado)
-        {
-            _pantallaDerrota.Draw(SpriteBatch, GraphicsDevice.Viewport);
-        }
-        else
-        {
-            _sinner.Draw(SpriteBatch);
-            _duck.Draw(SpriteBatch);
-        }
-
-        SpriteBatch.End();
-
+        _escenaActual.Draw(gameTime);
+        GumService.Default.Draw();
         base.Draw(gameTime);
+    }
+
+    protected override void UnloadContent()
+    {
+        _escenaActual?.Dispose();
+        _escenaPendiente?.Dispose();
+        GumService.Default.Root.Children.Clear();
+        base.UnloadContent();
     }
 }

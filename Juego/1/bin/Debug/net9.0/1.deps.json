@@ -8,11 +8,60 @@
     ".NETCoreApp,Version=v9.0": {
       "1/1.0.0": {
         "dependencies": {
+          "Gum.MonoGame": "2026.5.8.1",
           "LutredLibrary": "1.0.0",
           "MonoGame.Framework.DesktopGL": "3.8.6"
         },
         "runtime": {
           "1.dll": {}
+        }
+      },
+      "CsvHelper/33.1.0": {
+        "runtime": {
+          "lib/net9.0/CsvHelper.dll": {
+            "assemblyVersion": "33.0.0.0",
+            "fileVersion": "33.1.0.26"
+          }
+        }
+      },
+      "FlatRedBall.GumCommon/2026.5.8.1": {
+        "dependencies": {
+          "CsvHelper": "33.1.0",
+          "FlatRedBall.InterpolationCore": "2025.4.22.1"
+        },
+        "runtime": {
+          "lib/net8.0/GumCommon.dll": {
+            "assemblyVersion": "2026.5.8.1",
+            "fileVersion": "2026.5.8.1"
+          }
+        }
+      },
+      "FlatRedBall.InterpolationCore/2025.4.22.1": {
+        "runtime": {
+          "lib/netstandard2.0/FlatRedBall.InterpolationCore.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
+          }
+        }
+      },
+      "Gum.MonoGame/2026.5.8.1": {
+        "dependencies": {
+          "FlatRedBall.GumCommon": "2026.5.8.1",
+          "TextCopy": "6.2.1"
+        },
+        "runtime": {
+          "lib/net8.0/MonoGameGum.dll": {
+            "assemblyVersion": "2026.5.8.1",
+            "fileVersion": "2026.5.8.1"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/7.0.0": {
+        "runtime": {
+          "lib/net7.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.51805"
+          }
         }
       },
       "MonoGame.Framework.DesktopGL/3.8.6": {
@@ -129,6 +178,17 @@
           }
         }
       },
+      "TextCopy/6.2.1": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/TextCopy.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "LutredLibrary/1.0.0": {
         "runtime": {
           "LutredLibrary.dll": {
@@ -144,6 +204,41 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "CsvHelper/33.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kqfTOZGrn7NarNeXgjh86JcpTHUoeQDMB8t9NVa/ZtlSYiV1rxfRnQ49WaJsob4AiGrbK0XDzpyKkBwai4F8eg==",
+      "path": "csvhelper/33.1.0",
+      "hashPath": "csvhelper.33.1.0.nupkg.sha512"
+    },
+    "FlatRedBall.GumCommon/2026.5.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-T6DQG/dto/2mTLh9BU81ilxs+SU4H49JZPoPIdjIU7C+++WQjvlkaB2LeRHlHhGM6WvYnt9zf6rvvW4Oe+UJ1w==",
+      "path": "flatredball.gumcommon/2026.5.8.1",
+      "hashPath": "flatredball.gumcommon.2026.5.8.1.nupkg.sha512"
+    },
+    "FlatRedBall.InterpolationCore/2025.4.22.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-x95teSPBlV88KKbivY+peQ8AjqfXFgmGFnHw4Adds8UaO81zJKZAZZrXeetp5K+5mgd4t2hdtW4ItBFJ7ZwWig==",
+      "path": "flatredball.interpolationcore/2025.4.22.1",
+      "hashPath": "flatredball.interpolationcore.2025.4.22.1.nupkg.sha512"
+    },
+    "Gum.MonoGame/2026.5.8.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1AeUslKNxpbpuT8l9P89uNPkSi/rLnsmbjYjlzbaFNMN1o7P2A/+qGnZSAlcJQ0oQ31ryo2cHrzsqqCoAMwtLg==",
+      "path": "gum.monogame/2026.5.8.1",
+      "hashPath": "gum.monogame.2026.5.8.1.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-h3j/QfmFN4S0w4C2A6X7arXij/M/OVw3uQHSOFxnND4DyAzO1F9eMX7Eti7lU/OkSthEE0WzRsfT/Dmx86jzCw==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/7.0.0",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512"
     },
     "MonoGame.Framework.DesktopGL/3.8.6": {
       "type": "package",
@@ -172,6 +267,13 @@
       "sha512": "sha512-WYnil3DhQHzjCY0dM9I2B3r1vWip90AOuQd25KE4NrjPQBg0tBJFluRLm5YPnO5ZLDmwrfosY8jCQGQRmWI/Pg==",
       "path": "nvorbis/0.10.4",
       "hashPath": "nvorbis.0.10.4.nupkg.sha512"
+    },
+    "TextCopy/6.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ryejViUBmHQ2XMie2AiRBn7KVKu2Gh/hqrctGSAUf1BufwfPjr+MWuACNBaiG+40TMbWRDJZgV73Tpl9hggeRw==",
+      "path": "textcopy/6.2.1",
+      "hashPath": "textcopy.6.2.1.nupkg.sha512"
     },
     "LutredLibrary/1.0.0": {
       "type": "project",
