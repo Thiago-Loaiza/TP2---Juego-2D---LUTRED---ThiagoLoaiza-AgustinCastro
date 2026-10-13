@@ -14,6 +14,7 @@ public class Partida : Escena
 {
     private Sinner _sinner;
     private Duck _duck;
+    private JarJar _jarJar;
     private readonly List<EstructuraSolida> _estructuras = new();
     private readonly List<ColisionSolida> _obstaculos = new();
     private Effect _tintaAntigua;
@@ -28,6 +29,8 @@ public class Partida : Escena
             Core.GraphicsDevice.Viewport.Height
         ) * 0.5f;
         _duck.Position = _sinner.Position + new Vector2(360f, 0f);
+        // Lejos de las estructuras y fuera de su rango al empezar.
+        _jarJar.Ubicar(_sinner.Position + new Vector2(-300f, 280f));
 
         // Tres piezas fijas para probar; luego las ubicara el generador del piso.
         const int lado = 192;
@@ -74,6 +77,9 @@ public class Partida : Escena
 
         _duck = new Duck();
         _duck.LoadContent(Content);
+
+        _jarJar = new JarJar();
+        _jarJar.LoadContent(Content);
         _pantallaDerrota = new PantallaDerrota();
         _pantallaDerrota.LoadContent(Content);
 
@@ -84,6 +90,7 @@ public class Partida : Escena
     {
         _sinner?.UnloadContent();
         _duck?.UnloadContent();
+        _jarJar?.UnloadContent();
         MediaPlayer.Stop();
         base.UnloadContent();
     }
@@ -118,13 +125,27 @@ public class Partida : Escena
             else if (_sinner.Colision.SeCruzan(centroAnteriorSinner,
                     _duck.Colision, posicionAnteriorDuck))
             {
-                _derrotado = true;
-                MediaPlayer.Stop();
-                _sinner.DetenerSonidos();
-                _duck.DetenerSonidos();
-                _pantallaDerrota.Mostrar();
+                Perder();
+                return;
             }
+
+            ResultadoJarJar resultadoJarJar = _jarJar.Update(gameTime,
+                _sinner.Colision.Centro, _sinner.HaciendoParry);
+            if (resultadoJarJar == ResultadoJarJar.Parreado)
+                _sinner.ConfirmarParry();
+            else if (resultadoJarJar == ResultadoJarJar.Golpe)
+                Perder();
         }
+    }
+
+    private void Perder()
+    {
+        _derrotado = true;
+        MediaPlayer.Stop();
+        _sinner.DetenerSonidos();
+        _duck.DetenerSonidos();
+        _jarJar.DetenerSonidos();
+        _pantallaDerrota.Mostrar();
     }
 
     public override void Draw(GameTime gameTime)
@@ -151,6 +172,7 @@ public class Partida : Escena
         }
         else
         {
+            _jarJar.Draw(Core.SpriteBatch);
             _sinner.Draw(Core.SpriteBatch);
             _duck.Draw(Core.SpriteBatch);
         }

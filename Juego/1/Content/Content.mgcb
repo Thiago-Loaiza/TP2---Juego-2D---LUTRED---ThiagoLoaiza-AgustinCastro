@@ -17,6 +17,7 @@
 /importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:And the rest was silence - Grace OST.mp3
 
 #begin Effects/EstrellaParry-Sheet.png
@@ -35,6 +36,9 @@
 #begin Effects/TintaAntigua.fx
 /importer:EffectImporter
 /processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/processorParam:Defines=
+/processorParam:Version=3.8.5.1
 /build:Effects/TintaAntigua.fx
 
 #begin Fonts/PMingLiU Regular/Font.fnt
@@ -43,10 +47,14 @@
 #begin Fonts/PMingLiU Regular/Font_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Fonts/PMingLiU Regular/Font_0.png
 
 #begin Fonts/PMingLiU Regular/PMingLiU Regular.ttf
@@ -63,6 +71,146 @@
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/And the rest was silence - Grace OST.mp3
+
+#begin Music/Eleccion/Eleccion_Continuar.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Eleccion/Eleccion_Continuar.MP3
+
+#begin Music/Eleccion/Eleccion_Duda.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Eleccion/Eleccion_Duda.MP3
+
+#begin Music/Eleccion/Eleccion_Neutral.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Eleccion/Eleccion_Neutral.MP3
+
+#begin Music/Layers/Layers/Layer1.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Layers/Layer1.MP3
+
+#begin Music/Layers/Layers/Layer2.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Layers/Layer2.MP3
+
+#begin Music/Layers/Layers/Layer3.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Layers/Layer3.MP3
+
+#begin Music/Layers/Layers/Layer4.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Layers/Layer4.MP3
+
+#begin Music/Layers/Layers/Layer5.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Layers/Layer5.MP3
+
+#begin Music/Layers/Layers/Layer6.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Layers/Layer6.MP3
+
+#begin Music/Layers/Layers/Layer7.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Layers/Layer7.MP3
+
+#begin Music/Layers/Layers/Layer8.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Layers/Layer8.MP3
+
+#begin Music/Layers/Transicciones/Iniciador1.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador1.MP3
+
+#begin Music/Layers/Transicciones/Iniciador2.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador2.MP3
+
+#begin Music/Layers/Transicciones/Iniciador3.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador3.MP3
+
+#begin Music/Layers/Transicciones/Iniciador4.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador4.MP3
+
+#begin Music/Layers/Transicciones/Iniciador5.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador5.MP3
+
+#begin Music/Layers/Transicciones/Iniciador6.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador6.MP3
+
+#begin Music/Layers/Transicciones/Iniciador7.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador7.MP3
+
+#begin Music/Layers/Transicciones/Iniciador8.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador8.MP3
+
+#begin Music/Layers/Transicciones/Iniciador9.MP3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:Music/Layers/Transicciones/Iniciador9.MP3
 
 #begin SFX/Entities/Duck/DuckParry.wav
 /importer:WavImporter
@@ -82,36 +230,42 @@
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/Dupe/Attack.mp3
 
 #begin SFX/Entities/Dupe/DupeParry.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/Dupe/DupeParry.mp3
 
 #begin SFX/Entities/Dupe/Moving.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/Dupe/Moving.mp3
 
 #begin SFX/Entities/Dupe/Spawn.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/Dupe/Spawn.mp3
 
 #begin SFX/Entities/JarJar/JarJarParry.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/JarJar/JarJarParry.mp3
 
 #begin SFX/Entities/SHAME/Shame_Laugh.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/SHAME/Shame_Laugh.wav
 
 #begin SFX/Entities/Sinner/Caminata.MP3
@@ -146,7 +300,57 @@
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/Zorak/Tick.wav
+
+#begin SFX/LUTRED_Salvation.MP3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:SFX/LUTRED_Salvation.MP3
+
+#begin SFX/Puerta/Acercamiento1.MP3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:SFX/Puerta/Acercamiento1.MP3
+
+#begin SFX/Puerta/Acercamiento2.MP3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:SFX/Puerta/Acercamiento2.MP3
+
+#begin SFX/Puerta/Acercamiento3.MP3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:SFX/Puerta/Acercamiento3.MP3
+
+#begin SFX/Puerta/Acercamiento4.MP3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:SFX/Puerta/Acercamiento4.MP3
+
+#begin SFX/Puerta/PuertaAbriendose.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:SFX/Puerta/PuertaAbriendose.mp3
+
+#begin SFX/Puerta/PuertaCerrandose.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:SFX/Puerta/PuertaCerrandose.mp3
 
 #begin Sprites/Enemies/Duck/DuckSpriteSheet.png
 /importer:TextureImporter
@@ -160,6 +364,45 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/Duck/DuckSpriteSheet.png
+
+#begin Sprites/Enemies/JarJar/Sprite-JarJar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/JarJar/Sprite-JarJar.png;Sprites/Enemies/JarJar/Sprite-JarJar
+
+#begin Sprites/Enemies/JarJar/Sprite-JarJar-Carga-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/JarJar/Sprite-JarJar-Carga-Sheet.png
+
+#begin Sprites/Enemies/JarJar/Sprite-JarJar-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/JarJar/Sprite-JarJar-Sheet.png;Sprites/Enemies/JarJar/Sprite-JarJar-Sheet
 
 #begin Sprites/Sinner/SinnerParryFront-Sheet.png
 /importer:TextureImporter
@@ -242,125 +485,181 @@
 #begin Sprites/UI/DeatchScreen/DeathScreen-Eye-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/UI/DeatchScreen/DeathScreen-Eye-Sheet.png
 
 #begin Sprites/UI/DeatchScreen/DeathScreen-Flower-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/UI/DeatchScreen/DeathScreen-Flower-Sheet.png
 
 #begin Sprites/UI/DeatchScreen/DeathScreen-Line-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/UI/DeatchScreen/DeathScreen-Line-Sheet.png
 
 #begin Textures/Cesped.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Cesped.png
 
 #begin Textures/Concreto.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Concreto.png
 
 #begin Textures/Granito.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Granito.png
 
 #begin Textures/Guijarro.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Guijarro.png
 
 #begin Textures/Hielo.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Hielo.png
 
 #begin Textures/LadrillosTextura.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/LadrillosTextura.png
 
 #begin Textures/Marmol.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Marmol.png
 
 #begin Textures/Pizarra.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Pizarra.png
 
 #begin Textures/Roca.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Roca.png
 
 #begin Textures/Tela.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Tela.png
 
 #begin Textures/Vidrio.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Textures/Vidrio.png
