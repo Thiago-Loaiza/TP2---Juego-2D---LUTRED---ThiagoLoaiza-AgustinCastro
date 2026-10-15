@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/And the rest was silence - Grace OST.mp3</SourceFile>
-  <SourceTime>2026-10-12T22:09:36.594929-03:00</SourceTime>
-  <DestFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Music/And the rest was silence - Grace OST.xnb</DestFile>
-  <DestTime>2026-10-13T00:52:03.1802251-03:00</DestTime>
+  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/And the rest was silence - Grace OST.mp3</SourceFile>
+  <SourceTime>2026-10-14T22:51:58.7249591-03:00</SourceTime>
+  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Music/And the rest was silence - Grace OST.xnb</DestFile>
+  <DestTime>2026-10-14T22:58:26.6134165-03:00</DestTime>
   <Importer>Mp3Importer</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>SongProcessor</Processor>
@@ -19,6 +19,6 @@
   <Dependencies />
   <BuildAsset />
   <BuildOutput>
-    <string>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Music/And the rest was silence - Grace OST.ogg</string>
+    <string>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Music/And the rest was silence - Grace OST.ogg</string>
   </BuildOutput>
 </PipelineBuildEvent>

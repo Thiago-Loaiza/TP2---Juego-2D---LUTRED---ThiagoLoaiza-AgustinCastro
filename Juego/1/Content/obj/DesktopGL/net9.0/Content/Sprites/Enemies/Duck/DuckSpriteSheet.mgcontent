@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Duck/DuckSpriteSheet.png</SourceFile>
-  <SourceTime>2026-10-12T22:09:36.6552631-03:00</SourceTime>
-  <DestFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Enemies/Duck/DuckSpriteSheet.xnb</DestFile>
-  <DestTime>2026-10-13T00:52:09.4726309-03:00</DestTime>
+  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Duck/DuckSpriteSheet.png</SourceFile>
+  <SourceTime>2026-10-14T22:51:58.8423019-03:00</SourceTime>
+  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Enemies/Duck/DuckSpriteSheet.xnb</DestFile>
+  <DestTime>2026-10-14T22:58:38.2089916-03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

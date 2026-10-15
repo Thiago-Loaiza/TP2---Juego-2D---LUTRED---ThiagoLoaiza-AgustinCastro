@@ -63,7 +63,7 @@ public class Inicio : Escena
 
     private void Jugar(object sender, EventArgs args)
     {
-        _cambiarEscena(new Partida());
+        _cambiarEscena(new Seleccion(_cambiarEscena));
     }
 
     public override void Draw(GameTime gameTime)

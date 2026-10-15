@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {}
+    "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {}
   },
   "projects": {
-    "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {
+    "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+        "projectUniqueName": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
         "projectName": "1",
-        "projectPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
-        "packagesPath": "C:\\Users\\AgusCS\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\obj\\",
+        "projectPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+        "packagesPath": "C:\\Users\\juanl\\.nuget\\packages\\",
+        "outputPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\AgusCS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\juanl\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,10 +26,11 @@
         },
         "frameworks": {
           "net9.0": {
+            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {
-              "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
-                "projectPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj"
+              "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
+                "projectPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj"
               }
             }
           }
@@ -44,10 +45,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "dependencies": {
             "Gum.MonoGame": {
@@ -77,19 +79,19 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[9.0.14, 9.0.14]"
+              "version": "[9.0.17, 9.0.17]"
             },
             {
               "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[9.0.14, 9.0.14]"
+              "version": "[9.0.17, 9.0.17]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[9.0.14, 9.0.14]"
+              "version": "[9.0.17, 9.0.17]"
             },
             {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[9.0.14, 9.0.14]"
+              "version": "[9.0.17, 9.0.17]"
             }
           ],
           "frameworkReferences": {
@@ -97,21 +99,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
+    "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
+        "projectUniqueName": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
         "projectName": "LutredLibrary",
-        "projectPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
-        "packagesPath": "C:\\Users\\AgusCS\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\obj\\",
+        "projectPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
+        "packagesPath": "C:\\Users\\juanl\\.nuget\\packages\\",
+        "outputPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\AgusCS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\juanl\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -123,6 +125,7 @@
         },
         "frameworks": {
           "net9.0": {
+            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {}
           }
@@ -137,10 +140,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "dependencies": {
             "MonoGame.Framework.DesktopGL": {
@@ -163,15 +167,15 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[9.0.14, 9.0.14]"
+              "version": "[9.0.17, 9.0.17]"
             },
             {
               "name": "Microsoft.NETCore.App.Ref",
-              "version": "[9.0.14, 9.0.14]"
+              "version": "[9.0.17, 9.0.17]"
             },
             {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[9.0.14, 9.0.14]"
+              "version": "[9.0.17, 9.0.17]"
             }
           ],
           "frameworkReferences": {
@@ -179,7 +183,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
