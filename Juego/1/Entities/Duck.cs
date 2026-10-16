@@ -1,3 +1,4 @@
+using LutredLibrary;
 using System;
 using System.Collections.Generic;
 using LutredLibrary.Graphics;
@@ -32,7 +33,7 @@ public class Duck
     {
         Texture2D textura = content.Load<Texture2D>("Sprites/Enemies/Duck/DuckSpriteSheet");
         List<TextureRegion> frames = new();
-        // La hoja tiene cinco celdas de 355x261, pero solo las primeras tres tienen dibujo.
+        // solo las primeras tres celdas de la hoja contienen dibujos.
         for (int i = 0; i < 3; i++)
             frames.Add(new TextureRegion(textura, i * 355, 0, 355, 261));
 
@@ -40,10 +41,10 @@ public class Duck
         _sprite.Origin = new Vector2(177.5f, 130.5f);
         _sprite.Scale = new Vector2(0.4f);
 
-        _sonidoParry = content.Load<SoundEffect>("SFX/Entities/Duck/DuckParry").CreateInstance();
-        _sonidoQuack = content.Load<SoundEffect>("SFX/Entities/Duck/Dukquack").CreateInstance();
-        _sonidoParry.Volume = 0.6f;
-        _sonidoQuack.Volume = 0.5f;
+        _sonidoParry = Core.Audio.CreateSoundEffectInstance(content.Load<SoundEffect>("SFX/Entities/Duck/DuckParry"));
+        _sonidoQuack = Core.Audio.CreateSoundEffectInstance(content.Load<SoundEffect>("SFX/Entities/Duck/Dukquack"));
+        Core.Audio.SetVolume(_sonidoParry, 0.6f);
+        Core.Audio.SetVolume(_sonidoQuack, 0.5f);
         ProgramarQuack();
     }
 
@@ -69,7 +70,7 @@ public class Duck
         }
 
         Position += movimiento;
-        // El dibujo original de Duck mira hacia la izquierda.
+        // el dibujo original mira hacia la izquierda.
         if (movimiento.X < 0f) _sprite.Effects = SpriteEffects.None;
         else if (movimiento.X > 0f) _sprite.Effects = SpriteEffects.FlipHorizontally;
         _sprite.Update(gameTime);
@@ -77,8 +78,8 @@ public class Duck
         _segundosHastaQuack -= segundos;
         if (_segundosHastaQuack <= 0)
         {
-            _sonidoQuack.Stop();
-            _sonidoQuack.Play();
+            Core.Audio.StopSoundEffect(_sonidoQuack);
+            Core.Audio.PlaySoundEffect(_sonidoQuack);
             ProgramarQuack();
         }
     }
@@ -88,7 +89,7 @@ public class Duck
         if (Rebotando)
             return;
 
-        // La posicion previa conserva el lado de llegada incluso si cruzo el centro.
+        // la posicion previa conserva el lado de llegada aunque el enemigo cruce el centro.
         Vector2 direccion = posicionAnterior - centroParry;
         if (direccion.LengthSquared() == 0f) direccion = Position - centroParry;
         if (direccion.LengthSquared() == 0f) direccion = Vector2.UnitX;
@@ -96,8 +97,8 @@ public class Duck
         _direccionRebote = direccion;
         _rapidezRebote = VelocidadRebote;
         Position = centroParry + direccion * (radioParry + RadioColision + 1f);
-        _sonidoParry.Stop();
-        _sonidoParry.Play();
+        Core.Audio.StopSoundEffect(_sonidoParry);
+        Core.Audio.PlaySoundEffect(_sonidoParry);
     }
 
     private void ProgramarQuack()
@@ -113,13 +114,13 @@ public class Duck
 
     public void DetenerSonidos()
     {
-        _sonidoParry.Stop();
-        _sonidoQuack.Stop();
+        Core.Audio.StopSoundEffect(_sonidoParry);
+        Core.Audio.StopSoundEffect(_sonidoQuack);
     }
 
     public void UnloadContent()
     {
-        _sonidoParry.Dispose();
-        _sonidoQuack.Dispose();
+        Core.Audio.ReleaseSoundEffect(_sonidoParry);
+        Core.Audio.ReleaseSoundEffect(_sonidoQuack);
     }
 }

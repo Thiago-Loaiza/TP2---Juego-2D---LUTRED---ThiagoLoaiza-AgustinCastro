@@ -9,13 +9,11 @@ using LutredLibrary.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 using MonoGameGum;
 using MonoGameGum.GueDeriving;
 
 namespace _1.Scenes;
 
-/// <summary>Vista provisional entre niveles. Sus salidas abren la prueba de colisiones.</summary>
 public sealed class Seleccion : Escena
 {
     private enum Estado { Neutral, Escapar, Continuar }
@@ -39,7 +37,8 @@ public sealed class Seleccion : Escena
 
     protected override void LoadContent()
     {
-        MediaPlayer.Stop();
+        Core.Audio.StopSong();
+        Core.Audio.SongVolume = 1f;
         _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
         string[] arte = { "Neutral", "Escapar", "Continuar" };
@@ -47,8 +46,7 @@ public sealed class Seleccion : Escena
         for (int i = 0; i < 3; i++)
         {
             _animaciones[i] = Content.Load<Texture2D>($"Sprites/Sinner/PantallaEleccion/Atlas/{arte[i]}");
-            // Base blanca premultiplicada: SpriteBatch puede aplicar un tono
-            // uniforme sin depender de un efecto ni del negro del dibujo original.
+            // la base blanca premultiplicada permite aplicar un tono uniforme sin depender del negro original.
             var pixeles = new Color[_animaciones[i].Width * _animaciones[i].Height];
             _animaciones[i].GetData(pixeles);
             for (int p = 0; p < pixeles.Length; p++)
@@ -57,12 +55,11 @@ public sealed class Seleccion : Escena
                 pixeles[p] = new Color(alfa, alfa, alfa, alfa);
             }
             _animaciones[i].SetData(pixeles);
-            _musicas[i] = Content.Load<SoundEffect>($"Music/Eleccion/Eleccion_{musica[i]}").CreateInstance();
-            _musicas[i].IsLooped = true;
-            _musicas[i].Volume = i == 0 ? 0.45f : 0f;
+            _musicas[i] = Core.Audio.CreateSoundEffectInstance(Content.Load<SoundEffect>($"Music/Eleccion/Eleccion_{musica[i]}"), isLooped: true, isMusic: true);
+            Core.Audio.SetVolume(_musicas[i], i == 0 ? 0.45f : 0f);
         }
-        // Arrancan una sola vez: las pistas silenciadas conservan su posicion.
-        foreach (SoundEffectInstance pista in _musicas) pista.Play();
+        // las pistas silenciadas siguen avanzando para conservar la sincronizacion de la mezcla.
+        foreach (SoundEffectInstance pista in _musicas) Core.Audio.PlaySoundEffect(pista);
     }
 
     public override void Initialize()
@@ -86,7 +83,6 @@ public sealed class Seleccion : Escena
         AgregarBoton(panel, "Continuar", 350, 0, () => CambiarEstado(Estado.Continuar));
         AgregarBoton(panel, "Confirmar", -350, 0, EntrarAPrueba);
         AgregarBoton(panel, "Volver", 350, 0, () => CambiarEstado(Estado.Neutral));
-        // El espacio de modificadores queda vacio; este boton permite probar la salida.
         AgregarBoton(panel, "Entrar", 350, 0, EntrarAPrueba);
         ActualizarOpciones();
     }
@@ -121,7 +117,6 @@ public sealed class Seleccion : Escena
     private void CambiarEstado(Estado estado)
     {
         _estado = estado;
-        // El sprite mantiene un color fijo durante toda la animacion y su loop.
         _sinner = estado == Estado.Escapar ? Color.White : Color.Black;
         _relojEstado = 0;
         _titulo.Text = estado switch
@@ -166,7 +161,7 @@ public sealed class Seleccion : Escena
         for (int i = 0; i < 3; i++)
         {
             _mezcla[i] = MathHelper.Lerp(_mezcla[i], i == (int)_estado ? 1f : 0f, suavidad);
-            _musicas[i].Volume = _mezcla[i] * 0.45f;
+            Core.Audio.SetVolume(_musicas[i], _mezcla[i] * 0.45f);
         }
         foreach (var item in _botones)
         {
@@ -193,7 +188,7 @@ public sealed class Seleccion : Escena
             frame = (int)avance;
         else
         {
-            // Tras la primera pasada completa, repetir los seis frames finales.
+            // despues de la primera pasada, solo se repiten los seis cuadros finales.
             int framesLoop = Math.Min(6, cantidad);
             frame = cantidad - framesLoop + (int)((avance - cantidad) % framesLoop);
         }
@@ -214,7 +209,7 @@ public sealed class Seleccion : Escena
 
     protected override void UnloadContent()
     {
-        foreach (SoundEffectInstance pista in _musicas) { pista?.Stop(); pista?.Dispose(); }
+        foreach (SoundEffectInstance pista in _musicas) Core.Audio.ReleaseSoundEffect(pista);
         foreach (var item in _botones) item.boton.IsFocused = false;
         _pixel?.Dispose();
     }

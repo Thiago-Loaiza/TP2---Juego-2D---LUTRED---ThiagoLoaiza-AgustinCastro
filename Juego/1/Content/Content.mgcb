@@ -509,6 +509,114 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Sinner/SinnerWalkUP-Sheet.png
 
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Configuration-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Configuration-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Confirmar-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Confirmar-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Misc-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Misc-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Music-NO-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Music-NO-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Music-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Music-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Negar-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Negar-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Pausa-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Pausa-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-Reanudar-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-Reanudar-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-SFX-NO-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-SFX-NO-Sheet.png
+
+#begin Sprites/UI/Buttons/Buttons_50x50/Button-SFX-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/Button-SFX-Sheet.png
+
+#begin Sprites/UI/Buttons/Button-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Button-Sheet.png
+
 #begin Sprites/UI/DeatchScreen/DeathScreen-Eye-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor

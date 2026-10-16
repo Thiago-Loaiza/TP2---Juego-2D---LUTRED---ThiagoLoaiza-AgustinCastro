@@ -1,3 +1,4 @@
+using LutredLibrary;
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -36,7 +37,6 @@ public class Sinner
     private Vector2 _velocidadActual;
     private AnimatedSprite _sprite;
 
-    // La futura mejora puede desactivar la inercia sin cambiar los controles.
     public bool UsarInercia { get; set; } = true;
     public bool HaciendoParry => _haciendoParry;
     public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
@@ -108,19 +108,18 @@ public class Sinner
             "SFX/Entities/Sinner/Caminata"
         );
 
-        _sonidoCaminata = sonido.CreateInstance();
-        _sonidoCaminata.IsLooped = true;
-        _sonidoCaminata.Volume = 0.4f;
+        _sonidoCaminata = Core.Audio.CreateSoundEffectInstance(sonido, isLooped: true);
+        Core.Audio.SetVolume(_sonidoCaminata, 0.4f);
 
-        _sonidoParry = content.Load<SoundEffect>(
+        _sonidoParry = Core.Audio.CreateSoundEffectInstance(content.Load<SoundEffect>(
             "SFX/Entities/Sinner/Parry"
-        ).CreateInstance();
-        _sonidoParry.Volume = 0.6f;
+        ));
+        Core.Audio.SetVolume(_sonidoParry, 0.6f);
 
-        _sonidoParryExitoso = content.Load<SoundEffect>(
+        _sonidoParryExitoso = Core.Audio.CreateSoundEffectInstance(content.Load<SoundEffect>(
             "SFX/Entities/Sinner/ParryExitoso"
-        ).CreateInstance();
-        _sonidoParryExitoso.Volume = 0.6f;
+        ));
+        Core.Audio.SetVolume(_sonidoParryExitoso, 0.6f);
 
         _efectoParry = new AnimatedSprite(CrearAnimacion(
             content,
@@ -196,11 +195,10 @@ public class Sinner
             _sprite.IsLooping = false;
             CambiarAnimacion(SinnerAnimation.Parry);
             _efectoParry.Animation = _efectoParry.Animation;
-            _sonidoParry.Stop();
-            _sonidoParry.Play();
+            Core.Audio.StopSoundEffect(_sonidoParry);
+            Core.Audio.PlaySoundEffect(_sonidoParry);
         }
 
-        // El parry cambia la animacion, pero no interrumpe el movimiento.
         Vector2 direccion = Vector2.Zero;
 
         if (teclado.IsKeyDown(Keys.A)) direccion.X -= 1;
@@ -233,7 +231,7 @@ public class Sinner
         if (obstaculos != null)
         {
             Vector2 permitido = ResolutorMovimiento.Limitar(Colision, movimiento, obstaculos);
-            // Quitar la velocidad contra la pared evita acumular inercia.
+            // quitar la velocidad contra la pared evita acumular inercia.
             if (permitido.X != movimiento.X)
                 _velocidadActual.X = 0f;
             if (permitido.Y != movimiento.Y)
@@ -244,15 +242,14 @@ public class Sinner
 
         if (_velocidadActual != Vector2.Zero)
         {
-            _sonidoCaminata.Pitch =
-            _velocidadActual.LengthSquared() > Velocidad * Velocidad
+            Core.Audio.SetPitch(_sonidoCaminata,
+                _velocidadActual.LengthSquared() > Velocidad * Velocidad
                 ? 0.5f
-                : 0f;
+                : 0f);
 
             if (_sonidoCaminata.State != SoundState.Playing)
-                _sonidoCaminata.Play();
+                Core.Audio.PlaySoundEffect(_sonidoCaminata);
 
-            // Mantener la animacion de parry hasta terminar, aun caminando.
             if (!_haciendoParry)
             {
                 if (_velocidadActual.LengthSquared() > Velocidad * Velocidad)
@@ -276,7 +273,7 @@ public class Sinner
         }
         else
         {
-            _sonidoCaminata.Stop();
+            Core.Audio.StopSoundEffect(_sonidoCaminata);
             if (!_haciendoParry)
                 CambiarAnimacion(SinnerAnimation.Reposo);
         }
@@ -292,7 +289,7 @@ public class Sinner
         Vector2 diferencia = objetivo - actual;
         float distancia = diferencia.Length();
 
-        // Llegar exactamente al objetivo evita oscilar o deslizarse para siempre.
+        // llegar exactamente al objetivo evita oscilar o deslizarse indefinidamente.
         if (distancia <= cambioMaximo || distancia == 0f)
             return objetivo;
 
@@ -307,26 +304,26 @@ public class Sinner
             _efectoParry.Position = Position;
             _efectoParry.Draw(spriteBatch);
         }
-        
+
     }
 
     public void UnloadContent()
     {
-        _sonidoCaminata.Dispose();
-        _sonidoParry.Dispose();
-        _sonidoParryExitoso.Dispose();
+        Core.Audio.ReleaseSoundEffect(_sonidoCaminata);
+        Core.Audio.ReleaseSoundEffect(_sonidoParry);
+        Core.Audio.ReleaseSoundEffect(_sonidoParryExitoso);
     }
 
     public void ConfirmarParry()
     {
-        _sonidoParryExitoso.Stop();
-        _sonidoParryExitoso.Play();
+        Core.Audio.StopSoundEffect(_sonidoParryExitoso);
+        Core.Audio.PlaySoundEffect(_sonidoParryExitoso);
     }
 
     public void DetenerSonidos()
     {
-        _sonidoCaminata.Stop();
-        _sonidoParry.Stop();
-        _sonidoParryExitoso.Stop();
+        Core.Audio.StopSoundEffect(_sonidoCaminata);
+        Core.Audio.StopSoundEffect(_sonidoParry);
+        Core.Audio.StopSoundEffect(_sonidoParryExitoso);
     }
 }

@@ -10,7 +10,6 @@ $sections = [regex]::Split($original, '(?m)^#begin ')
 $header = $sections[0].TrimEnd()
 $entries = @{}
 
-# Preserve processing settings for existing source files, excluding build output.
 foreach ($section in $sections | Select-Object -Skip 1) {
     $path = (($section -split '\r?\n', 2)[0]).Replace('\', '/')
     if ($path -match '(^|/)(bin|obj)/' -or $path -match '\.(mgcb|xnb|mgcontent|mgstats)$') {

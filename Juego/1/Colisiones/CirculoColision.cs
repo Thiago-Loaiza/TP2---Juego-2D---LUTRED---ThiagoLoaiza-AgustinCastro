@@ -22,7 +22,7 @@ public readonly struct CirculoColision
     public bool SeCruzan(Vector2 centroAnterior,
         CirculoColision otro, Vector2 centroAnteriorOtro)
     {
-        // Movimiento relativo: buscamos el punto del recorrido mas cercano a cero.
+        // el movimiento relativo permite buscar el punto del recorrido mas cercano al origen.
         Vector2 inicio = centroAnterior - centroAnteriorOtro;
         Vector2 fin = Centro - otro.Centro;
         Vector2 recorrido = fin - inicio;

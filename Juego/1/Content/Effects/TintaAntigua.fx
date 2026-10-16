@@ -5,10 +5,9 @@
     #define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
-// SpriteBatch asigna la textura que se esta dibujando al sampler 0.
 sampler2D Textura : register(s0);
 
-// Se configuran desde C#: no depender de valores por defecto en OpenGL.
+// estos valores se configuran desde el juego porque los valores por defecto pueden variar entre plataformas.
 float Umbral;
 float Contraste;
 float Grano;
@@ -37,13 +36,12 @@ float Luminosidad(float2 uv)
 float4 DibujarTinta(EntradaPixel entrada) : COLOR0
 {
     float4 muestra = tex2D(Textura, entrada.UV);
-    // Recuperar RGB sin premultiplicar para conservar bordes transparentes.
+    // recuperar el color sin premultiplicar conserva los bordes transparentes.
     float3 color = muestra.rgb / max(muestra.a, 0.0001);
     float gris = dot(color, float3(0.299, 0.587, 0.114));
-    // Grano fijo sobre la textura: no parpadea cuando se mueve la camara.
+    // fijar el grano a la textura evita parpadeos cuando se mueve la camara.
     float ruido = Ruido(floor(entrada.UV * EscalaGrano)) - 0.5;
     float tinta = saturate((gris - Umbral + ruido * Grano) * Contraste + 0.5);
-    // Expandir las sombras cercanas marca las juntas como tinta negra.
     float2 paso = TamanoTexel * GrosorTinta;
     float sombra = min(gris, Luminosidad(entrada.UV + float2(paso.x, 0)));
     sombra = min(sombra, Luminosidad(entrada.UV - float2(paso.x, 0)));

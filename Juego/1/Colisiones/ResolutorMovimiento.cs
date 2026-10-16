@@ -8,8 +8,7 @@ public static class ResolutorMovimiento
     public static Vector2 Limitar(CirculoColision jugador, Vector2 movimiento,
         IReadOnlyList<ColisionSolida> obstaculos)
     {
-        // Resolver X contra todas las formas antes de resolver Y evita que
-        // una estructura posterior cambie el recorrido ya comprobado.
+        // resolver cada eje contra todas las formas evita que una estructura altere un recorrido ya comprobado.
         float x = movimiento.X;
         foreach (ColisionSolida obstaculo in obstaculos)
             x = obstaculo.LimitarEje(jugador, x, horizontal: true);

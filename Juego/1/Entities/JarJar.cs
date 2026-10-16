@@ -1,3 +1,4 @@
+using LutredLibrary;
 using System;
 using System.Collections.Generic;
 using LutredLibrary.Graphics;
@@ -21,7 +22,7 @@ public class JarJar
     private const int TamanoFrame = 300;
     private const double SegundosPorFrameCarga = 0.25;
     private const double SegundosPorFrameRecarga = 0.2;
-    // Margen tras aparecer encima de Sinner para que el parry no exija un frame exacto.
+    // este margen permite realizar el parry sin exigir un cuadro exacto al aparecer el enemigo.
     private const float VentanaParry = 0.15f;
     private const float DuracionRecarga = 5f;
 
@@ -40,7 +41,6 @@ public class JarJar
     private Estado _estado;
     private float _temporizador;
 
-    // El rango acompana a JarJar: tras atacar se queda donde aparecio.
     public Vector2 Position { get; set; }
 
     public void LoadContent(ContentManager content)
@@ -49,7 +49,7 @@ public class JarJar
             "Sprites/Enemies/JarJar/Sprite-JarJar-Sheet", 6);
         _carga = new Animation(framesCarga, TimeSpan.FromSeconds(SegundosPorFrameCarga));
 
-        // Espadas abajo, a un lado, abajo y al otro lado: 1-2-1-3.
+        // la recarga alterna los cuadros 1, 2, 1, 3 para volver al centro entre ambos lados.
         List<TextureRegion> framesRecarga = CortarFrames(content,
             "Sprites/Enemies/JarJar/Sprite-JarJar-Carga-Sheet", 3);
         _recarga = new Animation(
@@ -61,8 +61,8 @@ public class JarJar
         _sprite.Scale = new Vector2(0.5f);
         ReiniciarCarga();
 
-        _sonidoParry = content.Load<SoundEffect>("SFX/Entities/JarJar/JarJarParry").CreateInstance();
-        _sonidoParry.Volume = 0.6f;
+        _sonidoParry = Core.Audio.CreateSoundEffectInstance(content.Load<SoundEffect>("SFX/Entities/JarJar/JarJarParry"));
+        Core.Audio.SetVolume(_sonidoParry, 0.6f);
     }
 
     private static List<TextureRegion> CortarFrames(ContentManager content, string ruta, int cantidad)
@@ -97,7 +97,6 @@ public class JarJar
             case Estado.Cargando:
                 if (!sinnerEnRango)
                 {
-                    // Salir del rango cancela la carga y la proxima vez empieza de cero.
                     ReiniciarCarga();
                     _estado = Estado.Esperando;
                     break;
@@ -115,8 +114,8 @@ public class JarJar
                 Position = centroSinner;
                 if (sinnerHaciendoParry)
                 {
-                    _sonidoParry.Stop();
-                    _sonidoParry.Play();
+                    Core.Audio.StopSoundEffect(_sonidoParry);
+                    Core.Audio.PlaySoundEffect(_sonidoParry);
                     _sprite.IsLooping = true;
                     _sprite.Animation = _recarga;
                     _temporizador = DuracionRecarga;
@@ -144,7 +143,7 @@ public class JarJar
 
     private void ReiniciarCarga()
     {
-        // Reasignar la animacion vuelve al primer frame y limpia IsFinished.
+        // reasignar la animacion vuelve al primer cuadro y reinicia su estado de finalizacion.
         _sprite.IsLooping = false;
         _sprite.Animation = _carga;
     }
@@ -157,11 +156,11 @@ public class JarJar
 
     public void DetenerSonidos()
     {
-        _sonidoParry.Stop();
+        Core.Audio.StopSoundEffect(_sonidoParry);
     }
 
     public void UnloadContent()
     {
-        _sonidoParry.Dispose();
+        Core.Audio.ReleaseSoundEffect(_sonidoParry);
     }
 }

@@ -44,7 +44,7 @@ public class Game1 : Core
         if (_escenaPendiente == null)
             return;
 
-        // Cambiar despues de procesar la entrada evita modificar la UI en su Click.
+        // el cambio se aplica despues de procesar la entrada para evitar modificar la interfaz durante el clic.
         _escenaActual?.Dispose();
         GumService.Default.Root.Children.Clear();
         _escenaActual = _escenaPendiente;

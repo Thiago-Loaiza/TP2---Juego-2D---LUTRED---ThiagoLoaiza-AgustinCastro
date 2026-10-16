@@ -22,8 +22,7 @@ public abstract class EstructuraSolida
 
     public abstract void Draw(SpriteBatch spriteBatch);
 
-    // Todas las partes usan las mismas coordenadas de textura: los ladrillos
-    // continuan de un brazo al otro de la L y entre las filas del circulo.
+    // compartir las coordenadas de textura mantiene los ladrillos alineados entre todas las partes.
     protected void DibujarRegion(SpriteBatch spriteBatch, Rectangle region)
     {
         int x = (region.Left - Limites.Left) * Textura.Width / Limites.Width;

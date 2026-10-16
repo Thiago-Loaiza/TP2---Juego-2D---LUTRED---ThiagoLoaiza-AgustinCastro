@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 
 namespace _1.Colisiones;
 
-// Una forma fisica, independiente de su textura y de los personajes.
 public readonly struct ColisionSolida
 {
     private readonly Rectangle _rectangulo;

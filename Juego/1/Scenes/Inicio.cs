@@ -1,24 +1,29 @@
 using System;
-using Gum.DataTypes.Variables;
 using Gum.Forms.Controls;
-using Gum.Forms.DefaultVisuals.V3;
 using Gum.Wireframe;
 using LutredLibrary;
 using LutredLibrary.Scenes;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoGameGum;
-using MonoGameGum.GueDeriving;
+using _1.UI;
 
 namespace _1.Scenes;
 
 public class Inicio : Escena
 {
     private readonly Action<Escena> _cambiarEscena;
-    private Button _jugar;
+    private BotonAnimado _jugar;
+    private Texture2D _hojaBoton;
 
     public Inicio(Action<Escena> cambiarEscena)
     {
         _cambiarEscena = cambiarEscena;
+    }
+
+    protected override void LoadContent()
+    {
+        _hojaBoton = Content.Load<Texture2D>("Sprites/UI/Buttons/Button-Sheet");
     }
 
     public override void Initialize()
@@ -29,32 +34,13 @@ public class Inicio : Escena
         panel.Dock(Dock.Fill);
         panel.AddToRoot();
 
-        _jugar = new Button();
-        _jugar.Text = "Jugar";
-        var visual = (ButtonVisual)_jugar.Visual;
-        visual.ButtonCategory.ResetAllStates();
-        visual.Background.Visible = false;
-        visual.FocusedIndicator.Visible = false;
-
-        var borde = new ColoredRectangleRuntime();
-        borde.Color = Color.White;
-        borde.Dock(Dock.Fill);
-        visual.Children.Insert(0, borde);
-
-        var fondo = new ColoredRectangleRuntime();
-        fondo.Color = Color.Black;
-        fondo.Dock(Dock.Fill);
-        fondo.Width = -4;
-        fondo.Height = -4;
-        borde.Children.Add(fondo);
-
-        var texto = visual.TextInstance;
-        texto.UseCustomFont = true;
-        texto.CustomFontFile = "Fonts/PMingLiU Regular/Font.fnt";
-        texto.FontScale = 1.5f;
-        texto.Color = Color.White;
-        _jugar.Width = 240;
-        _jugar.Height = 64;
+        _jugar = new BotonAnimado(_hojaBoton, 400, 200, 9,
+            TimeSpan.FromSeconds(0.12), new Rectangle(32, 32, 336, 136))
+        {
+            Text = "Jugar",
+            Width = 320,
+            Height = 130
+        };
         _jugar.Anchor(Anchor.Center);
         _jugar.Click += Jugar;
         panel.AddChild(_jugar);
@@ -64,6 +50,11 @@ public class Inicio : Escena
     private void Jugar(object sender, EventArgs args)
     {
         _cambiarEscena(new Seleccion(_cambiarEscena));
+    }
+
+    public override void Update(GameTime gameTime)
+    {
+        _jugar.Update(gameTime);
     }
 
     public override void Draw(GameTime gameTime)
@@ -76,7 +67,7 @@ public class Inicio : Escena
         if (_jugar != null)
         {
             _jugar.Click -= Jugar;
-            _jugar.IsFocused = false;
+            _jugar.Dispose();
         }
     }
 }

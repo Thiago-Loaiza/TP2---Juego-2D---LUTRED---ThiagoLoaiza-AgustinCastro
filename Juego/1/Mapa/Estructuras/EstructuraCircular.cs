@@ -13,7 +13,6 @@ public class EstructuraCircular : EstructuraSolida
         : base(CrearLimites(centro, radio), textura,
             new ColisionSolida(new CirculoColision(centro.ToVector2(), radio)))
     {
-        // Recorte circular por filas de un pixel, calculado una sola vez.
         _filas = new Rectangle[Limites.Height];
         for (int y = 0; y < Limites.Height; y++)
         {

@@ -29,10 +29,8 @@ public class Partida : Escena
             Core.GraphicsDevice.Viewport.Height
         ) * 0.5f;
         _duck.Position = _sinner.Position + new Vector2(360f, 0f);
-        // Lejos de las estructuras y fuera de su rango al empezar.
         _jarJar.Ubicar(_sinner.Position + new Vector2(-300f, 280f));
 
-        // Tres piezas fijas para probar; luego las ubicara el generador del piso.
         const int lado = 192;
         Texture2D ladrillos = Content.Load<Texture2D>("Textures/LadrillosTextura");
         _estructuras.Clear();
@@ -57,7 +55,7 @@ public class Partida : Escena
     protected override void LoadContent()
     {
         _tintaAntigua = Content.Load<Effect>("Effects/TintaAntigua");
-        // Ajustes del estilo: mas umbral = mas negro; mas contraste = menos grises.
+        // aumentar el umbral produce mas negro, aumentar el contraste reduce los grises.
         _tintaAntigua.Parameters["Umbral"].SetValue(0.80f);
         _tintaAntigua.Parameters["Contraste"].SetValue(60f);
         _tintaAntigua.Parameters["Grano"].SetValue(0.10f);
@@ -68,9 +66,8 @@ public class Partida : Escena
             "Music/And the rest was silence - Grace OST"
         );
 
-        MediaPlayer.IsRepeating = true;
-        MediaPlayer.Volume = 0.3f;
-        MediaPlayer.Play(musica);
+        Core.Audio.SongVolume = 0.3f;
+        Core.Audio.PlaySong(musica);
 
         _sinner = new Sinner();
         _sinner.LoadContent(Content);
@@ -91,7 +88,7 @@ public class Partida : Escena
         _sinner?.UnloadContent();
         _duck?.UnloadContent();
         _jarJar?.UnloadContent();
-        MediaPlayer.Stop();
+        Core.Audio.StopSong();
         base.UnloadContent();
     }
 
@@ -109,12 +106,11 @@ public class Partida : Escena
             _sinner.Update(gameTime, _obstaculos);
             _duck.Update(gameTime, _sinner.Colision.Centro);
 
-            // El parry se resuelve antes del contacto que provoca la derrota.
+            // el parry se resuelve antes del contacto para evitar una derrota cuando ambos ocurren juntos.
             if (_sinner.HaciendoParry
                 && _sinner.ColisionParry.SeCruzan(centroAnteriorSinner,
                     _duck.Colision, posicionAnteriorDuck))
             {
-                // Un mismo rebote no debe repetir el sonido en cada actualizacion.
                 if (!estabaRebotando)
                 {
                     _duck.Rebotar(_sinner.ColisionParry.Centro,
@@ -141,7 +137,7 @@ public class Partida : Escena
     private void Perder()
     {
         _derrotado = true;
-        MediaPlayer.Stop();
+        Core.Audio.StopSong();
         _sinner.DetenerSonidos();
         _duck.DetenerSonidos();
         _jarJar.DetenerSonidos();
