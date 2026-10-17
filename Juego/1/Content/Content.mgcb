@@ -710,6 +710,114 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/DeatchScreen/DeathScreen-Line-Sheet.png
 
+#begin Sprites/Upgrades/Icons/AureolaDivina.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/AureolaDivina.png
+
+#begin Sprites/Upgrades/Icons/Caliz.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/Caliz.png
+
+#begin Sprites/Upgrades/Icons/Dominio.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/Dominio.png
+
+#begin Sprites/Upgrades/Icons/Escudo.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/Escudo.png
+
+#begin Sprites/Upgrades/Icons/FellDoor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/FellDoor.png
+
+#begin Sprites/Upgrades/Icons/GranJabalina.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/GranJabalina.png
+
+#begin Sprites/Upgrades/Icons/Guantelet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/Guantelet.png
+
+#begin Sprites/Upgrades/Icons/Paz.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/Paz.png
+
+#begin Sprites/Upgrades/Icons/PiezAgiles.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/PiezAgiles.png
+
+#begin Sprites/Upgrades/Icons/Precipitacion.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/Precipitacion.png
+
+#begin Sprites/Upgrades/Icons/TETUTRED.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/TETUTRED.png
+
+#begin Sprites/Upgrades/Icons/TipoDuro.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/TipoDuro.png
+
 #begin Textures/Cesped.png
 /importer:TextureImporter
 /processor:TextureProcessor

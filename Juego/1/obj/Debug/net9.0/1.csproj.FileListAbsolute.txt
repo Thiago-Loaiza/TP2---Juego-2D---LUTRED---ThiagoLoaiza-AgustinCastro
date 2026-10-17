@@ -387,3 +387,15 @@ C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCa
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\DudaV2-1.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\ElegirV2-0.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\ElegirV2-1.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\AureolaDivina.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\Caliz.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\Dominio.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\Escudo.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\FellDoor.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\GranJabalina.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\Guantelet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\Paz.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\PiezAgiles.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\Precipitacion.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\TETUTRED.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\TipoDuro.xnb

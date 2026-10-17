@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using LutredLibrary.Scenes;
 using Microsoft.Xna.Framework.Media;
 using LutredLibrary;
+using LutredLibrary.Graphics;
 using _1.Entities;
 using System.Collections.Generic;
 using _1.Colisiones;
@@ -15,6 +16,7 @@ public class Partida : Escena
     private Sinner _sinner;
     private Duck _duck;
     private JarJar _jarJar;
+    private readonly Camara2D _camara = new();
     private readonly List<EstructuraSolida> _estructuras = new();
     private readonly List<ColisionSolida> _obstaculos = new();
     private Effect _tintaAntigua;
@@ -28,6 +30,7 @@ public class Partida : Escena
             Core.GraphicsDevice.Viewport.Width,
             Core.GraphicsDevice.Viewport.Height
         ) * 0.5f;
+        _camara.Seguir(_sinner.Position);
         _duck.Position = _sinner.Position + new Vector2(360f, 0f);
         _jarJar.Ubicar(_sinner.Position + new Vector2(-300f, 280f));
 
@@ -104,6 +107,7 @@ public class Partida : Escena
             Vector2 posicionAnteriorDuck = _duck.Position;
             bool estabaRebotando = _duck.Rebotando;
             _sinner.Update(gameTime, _obstaculos);
+            _camara.Seguir(_sinner.Position);
             _duck.Update(gameTime, _sinner.Colision.Centro);
 
             // el parry se resuelve antes del contacto para evitar una derrota cuando ambos ocurren juntos.
@@ -147,19 +151,22 @@ public class Partida : Escena
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(_derrotado ? Color.Black : Color.White);
+        Matrix transformacion = _camara.ObtenerTransformacion(Core.GraphicsDevice.Viewport);
 
         if (!_derrotado)
         {
             Core.SpriteBatch.Begin(
                 samplerState: SamplerState.PointClamp,
-                effect: _tintaAntigua);
+                effect: _tintaAntigua,
+                transformMatrix: transformacion);
             foreach (EstructuraSolida estructura in _estructuras)
                 estructura.Draw(Core.SpriteBatch);
             Core.SpriteBatch.End();
         }
 
         Core.SpriteBatch.Begin(
-            samplerState: SamplerState.PointClamp
+            samplerState: SamplerState.PointClamp,
+            transformMatrix: _derrotado ? Matrix.Identity : transformacion
         );
 
         if (_derrotado)
