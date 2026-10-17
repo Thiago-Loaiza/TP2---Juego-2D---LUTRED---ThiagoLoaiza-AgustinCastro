@@ -10,6 +10,7 @@ using _1.Colisiones;
 using _1.Mapa.Estructuras;
 using _1.Mapa;
 using System;
+using _1.UI;
 
 namespace _1.Scenes;
 
@@ -32,6 +33,7 @@ public class Partida : Escena
     private SoundEffectInstance _musicaNivel;
     private Texture2D _pixelTransicion;
     private float _opacidadBlanca = 1f;
+    private BordeAnimado _bordePantalla;
 
     public override void Initialize()
     {
@@ -74,6 +76,8 @@ public class Partida : Escena
             Content.Load<SoundEffect>("Music/Layers/Layers/Layer1"), isLooped: true, isMusic: true);
         _pixelTransicion = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixelTransicion.SetData(new[] { Color.White });
+        _bordePantalla = new BordeAnimado(
+            Content.Load<Texture2D>("Sprites/UI/BorderSreen/EfectoBorde-Sheet"), TimeSpan.FromSeconds(0.12));
 
         _sinner = new Sinner();
         _sinner.LoadContent(Content);
@@ -103,6 +107,7 @@ public class Partida : Escena
 
     public override void Update(GameTime gameTime)
     {
+        _bordePantalla.Update(gameTime);
         if (_faseEntrada == FaseEntrada.Transicion)
         {
             if (!Core.Audio.IsPaused && _sonidoEntrada.State == SoundState.Stopped)
@@ -176,6 +181,7 @@ public class Partida : Escena
         if (_faseEntrada == FaseEntrada.Transicion)
         {
             Core.GraphicsDevice.Clear(Color.Black);
+            DibujarBorde();
             return;
         }
 
@@ -224,5 +230,13 @@ public class Partida : Escena
                 new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White * _opacidadBlanca);
             Core.SpriteBatch.End();
         }
+        DibujarBorde();
+    }
+
+    private void DibujarBorde()
+    {
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend);
+        _bordePantalla.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+        Core.SpriteBatch.End();
     }
 }

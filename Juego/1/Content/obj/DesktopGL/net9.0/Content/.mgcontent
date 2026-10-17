@@ -71,6 +71,7 @@
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/Sinner-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/SinnerWalk-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/SinnerWalkUP-Sheet.png</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/BorderSreen/EfectoBorde-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Configuration-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Confirmar-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet.png</File>
@@ -167,6 +168,7 @@
     <File>Sprites/Enemies/JarJar/Sprite-JarJar</File>
     <File xsi:nil="true" />
     <File>Sprites/Enemies/JarJar/Sprite-JarJar-Sheet</File>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

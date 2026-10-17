@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/BorderSreen/EfectoBorde-Sheet.png</SourceFile>
+  <SourceTime>2026-10-16T22:54:27.0089613-03:00</SourceTime>
+  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/UI/BorderSreen/EfectoBorde-Sheet.xnb</DestFile>
+  <DestTime>2026-10-16T23:06:58.0526888-03:00</DestTime>
+  <Importer>TextureImporter</Importer>
+  <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
+  <Processor>TextureProcessor</Processor>
+  <ProcessorTime>2026-08-14T18:50:10-03:00</ProcessorTime>
+  <Parameters>
+    <Key>ColorKeyEnabled</Key>
+    <Value>False</Value>
+  </Parameters>
+  <Parameters>
+    <Key>GenerateMipmaps</Key>
+    <Value>False</Value>
+  </Parameters>
+  <Parameters>
+    <Key>PremultiplyAlpha</Key>
+    <Value>True</Value>
+  </Parameters>
+  <Parameters>
+    <Key>TextureFormat</Key>
+    <Value>Color</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>
