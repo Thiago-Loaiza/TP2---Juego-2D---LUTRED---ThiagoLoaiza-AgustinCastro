@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using LutredLibrary.Scenes;
-using Microsoft.Xna.Framework.Media;
 using LutredLibrary;
 using LutredLibrary.Graphics;
 using _1.Entities;
@@ -15,6 +15,8 @@ namespace _1.Scenes;
 
 public class Partida : Escena
 {
+    private enum FaseEntrada { Transicion, Aparicion, Jugando }
+
     private Sinner _sinner;
     private Duck _duck;
     private JarJar _jarJar;
@@ -25,6 +27,11 @@ public class Partida : Escena
     private Effect _tintaAntigua;
     private PantallaDerrota _pantallaDerrota;
     private bool _derrotado;
+    private FaseEntrada _faseEntrada;
+    private SoundEffectInstance _sonidoEntrada;
+    private SoundEffectInstance _musicaNivel;
+    private Texture2D _pixelTransicion;
+    private float _opacidadBlanca = 1f;
 
     public override void Initialize()
     {
@@ -46,6 +53,9 @@ public class Partida : Escena
         _obstaculos.AddRange(mapa.Obstaculos);
         _tintaAntigua.Parameters["TamanoTexel"].SetValue(
             new Vector2(1f / ladrillos.Width, 1f / ladrillos.Height));
+        Core.Audio.SongVolume = 0.3f;
+        Core.Audio.StopSong();
+        Core.Audio.PlaySoundEffect(_sonidoEntrada);
     }
 
     protected override void LoadContent()
@@ -58,12 +68,12 @@ public class Partida : Escena
         _tintaAntigua.Parameters["EscalaGrano"].SetValue(512f);
         _tintaAntigua.Parameters["GrosorTinta"].SetValue(3f);
 
-        Song musica = Content.Load<Song>(
-            "Music/And the rest was silence - Grace OST"
-        );
-
-        Core.Audio.SongVolume = 0.3f;
-        Core.Audio.PlaySong(musica);
+        _sonidoEntrada = Core.Audio.CreateSoundEffectInstance(
+            Content.Load<SoundEffect>("Music/Layers/Transicciones/Iniciador1"), isMusic: true);
+        _musicaNivel = Core.Audio.CreateSoundEffectInstance(
+            Content.Load<SoundEffect>("Music/Layers/Layers/Layer1"), isLooped: true, isMusic: true);
+        _pixelTransicion = new Texture2D(Core.GraphicsDevice, 1, 1);
+        _pixelTransicion.SetData(new[] { Color.White });
 
         _sinner = new Sinner();
         _sinner.LoadContent(Content);
@@ -85,11 +95,30 @@ public class Partida : Escena
         _duck?.UnloadContent();
         _jarJar?.UnloadContent();
         Core.Audio.StopSong();
+        Core.Audio.ReleaseSoundEffect(_sonidoEntrada);
+        Core.Audio.ReleaseSoundEffect(_musicaNivel);
+        _pixelTransicion?.Dispose();
         base.UnloadContent();
     }
 
     public override void Update(GameTime gameTime)
     {
+        if (_faseEntrada == FaseEntrada.Transicion)
+        {
+            if (!Core.Audio.IsPaused && _sonidoEntrada.State == SoundState.Stopped)
+            {
+                Core.Audio.PlaySoundEffect(_musicaNivel);
+                _faseEntrada = FaseEntrada.Aparicion;
+            }
+            return;
+        }
+
+        if (_faseEntrada == FaseEntrada.Aparicion)
+        {
+            _opacidadBlanca = Math.Max(0f, _opacidadBlanca - (float)gameTime.ElapsedGameTime.TotalSeconds);
+            if (_opacidadBlanca == 0f) _faseEntrada = FaseEntrada.Jugando;
+        }
+
         if (_derrotado)
         {
             _pantallaDerrota.Update(gameTime);
@@ -135,6 +164,7 @@ public class Partida : Escena
     {
         _derrotado = true;
         Core.Audio.StopSong();
+        Core.Audio.StopSoundEffect(_musicaNivel);
         _sinner.DetenerSonidos();
         _duck.DetenerSonidos();
         _jarJar.DetenerSonidos();
@@ -143,6 +173,12 @@ public class Partida : Escena
 
     public override void Draw(GameTime gameTime)
     {
+        if (_faseEntrada == FaseEntrada.Transicion)
+        {
+            Core.GraphicsDevice.Clear(Color.Black);
+            return;
+        }
+
         Core.GraphicsDevice.Clear(_derrotado ? Color.Black : Color.White);
         Matrix transformacion = _camara.ObtenerTransformacion(Core.GraphicsDevice.Viewport);
 
@@ -179,5 +215,14 @@ public class Partida : Escena
         }
 
         Core.SpriteBatch.End();
+
+        if (_faseEntrada == FaseEntrada.Aparicion)
+        {
+            var viewport = Core.GraphicsDevice.Viewport;
+            Core.SpriteBatch.Begin(blendState: BlendState.AlphaBlend);
+            Core.SpriteBatch.Draw(_pixelTransicion,
+                new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White * _opacidadBlanca);
+            Core.SpriteBatch.End();
+        }
     }
 }

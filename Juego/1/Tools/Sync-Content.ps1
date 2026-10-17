@@ -19,7 +19,7 @@ foreach ($section in $sections | Select-Object -Skip 1) {
     }
     if (Test-Path -LiteralPath (Join-Path $contentRoot $path) -PathType Leaf) {
         $block = "#begin $section".TrimEnd()
-        if ($path -match '^SFX/' -and $path -match '\.(wav|mp3|ogg)$') {
+        if ($path -match '^(SFX/|Music/Layers/(Transicciones/Iniciador1|Layers/Layer1)\.mp3$)' -and $path -match '\.(wav|mp3|ogg)$') {
             $block = $block.Replace('/processor:SongProcessor', '/processor:SoundEffectProcessor')
         }
         $entries[$path] = $block
@@ -61,7 +61,7 @@ foreach ($file in Get-ChildItem -LiteralPath $contentRoot -Recurse -File) {
         'EffectImporter' { $processor = 'EffectProcessor' }
         default {
             $processor = 'SoundEffectProcessor'
-            if ($path -notmatch '^SFX/') { $processor = 'SongProcessor' }
+            if ($path -notmatch '^(SFX/|Music/Layers/(Transicciones/Iniciador1|Layers/Layer1)\.mp3$)') { $processor = 'SongProcessor' }
             $parameters = @('/processorParam:Quality=Best')
         }
     }
