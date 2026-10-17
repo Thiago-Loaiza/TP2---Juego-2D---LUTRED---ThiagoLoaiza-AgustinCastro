@@ -3,7 +3,7 @@
   <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/Zorak/Tick.wav</SourceFile>
   <SourceTime>2026-10-14T22:51:58.8414962-03:00</SourceTime>
   <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Entities/Zorak/Tick.xnb</DestFile>
-  <DestTime>2026-10-16T23:06:54.17035-03:00</DestTime>
+  <DestTime>2026-10-16T23:17:28.1336451-03:00</DestTime>
   <Importer>WavImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>
