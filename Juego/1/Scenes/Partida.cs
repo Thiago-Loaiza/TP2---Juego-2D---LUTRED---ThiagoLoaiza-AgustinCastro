@@ -8,6 +8,8 @@ using _1.Entities;
 using System.Collections.Generic;
 using _1.Colisiones;
 using _1.Mapa.Estructuras;
+using _1.Mapa;
+using System;
 
 namespace _1.Scenes;
 
@@ -17,6 +19,7 @@ public class Partida : Escena
     private Duck _duck;
     private JarJar _jarJar;
     private readonly Camara2D _camara = new();
+    private readonly GeneradorMapa _generador = new();
     private readonly List<EstructuraSolida> _estructuras = new();
     private readonly List<ColisionSolida> _obstaculos = new();
     private Effect _tintaAntigua;
@@ -34,23 +37,13 @@ public class Partida : Escena
         _duck.Position = _sinner.Position + new Vector2(360f, 0f);
         _jarJar.Ubicar(_sinner.Position + new Vector2(-300f, 280f));
 
-        const int lado = 192;
         Texture2D ladrillos = Content.Load<Texture2D>("Textures/LadrillosTextura");
+        MapaGenerado mapa = _generador.Generar(_sinner.Position, ladrillos,
+            CatalogoEstructuras.Crear(), Random.Shared.Next());
         _estructuras.Clear();
         _obstaculos.Clear();
-        _estructuras.Add(new BloqueSolido(new Rectangle(
-            (int)_sinner.Colision.Centro.X - 320,
-            (int)_sinner.Colision.Centro.Y - lado / 2,
-            lado, lado), ladrillos));
-        _estructuras.Add(new EstructuraCircular(new Point(
-            (int)_sinner.Colision.Centro.X,
-            (int)_sinner.Colision.Centro.Y - 200), 88, ladrillos));
-        _estructuras.Add(new EstructuraL(new Rectangle(
-            (int)_sinner.Colision.Centro.X + 200,
-            (int)_sinner.Colision.Centro.Y + 40,
-            224, 224), 64, ladrillos));
-        foreach (EstructuraSolida estructura in _estructuras)
-            _obstaculos.AddRange(estructura.Colisiones);
+        _estructuras.AddRange(mapa.Estructuras);
+        _obstaculos.AddRange(mapa.Obstaculos);
         _tintaAntigua.Parameters["TamanoTexel"].SetValue(
             new Vector2(1f / ladrillos.Width, 1f / ladrillos.Height));
     }
@@ -156,11 +149,16 @@ public class Partida : Escena
         if (!_derrotado)
         {
             Core.SpriteBatch.Begin(
-                samplerState: SamplerState.PointClamp,
+                samplerState: SamplerState.PointWrap,
                 effect: _tintaAntigua,
                 transformMatrix: transformacion);
+            var viewport = Core.GraphicsDevice.Viewport;
+            var visible = new Rectangle(
+                (int)MathF.Floor(_camara.Posicion.X - viewport.Width * 0.5f),
+                (int)MathF.Floor(_camara.Posicion.Y - viewport.Height * 0.5f),
+                viewport.Width + 1, viewport.Height + 1);
             foreach (EstructuraSolida estructura in _estructuras)
-                estructura.Draw(Core.SpriteBatch);
+                if (estructura.Limites.Intersects(visible)) estructura.Draw(Core.SpriteBatch);
             Core.SpriteBatch.End();
         }
 

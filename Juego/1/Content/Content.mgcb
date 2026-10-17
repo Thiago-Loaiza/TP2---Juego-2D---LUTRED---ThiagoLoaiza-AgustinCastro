@@ -458,6 +458,24 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/JarJar/Sprite-JarJar-Sheet.png;Sprites/Enemies/JarJar/Sprite-JarJar-Sheet
 
+#begin Sprites/Enemies/Zorak/Particulas-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Enemies/Zorak/Particulas-Sheet.png
+
+#begin Sprites/Enemies/Zorak/Zorak-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Enemies/Zorak/Zorak-Sheet.png
+
 #begin Sprites/Sinner/PantallaEleccion/Atlas/Continuar.png
 /importer:TextureImporter
 /processor:TextureProcessor
