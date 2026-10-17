@@ -21,13 +21,16 @@ public sealed class Seleccion : Escena
     private readonly SoundEffectInstance[] _musicas = new SoundEffectInstance[3];
     private readonly Texture2D[] _animaciones = new Texture2D[3];
     private readonly int[] _cantidadFrames = { 11, 30, 24 };
+    private readonly Texture2D[,] _fondosAnimados = new Texture2D[3, 2];
+    private readonly int[] _cuadrosFondo = { 20, 20, 22 };
     private readonly List<(Button boton, ColoredRectangleRuntime borde,
         ColoredRectangleRuntime fondo, TextRuntime texto)> _botones = new();
     private readonly float[] _mezcla = { 1f, 0f, 0f };
     private Estado _estado;
-    private Texture2D _pixel;
     private TextRuntime _titulo;
     private double _relojEstado;
+    private double _relojFondo;
+    private float _opacidadDuda;
     private Color _fondo = Color.White;
     private Color _tinta = Color.Black;
     private Color _borde = Color.Black;
@@ -39,12 +42,14 @@ public sealed class Seleccion : Escena
     {
         Core.Audio.StopSong();
         Core.Audio.SongVolume = 1f;
-        _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
-        _pixel.SetData(new[] { Color.White });
+        string[] fondos = { "ElegirV2", "DudaV2", "ContinuarV2" };
         string[] arte = { "Neutral", "Escapar", "Continuar" };
         string[] musica = { "Neutral", "Duda", "Continuar" };
         for (int i = 0; i < 3; i++)
         {
+            for (int pagina = 0; pagina < 2; pagina++)
+                _fondosAnimados[i, pagina] = Content.Load<Texture2D>(
+                    $"Backgrounds/Selection/Atlas/{fondos[i]}-{pagina}");
             _animaciones[i] = Content.Load<Texture2D>($"Sprites/Sinner/PantallaEleccion/Atlas/{arte[i]}");
             // la base blanca premultiplicada permite aplicar un tono uniforme sin depender del negro original.
             var pixeles = new Color[_animaciones[i].Width * _animaciones[i].Height];
@@ -150,9 +155,12 @@ public sealed class Seleccion : Escena
     {
         double dt = gameTime.ElapsedGameTime.TotalSeconds;
         _relojEstado += dt;
+        _relojFondo += dt;
         float suavidad = 1f - MathF.Exp(-8f * (float)dt);
         bool escapar = _estado == Estado.Escapar;
         bool continuar = _estado == Estado.Continuar;
+        _opacidadDuda = MathHelper.Clamp(_opacidadDuda
+            + (escapar ? 1f : -1f) * (float)dt / 0.45f, 0f, 1f);
         Color rojo = new Color(165, 12, 24);
         _fondo = Color.Lerp(_fondo, continuar ? rojo : escapar ? Color.Black : Color.White, suavidad);
         _tinta = Color.Lerp(_tinta, escapar ? Color.White : Color.Black, suavidad);
@@ -194,23 +202,30 @@ public sealed class Seleccion : Escena
         }
         var origen = new Rectangle(frame % 6 * 640, frame / 6 * 360, 640, 360);
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        if (_estado == Estado.Continuar)
+            DibujarFondo(2, area, 1f);
+        else
+        {
+            // el fondo opaco debajo evita un oscurecimiento durante el fundido.
+            DibujarFondo(0, area, 1f);
+            if (_opacidadDuda > 0f) DibujarFondo(1, area, _opacidadDuda);
+        }
         Core.SpriteBatch.Draw(_animaciones[estado], area, origen, _sinner);
         Core.SpriteBatch.End();
+    }
 
-        Core.SpriteBatch.Begin();
-        const int margen = 20;
-        const int grosor = 3;
-        Core.SpriteBatch.Draw(_pixel, new Rectangle(margen, margen, viewport.Width - margen * 2, grosor), _borde);
-        Core.SpriteBatch.Draw(_pixel, new Rectangle(margen, viewport.Height - margen - grosor, viewport.Width - margen * 2, grosor), _borde);
-        Core.SpriteBatch.Draw(_pixel, new Rectangle(margen, margen, grosor, viewport.Height - margen * 2), _borde);
-        Core.SpriteBatch.Draw(_pixel, new Rectangle(viewport.Width - margen - grosor, margen, grosor, viewport.Height - margen * 2), _borde);
-        Core.SpriteBatch.End();
+    private void DibujarFondo(int estado, Rectangle destino, float opacidad)
+    {
+        int cuadro = (int)(_relojFondo * 8) % _cuadrosFondo[estado];
+        int pagina = cuadro / 12;
+        int celda = cuadro % 12;
+        var origen = new Rectangle(celda % 3 * 1280, celda / 3 * 720, 1280, 720);
+        Core.SpriteBatch.Draw(_fondosAnimados[estado, pagina], destino, origen, Color.White * opacidad);
     }
 
     protected override void UnloadContent()
     {
         foreach (SoundEffectInstance pista in _musicas) Core.Audio.ReleaseSoundEffect(pista);
         foreach (var item in _botones) item.boton.IsFocused = false;
-        _pixel?.Dispose();
     }
 }

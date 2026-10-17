@@ -20,6 +20,60 @@
 /processorParam:Version=3.8.5.1
 /build:And the rest was silence - Grace OST.mp3
 
+#begin Backgrounds/Selection/Atlas/ContinuarV2-0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Backgrounds/Selection/Atlas/ContinuarV2-0.png
+
+#begin Backgrounds/Selection/Atlas/ContinuarV2-1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Backgrounds/Selection/Atlas/ContinuarV2-1.png
+
+#begin Backgrounds/Selection/Atlas/DudaV2-0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Backgrounds/Selection/Atlas/DudaV2-0.png
+
+#begin Backgrounds/Selection/Atlas/DudaV2-1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Backgrounds/Selection/Atlas/DudaV2-1.png
+
+#begin Backgrounds/Selection/Atlas/ElegirV2-0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Backgrounds/Selection/Atlas/ElegirV2-0.png
+
+#begin Backgrounds/Selection/Atlas/ElegirV2-1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Backgrounds/Selection/Atlas/ElegirV2-1.png
+
 #begin Effects/EstrellaParry-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor

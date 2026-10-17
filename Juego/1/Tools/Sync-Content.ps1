@@ -4,6 +4,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $contentRoot = (Resolve-Path -LiteralPath $ContentDirectory).Path
+& (Join-Path $PSScriptRoot 'Pack-SelectionBackgrounds.ps1') -ContentDirectory $contentRoot
 $manifestPath = Join-Path $contentRoot 'Content.mgcb'
 $original = [System.IO.File]::ReadAllText($manifestPath)
 $sections = [regex]::Split($original, '(?m)^#begin ')
@@ -12,7 +13,8 @@ $entries = @{}
 
 foreach ($section in $sections | Select-Object -Skip 1) {
     $path = (($section -split '\r?\n', 2)[0]).Replace('\', '/')
-    if ($path -match '(^|/)(bin|obj)/' -or $path -match '\.(mgcb|xnb|mgcontent|mgstats)$') {
+    if ($path -match '(^|/)(bin|obj)/' -or $path -match '\.(mgcb|xnb|mgcontent|mgstats)$' -or
+        $path -match '^Backgrounds/Selection/(ElegirV2|DudaV2|ContinuarV2)-Sheet\.png$') {
         continue
     }
     if (Test-Path -LiteralPath (Join-Path $contentRoot $path) -PathType Leaf) {
@@ -35,7 +37,8 @@ $importers = @{
 
 foreach ($file in Get-ChildItem -LiteralPath $contentRoot -Recurse -File) {
     $path = $file.FullName.Substring($contentRoot.Length + 1).Replace('\', '/')
-    if ($path -match '(^|/)(bin|obj)/' -or $entries.ContainsKey($path)) {
+    if ($path -match '(^|/)(bin|obj)/' -or $entries.ContainsKey($path) -or
+        $path -match '^Backgrounds/Selection/(ElegirV2|DudaV2|ContinuarV2)-Sheet\.png$') {
         continue
     }
     $extension = $file.Extension.ToLowerInvariant()

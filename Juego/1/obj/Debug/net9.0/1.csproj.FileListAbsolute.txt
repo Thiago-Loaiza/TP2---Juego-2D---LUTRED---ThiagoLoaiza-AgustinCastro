@@ -381,3 +381,9 @@ c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCa
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\UI\Buttons\Buttons_50x50\Button-Reanudar-Sheet.xnb
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\UI\Buttons\Buttons_50x50\Button-SFX-NO-Sheet.xnb
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\UI\Buttons\Buttons_50x50\Button-SFX-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\ContinuarV2-0.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\ContinuarV2-1.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\DudaV2-0.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\DudaV2-1.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\ElegirV2-0.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\Selection\Atlas\ElegirV2-1.xnb
