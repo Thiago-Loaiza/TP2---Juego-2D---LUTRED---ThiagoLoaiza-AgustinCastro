@@ -350,6 +350,13 @@
 /processorParam:Version=3.8.5.1
 /build:SFX/Entities/Sinner/ParryExitosoDuro.mp3
 
+#begin SFX/Entities/Zorak/ParryZorak.MP3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
+/build:SFX/Entities/Zorak/ParryZorak.MP3
+
 #begin SFX/Entities/Zorak/Tick.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor

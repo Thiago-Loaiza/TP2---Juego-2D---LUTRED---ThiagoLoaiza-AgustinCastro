@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HPpV8AqoCLA=",
+  "dgSpecHash": "/BFEKw3jYxE=",
   "success": true,
-  "projectFilePath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+  "projectFilePath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\juanl\\.nuget\\packages\\csvhelper\\33.1.0\\csvhelper.33.1.0.nupkg.sha512",
     "C:\\Users\\juanl\\.nuget\\packages\\flatredball.gumcommon\\2026.5.8.1\\flatredball.gumcommon.2026.5.8.1.nupkg.sha512",

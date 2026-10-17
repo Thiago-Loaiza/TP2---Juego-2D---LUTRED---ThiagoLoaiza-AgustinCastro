@@ -39,6 +39,7 @@ public class Sinner
 
     public bool UsarInercia { get; set; } = true;
     public bool HaciendoParry => _haciendoParry;
+    public bool ParryIniciadoEsteFrame { get; private set; }
     public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
     public CirculoColision ColisionParry => new(Colision.Centro, 28f);
 
@@ -177,6 +178,7 @@ public class Sinner
     public void Update(GameTime gameTime, IReadOnlyList<ColisionSolida> obstaculos = null)
     {
         KeyboardState teclado = Keyboard.GetState();
+        ParryIniciadoEsteFrame = false;
 
         bool parryPresionado = teclado.IsKeyDown(Keys.F)
             && _tecladoAnterior.IsKeyUp(Keys.F);
@@ -191,6 +193,7 @@ public class Sinner
 
         if (parryPresionado && !_haciendoParry)
         {
+            ParryIniciadoEsteFrame = true;
             _haciendoParry = true;
             _sprite.IsLooping = false;
             CambiarAnimacion(SinnerAnimation.Parry);

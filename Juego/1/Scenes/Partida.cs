@@ -21,6 +21,7 @@ public class Partida : Escena
     private Sinner _sinner;
     private Duck _duck;
     private JarJar _jarJar;
+    private Zorak _zorak;
     private readonly Camara2D _camara = new();
     private readonly GeneradorMapa _generador = new();
     private readonly List<EstructuraSolida> _estructuras = new();
@@ -87,6 +88,8 @@ public class Partida : Escena
 
         _jarJar = new JarJar();
         _jarJar.LoadContent(Content);
+        _zorak = new Zorak();
+        _zorak.LoadContent(Content);
         _pantallaDerrota = new PantallaDerrota();
         _pantallaDerrota.LoadContent(Content);
 
@@ -98,6 +101,7 @@ public class Partida : Escena
         _sinner?.UnloadContent();
         _duck?.UnloadContent();
         _jarJar?.UnloadContent();
+        _zorak?.UnloadContent();
         Core.Audio.StopSong();
         Core.Audio.ReleaseSoundEffect(_sonidoEntrada);
         Core.Audio.ReleaseSoundEffect(_musicaNivel);
@@ -130,11 +134,29 @@ public class Partida : Escena
         }
         else
         {
+            if (_zorak.BloqueandoJugador)
+            {
+                if (_zorak.Update(gameTime, false, false) == ResultadoZorak.Golpe)
+                    Perder();
+                return;
+            }
             Vector2 centroAnteriorSinner = _sinner.Colision.Centro;
             Vector2 posicionAnteriorDuck = _duck.Position;
             bool estabaRebotando = _duck.Rebotando;
             _sinner.Update(gameTime, _obstaculos);
             _camara.Seguir(_sinner.Position);
+            ResultadoZorak resultadoZorak = _zorak.Update(gameTime,
+                Vector2.DistanceSquared(centroAnteriorSinner, _sinner.Colision.Centro) > 0.000001f,
+                _sinner.ParryIniciadoEsteFrame);
+            if (resultadoZorak == ResultadoZorak.Parreado)
+                _sinner.ConfirmarParry();
+            if (_zorak.BloqueandoJugador)
+            {
+                _sinner.DetenerSonidos();
+                _duck.DetenerSonidos();
+                _jarJar.DetenerSonidos();
+                return;
+            }
             _duck.Update(gameTime, _sinner.Colision.Centro);
 
             // el parry se resuelve antes del contacto para evitar una derrota cuando ambos ocurren juntos.
@@ -173,6 +195,7 @@ public class Partida : Escena
         _sinner.DetenerSonidos();
         _duck.DetenerSonidos();
         _jarJar.DetenerSonidos();
+        _zorak.DetenerSonidos();
         _pantallaDerrota.Mostrar();
     }
 
@@ -231,6 +254,15 @@ public class Partida : Escena
             Core.SpriteBatch.End();
         }
         DibujarBorde();
+
+        if (!_derrotado)
+        {
+            // La capa negra cubre tambien el borde y Zorak queda encima de todo.
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
+                blendState: BlendState.AlphaBlend);
+            _zorak.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+            Core.SpriteBatch.End();
+        }
     }
 
     private void DibujarBorde()
