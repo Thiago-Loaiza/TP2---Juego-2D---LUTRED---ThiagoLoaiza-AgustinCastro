@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Fonts/PMingLiU Regular/PMingLiU Regular.ttf</SourceFile>
-  <SourceTime>2026-10-10T23:30:32.3949408-03:00</SourceTime>
+  <SourceTime>2026-10-14T22:51:58.6917782-03:00</SourceTime>
   <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Fonts/PMingLiU Regular/PMingLiU Regular.xnb</DestFile>
-  <DestTime>2026-10-11T00:15:55.2392796-03:00</DestTime>
+  <DestTime>2026-10-19T18:46:08.6195928-03:00</DestTime>
   <Importer>FontImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

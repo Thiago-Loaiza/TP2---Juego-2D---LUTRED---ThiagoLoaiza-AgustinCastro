@@ -149,7 +149,7 @@ public sealed class Seleccion : Escena
         _botones[_estado == Estado.Neutral ? 0 : _estado == Estado.Escapar ? 3 : 4].boton.IsFocused = true;
     }
 
-    private void EntrarAPrueba() => _cambiarEscena(new Partida());
+    private void EntrarAPrueba() => _cambiarEscena(new Partida(_cambiarEscena));
 
     public override void Update(GameTime gameTime)
     {

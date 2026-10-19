@@ -23,6 +23,19 @@ public readonly struct ColisionSolida
         _esCirculo = true;
     }
 
+    public bool Toca(CirculoColision circulo)
+    {
+        if (_esCirculo)
+        {
+            return _circulo.Toca(circulo);
+        }
+
+        Vector2 cercano = new(
+            MathHelper.Clamp(circulo.Centro.X, _rectangulo.Left, _rectangulo.Right),
+            MathHelper.Clamp(circulo.Centro.Y, _rectangulo.Top, _rectangulo.Bottom));
+        return Vector2.DistanceSquared(circulo.Centro, cercano) <= circulo.Radio * circulo.Radio;
+    }
+
     public float LimitarEje(CirculoColision jugador, float movimiento, bool horizontal)
     {
         float posicion = horizontal ? jugador.Centro.X : jugador.Centro.Y;

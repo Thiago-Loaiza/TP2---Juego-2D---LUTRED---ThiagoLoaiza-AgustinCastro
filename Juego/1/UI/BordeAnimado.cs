@@ -21,7 +21,10 @@ public sealed class BordeAnimado
         for (int y = 0; y < hoja.Height; y += AltoCuadro)
             for (int x = 0; x < hoja.Width; x += AnchoCuadro)
                 cuadros.Add(new TextureRegion(hoja, x, y, AnchoCuadro, AltoCuadro));
-        _sprite = new AnimatedSprite(new Animation(cuadros, demora));
+        _sprite = new AnimatedSprite(new Animation(cuadros, demora))
+        {
+            Color = Color.White * 0.5f
+        };
     }
 
     public void Update(GameTime gameTime) => _sprite.Update(gameTime);

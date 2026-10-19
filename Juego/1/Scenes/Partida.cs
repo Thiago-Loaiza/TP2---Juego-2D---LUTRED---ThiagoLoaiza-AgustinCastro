@@ -16,6 +16,20 @@ namespace _1.Scenes;
 
 public class Partida : Escena
 {
+    private const int TotalOrbes = 10;
+    private readonly Action<Escena> _cambiarEscena;
+    private readonly List<Orbe> _orbes = new();
+    private Animation _animacionOrbe;
+    private SpriteFont _fuenteContador;
+    private int _orbesRecogidos;
+    private bool _nivelCompletado;
+    private float _tiempoSalida;
+
+    public Partida(Action<Escena> cambiarEscena)
+    {
+        _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
+    }
+
     private enum FaseEntrada { Transicion, Aparicion, Jugando }
 
     private Sinner _sinner;
@@ -54,6 +68,13 @@ public class Partida : Escena
         _obstaculos.Clear();
         _estructuras.AddRange(mapa.Estructuras);
         _obstaculos.AddRange(mapa.Obstaculos);
+        List<Vector2> posicionesOrbes = GeneradorOrbes.Generar(mapa.Limites,
+            _sinner.Colision.Centro, _obstaculos, TotalOrbes, Random.Shared);
+        _orbes.Clear();
+        for (int i = 0; i < posicionesOrbes.Count; i++)
+        {
+            _orbes.Add(new Orbe(_animacionOrbe, posicionesOrbes[i]));
+        }
         _tintaAntigua.Parameters["TamanoTexel"].SetValue(
             new Vector2(1f / ladrillos.Width, 1f / ladrillos.Height));
         Core.Audio.SongVolume = 0.3f;
@@ -63,6 +84,9 @@ public class Partida : Escena
 
     protected override void LoadContent()
     {
+        _fuenteContador = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        _animacionOrbe = Orbe.CrearAnimacion(
+            Content.Load<Texture2D>("Sprites/Misc/Orbs/Punto-Sheet"));
         _tintaAntigua = Content.Load<Effect>("Effects/TintaAntigua");
         // aumentar el umbral produce mas negro, aumentar el contraste reduce los grises.
         _tintaAntigua.Parameters["Umbral"].SetValue(0.80f);
@@ -112,6 +136,20 @@ public class Partida : Escena
     public override void Update(GameTime gameTime)
     {
         _bordePantalla.Update(gameTime);
+        if (_nivelCompletado)
+        {
+            _tiempoSalida += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            // Un segundo de fundido y una pausa breve completamente a negro.
+            if (_tiempoSalida >= 1.35f)
+            {
+                _cambiarEscena(new Seleccion(_cambiarEscena));
+            }
+            return;
+        }
+        for (int i = 0; i < _orbes.Count; i++)
+        {
+            _orbes[i].Update(gameTime);
+        }
         if (_faseEntrada == FaseEntrada.Transicion)
         {
             if (!Core.Audio.IsPaused && _sonidoEntrada.State == SoundState.Stopped)
@@ -184,6 +222,34 @@ public class Partida : Escena
                 _sinner.ConfirmarParry();
             else if (resultadoJarJar == ResultadoJarJar.Golpe)
                 Perder();
+
+            if (!_derrotado && _faseEntrada == FaseEntrada.Jugando)
+            {
+                RecogerOrbes(centroAnteriorSinner);
+            }
+        }
+    }
+
+    private void RecogerOrbes(Vector2 centroAnterior)
+    {
+        for (int i = _orbes.Count - 1; i >= 0; i--)
+        {
+            CirculoColision colision = _orbes[i].Colision;
+            // Comprobar el recorrido evita saltarse un orbe al correr con pocos FPS.
+            if (_sinner.Colision.SeCruzan(centroAnterior, colision, colision.Centro))
+            {
+                _orbes.RemoveAt(i);
+                _orbesRecogidos++;
+            }
+        }
+        if (_orbesRecogidos == TotalOrbes)
+        {
+            _nivelCompletado = true;
+            Core.Audio.StopSoundEffect(_musicaNivel);
+            _sinner.DetenerSonidos();
+            _duck.DetenerSonidos();
+            _jarJar.DetenerSonidos();
+            _zorak.DetenerSonidos();
         }
     }
 
@@ -238,6 +304,10 @@ public class Partida : Escena
         }
         else
         {
+            for (int i = 0; i < _orbes.Count; i++)
+            {
+                _orbes[i].Draw(Core.SpriteBatch);
+            }
             _jarJar.Draw(Core.SpriteBatch);
             _sinner.Draw(Core.SpriteBatch);
             _duck.Draw(Core.SpriteBatch);
@@ -257,10 +327,30 @@ public class Partida : Escena
 
         if (!_derrotado)
         {
+            Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
+                blendState: BlendState.AlphaBlend);
+            string contador = $"{_orbesRecogidos}/{TotalOrbes}";
+            Vector2 tamano = _fuenteContador.MeasureString(contador);
+            Vector2 posicion = new(
+                MathF.Round((Core.GraphicsDevice.Viewport.Width - tamano.X) * 0.5f), 24f);
+            Core.SpriteBatch.DrawString(_fuenteContador, contador,
+                posicion + new Vector2(2f), Color.White);
+            Core.SpriteBatch.DrawString(_fuenteContador, contador, posicion, Color.Black);
+            Core.SpriteBatch.End();
+
             // La capa negra cubre tambien el borde y Zorak queda encima de todo.
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                 blendState: BlendState.AlphaBlend);
             _zorak.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+            Core.SpriteBatch.End();
+        }
+        if (_nivelCompletado)
+        {
+            var viewport = Core.GraphicsDevice.Viewport;
+            Core.SpriteBatch.Begin(blendState: BlendState.AlphaBlend);
+            Core.SpriteBatch.Draw(_pixelTransicion,
+                new Rectangle(0, 0, viewport.Width, viewport.Height),
+                Color.Black * MathHelper.Clamp(_tiempoSalida, 0f, 1f));
             Core.SpriteBatch.End();
         }
     }
