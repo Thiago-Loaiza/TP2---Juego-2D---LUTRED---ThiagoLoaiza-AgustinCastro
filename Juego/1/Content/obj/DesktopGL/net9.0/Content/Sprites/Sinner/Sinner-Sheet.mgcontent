@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/Sinner-Sheet.png</SourceFile>
+  <SourceFile>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/Sinner-Sheet.png</SourceFile>
   <SourceTime>2026-10-14T22:51:58.8592874-03:00</SourceTime>
-  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Sinner/Sinner-Sheet.xnb</DestFile>
-  <DestTime>2026-10-19T20:59:25.112294-03:00</DestTime>
+  <DestFile>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Sinner/Sinner-Sheet.xnb</DestFile>
+  <DestTime>2026-10-19T21:18:00.8531913-03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

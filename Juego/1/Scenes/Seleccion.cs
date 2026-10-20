@@ -25,8 +25,8 @@ public sealed class Seleccion : Escena
     private readonly int[] _cantidadFrames = { 11, 30, 24 };
     private readonly Texture2D[,] _fondosAnimados = new Texture2D[3, 2];
     private readonly int[] _cuadrosFondo = { 20, 20, 22 };
-    private readonly List<(Button boton, ColoredRectangleRuntime borde,
-        ColoredRectangleRuntime fondo, TextRuntime texto)> _botones = new();
+    private readonly List<(Button boton, ColoredRectangleRuntime fondo,
+        TextRuntime texto)> _botones = new();
     private readonly float[] _mezcla = { 1f, 0f, 0f };
     private Estado _estado;
     private TextRuntime _titulo;
@@ -35,7 +35,6 @@ public sealed class Seleccion : Escena
     private float _opacidadDuda;
     private Color _fondo = Color.White;
     private Color _tinta = Color.Black;
-    private Color _borde = Color.Black;
     private Color _sinner = Color.Black;
 
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
@@ -110,21 +109,16 @@ public sealed class Seleccion : Escena
         visual.ButtonCategory.ResetAllStates();
         visual.Background.Visible = false;
         visual.FocusedIndicator.Visible = false;
-        var borde = new ColoredRectangleRuntime();
-        borde.Dock(Dock.Fill);
-        visual.Children.Insert(0, borde);
         var fondo = new ColoredRectangleRuntime();
         fondo.Dock(Dock.Fill);
-        fondo.Width = -4;
-        fondo.Height = -4;
-        borde.Children.Add(fondo);
+        visual.Children.Insert(0, fondo);
         var etiqueta = visual.TextInstance;
         etiqueta.UseCustomFont = true;
         etiqueta.CustomFontFile = "Fonts/PMingLiU Regular/Font.fnt";
         etiqueta.FontScale = 1.4f;
         boton.Click += (_, _) => accion();
         panel.AddChild(boton);
-        _botones.Add((boton, borde, fondo, etiqueta));
+        _botones.Add((boton, fondo, etiqueta));
     }
 
     private void CambiarEstado(Estado estado)
@@ -173,7 +167,6 @@ public sealed class Seleccion : Escena
         Color rojo = new Color(165, 12, 24);
         _fondo = Color.Lerp(_fondo, continuar ? rojo : escapar ? Color.Black : Color.White, suavidad);
         _tinta = Color.Lerp(_tinta, escapar ? Color.White : Color.Black, suavidad);
-        _borde = Color.Lerp(_borde, continuar ? rojo : escapar ? Color.White : Color.Black, suavidad);
         _titulo.Color = _tinta;
         for (int i = 0; i < 3; i++)
         {
@@ -182,10 +175,8 @@ public sealed class Seleccion : Escena
         }
         foreach (var item in _botones)
         {
-            item.borde.Color = _borde;
             item.fondo.Color = _fondo;
             item.texto.Color = _tinta;
-            item.borde.Height = item.boton.IsFocused ? 68 : 64;
         }
     }
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Effects/EstrellaParry-Sheet.png</SourceFile>
+  <SourceFile>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Effects/EstrellaParry-Sheet.png</SourceFile>
   <SourceTime>2026-10-14T22:51:58.5925924-03:00</SourceTime>
-  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Effects/EstrellaParry-Sheet.xnb</DestFile>
-  <DestTime>2026-10-19T20:58:56.8642245-03:00</DestTime>
+  <DestFile>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Effects/EstrellaParry-Sheet.xnb</DestFile>
+  <DestTime>2026-10-19T21:17:29.3448654-03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
