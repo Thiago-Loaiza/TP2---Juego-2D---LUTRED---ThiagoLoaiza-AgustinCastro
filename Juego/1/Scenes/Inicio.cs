@@ -6,6 +6,7 @@ using LutredLibrary;
 using LutredLibrary.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using MonoGameGum;
 using _1.UI;
 
@@ -26,6 +27,8 @@ public class Inicio : Escena
 
     protected override void LoadContent()
     {
+        Core.Audio.SongVolume = 0.45f;
+        Core.Audio.PlaySong(Content.Load<Song>("Music/Inicio"), isRepeating: true);
         _hojaBoton = Content.Load<Texture2D>("Sprites/UI/Buttons/Button-Sheet");
         _hojaCreditos = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet");
     }
@@ -90,6 +93,7 @@ public class Inicio : Escena
 
     protected override void UnloadContent()
     {
+        Core.Audio.StopSong();
         if (_jugar != null)
             _jugar.Click -= Jugar;
         foreach (BotonAnimado boton in _botones) boton.Dispose();

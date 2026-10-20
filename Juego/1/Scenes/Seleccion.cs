@@ -18,6 +18,8 @@ public sealed class Seleccion : Escena
 {
     private enum Estado { Neutral, Escapar, Continuar }
     private readonly Action<Escena> _cambiarEscena;
+    private readonly int _numeroNivel;
+    private readonly bool _transicionReproducida;
     private readonly SoundEffectInstance[] _musicas = new SoundEffectInstance[3];
     private readonly Texture2D[] _animaciones = new Texture2D[3];
     private readonly int[] _cantidadFrames = { 11, 30, 24 };
@@ -36,7 +38,13 @@ public sealed class Seleccion : Escena
     private Color _borde = Color.Black;
     private Color _sinner = Color.Black;
 
-    public Seleccion(Action<Escena> cambiarEscena) => _cambiarEscena = cambiarEscena;
+    public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
+        bool transicionReproducida = false)
+    {
+        _cambiarEscena = cambiarEscena;
+        _numeroNivel = numeroNivel;
+        _transicionReproducida = transicionReproducida;
+    }
 
     protected override void LoadContent()
     {
@@ -149,7 +157,8 @@ public sealed class Seleccion : Escena
         _botones[_estado == Estado.Neutral ? 0 : _estado == Estado.Escapar ? 3 : 4].boton.IsFocused = true;
     }
 
-    private void EntrarAPrueba() => _cambiarEscena(new Partida(_cambiarEscena));
+    private void EntrarAPrueba() => _cambiarEscena(
+        new Partida(_cambiarEscena, _numeroNivel, _transicionReproducida));
 
     public override void Update(GameTime gameTime)
     {

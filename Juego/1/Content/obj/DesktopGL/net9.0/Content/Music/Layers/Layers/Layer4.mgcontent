@@ -3,10 +3,10 @@
   <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Layers/Layers/Layer4.MP3</SourceFile>
   <SourceTime>2026-10-14T22:51:58.7738298-03:00</SourceTime>
   <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Music/Layers/Layers/Layer4.xnb</DestFile>
-  <DestTime>2026-10-19T19:38:30.018304-03:00</DestTime>
+  <DestTime>2026-10-19T20:59:02.1549579-03:00</DestTime>
   <Importer>Mp3Importer</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
-  <Processor>SongProcessor</Processor>
+  <Processor>SoundEffectProcessor</Processor>
   <ProcessorTime>2026-08-14T18:50:10-03:00</ProcessorTime>
   <Parameters>
     <Key>Quality</Key>
@@ -18,7 +18,5 @@
   </Parameters>
   <Dependencies />
   <BuildAsset />
-  <BuildOutput>
-    <string>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Music/Layers/Layers/Layer4.ogg</string>
-  </BuildOutput>
+  <BuildOutput />
 </PipelineBuildEvent>

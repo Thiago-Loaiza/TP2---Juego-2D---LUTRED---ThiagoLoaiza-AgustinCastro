@@ -16,10 +16,10 @@
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Fonts/BoldPixels/BoldPixels.spritefont</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Fonts/PMingLiU Regular/Font_0.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Fonts/PMingLiU Regular/PMingLiU Regular.ttf</File>
-    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/And the rest was silence - Grace OST.mp3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Eleccion/Eleccion_Continuar.MP3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Eleccion/Eleccion_Duda.MP3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Eleccion/Eleccion_Neutral.MP3</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Inicio.mp3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Layers/Layers/Layer1.MP3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Layers/Layers/Layer2.MP3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Layers/Layers/Layer3.MP3</File>
@@ -37,6 +37,12 @@
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Layers/Transicciones/Iniciador7.MP3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Layers/Transicciones/Iniciador8.MP3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Layers/Transicciones/Iniciador9.MP3</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Misc/Creditos.mp3</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Misc/Felldoor/Ambience1.wav</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Misc/Felldoor/Ambience2.mp3</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Misc/Felldoor/Ambience4.wav</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Misc/Mejoras.mp3</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Music/Prologo.mp3</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/Duck/DuckParry.wav</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/Duck/Dukquack.ogg</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/Dupe/Attack.mp3</File>
@@ -116,6 +122,12 @@
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Textures/Vidrio.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

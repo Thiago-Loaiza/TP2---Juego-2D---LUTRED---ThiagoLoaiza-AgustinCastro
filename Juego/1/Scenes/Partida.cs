@@ -17,17 +17,33 @@ namespace _1.Scenes;
 public class Partida : Escena
 {
     private const int TotalOrbes = 10;
+    private const int CantidadLayers = 8;
+    private const int CantidadTransiciones = 9;
     private readonly Action<Escena> _cambiarEscena;
+    private readonly int _numeroNivel;
+    private readonly bool _transicionReproducida;
     private readonly List<Orbe> _orbes = new();
     private Animation _animacionOrbe;
     private SpriteFont _fuenteContador;
+    private Texture2D _indicadorOrbes;
     private int _orbesRecogidos;
     private bool _nivelCompletado;
-    private float _tiempoSalida;
+    private const float DuracionTemblorContador = 0.28f;
+    private float _temblorContadorRestante;
+    private float _relojContador;
 
-    public Partida(Action<Escena> cambiarEscena)
+    private bool PocosOrbes => _orbes.Count > 0 && _orbes.Count * 4 <= TotalOrbes;
+
+    public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
+        bool transicionReproducida = false)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
+        if (numeroNivel < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(numeroNivel));
+        }
+        _numeroNivel = numeroNivel;
+        _transicionReproducida = transicionReproducida;
     }
 
     private enum FaseEntrada { Transicion, Aparicion, Jugando }
@@ -45,6 +61,7 @@ public class Partida : Escena
     private bool _derrotado;
     private FaseEntrada _faseEntrada;
     private SoundEffectInstance _sonidoEntrada;
+    private SoundEffectInstance _sonidoSalida;
     private SoundEffectInstance _musicaNivel;
     private Texture2D _pixelTransicion;
     private float _opacidadBlanca = 1f;
@@ -79,12 +96,22 @@ public class Partida : Escena
             new Vector2(1f / ladrillos.Width, 1f / ladrillos.Height));
         Core.Audio.SongVolume = 0.3f;
         Core.Audio.StopSong();
-        Core.Audio.PlaySoundEffect(_sonidoEntrada);
+        if (_transicionReproducida)
+        {
+            // La transicion ya sono al completar el nivel anterior.
+            _faseEntrada = FaseEntrada.Aparicion;
+            Core.Audio.PlaySoundEffect(_musicaNivel);
+        }
+        else
+        {
+            Core.Audio.PlaySoundEffect(_sonidoEntrada);
+        }
     }
 
     protected override void LoadContent()
     {
         _fuenteContador = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        _indicadorOrbes = Content.Load<Texture2D>("Sprites/Misc/Orbs/IndicadorPuntos");
         _animacionOrbe = Orbe.CrearAnimacion(
             Content.Load<Texture2D>("Sprites/Misc/Orbs/Punto-Sheet"));
         _tintaAntigua = Content.Load<Effect>("Effects/TintaAntigua");
@@ -95,10 +122,15 @@ public class Partida : Escena
         _tintaAntigua.Parameters["EscalaGrano"].SetValue(512f);
         _tintaAntigua.Parameters["GrosorTinta"].SetValue(3f);
 
+        int layer = (_numeroNivel - 1) % CantidadLayers + 1;
+        int transicionEntrada = (_numeroNivel - 1) % CantidadTransiciones + 1;
+        int transicionSalida = _numeroNivel % CantidadTransiciones + 1;
         _sonidoEntrada = Core.Audio.CreateSoundEffectInstance(
-            Content.Load<SoundEffect>("Music/Layers/Transicciones/Iniciador1"), isMusic: true);
+            Content.Load<SoundEffect>($"Music/Layers/Transicciones/Iniciador{transicionEntrada}"), isMusic: true);
+        _sonidoSalida = Core.Audio.CreateSoundEffectInstance(
+            Content.Load<SoundEffect>($"Music/Layers/Transicciones/Iniciador{transicionSalida}"), isMusic: true);
         _musicaNivel = Core.Audio.CreateSoundEffectInstance(
-            Content.Load<SoundEffect>("Music/Layers/Layers/Layer1"), isLooped: true, isMusic: true);
+            Content.Load<SoundEffect>($"Music/Layers/Layers/Layer{layer}"), isLooped: true, isMusic: true);
         _pixelTransicion = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixelTransicion.SetData(new[] { Color.White });
         _bordePantalla = new BordeAnimado(
@@ -128,6 +160,7 @@ public class Partida : Escena
         _zorak?.UnloadContent();
         Core.Audio.StopSong();
         Core.Audio.ReleaseSoundEffect(_sonidoEntrada);
+        Core.Audio.ReleaseSoundEffect(_sonidoSalida);
         Core.Audio.ReleaseSoundEffect(_musicaNivel);
         _pixelTransicion?.Dispose();
         base.UnloadContent();
@@ -138,14 +171,16 @@ public class Partida : Escena
         _bordePantalla.Update(gameTime);
         if (_nivelCompletado)
         {
-            _tiempoSalida += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            // Un segundo de fundido y una pausa breve completamente a negro.
-            if (_tiempoSalida >= 1.35f)
+            if (!Core.Audio.IsPaused && _sonidoSalida.State == SoundState.Stopped)
             {
-                _cambiarEscena(new Seleccion(_cambiarEscena));
+                _cambiarEscena(new Seleccion(_cambiarEscena, _numeroNivel + 1,
+                    transicionReproducida: true));
             }
             return;
         }
+        float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _relojContador = (_relojContador + segundos) % 100f;
+        _temblorContadorRestante = Math.Max(0f, _temblorContadorRestante - segundos);
         for (int i = 0; i < _orbes.Count; i++)
         {
             _orbes[i].Update(gameTime);
@@ -240,6 +275,7 @@ public class Partida : Escena
             {
                 _orbes.RemoveAt(i);
                 _orbesRecogidos++;
+                _temblorContadorRestante = DuracionTemblorContador;
             }
         }
         if (_orbesRecogidos == TotalOrbes)
@@ -250,6 +286,7 @@ public class Partida : Escena
             _duck.DetenerSonidos();
             _jarJar.DetenerSonidos();
             _zorak.DetenerSonidos();
+            Core.Audio.PlaySoundEffect(_sonidoSalida, restart: true);
         }
     }
 
@@ -267,6 +304,12 @@ public class Partida : Escena
 
     public override void Draw(GameTime gameTime)
     {
+        if (_nivelCompletado)
+        {
+            Core.GraphicsDevice.Clear(Color.Black);
+            return;
+        }
+
         if (_faseEntrada == FaseEntrada.Transicion)
         {
             Core.GraphicsDevice.Clear(Color.Black);
@@ -329,28 +372,14 @@ public class Partida : Escena
         {
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                 blendState: BlendState.AlphaBlend);
-            string contador = $"{_orbesRecogidos}/{TotalOrbes}";
-            Vector2 tamano = _fuenteContador.MeasureString(contador);
-            Vector2 posicion = new(
-                MathF.Round((Core.GraphicsDevice.Viewport.Width - tamano.X) * 0.5f), 24f);
-            Core.SpriteBatch.DrawString(_fuenteContador, contador,
-                posicion + new Vector2(2f), Color.White);
-            Core.SpriteBatch.DrawString(_fuenteContador, contador, posicion, Color.Black);
+            DibujarIndicadorOrbes(transformacion);
+            DibujarContadorOrbes();
             Core.SpriteBatch.End();
 
             // La capa negra cubre tambien el borde y Zorak queda encima de todo.
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                 blendState: BlendState.AlphaBlend);
             _zorak.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
-            Core.SpriteBatch.End();
-        }
-        if (_nivelCompletado)
-        {
-            var viewport = Core.GraphicsDevice.Viewport;
-            Core.SpriteBatch.Begin(blendState: BlendState.AlphaBlend);
-            Core.SpriteBatch.Draw(_pixelTransicion,
-                new Rectangle(0, 0, viewport.Width, viewport.Height),
-                Color.Black * MathHelper.Clamp(_tiempoSalida, 0f, 1f));
             Core.SpriteBatch.End();
         }
     }
@@ -360,5 +389,102 @@ public class Partida : Escena
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend);
         _bordePantalla.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
         Core.SpriteBatch.End();
+    }
+
+    private void DibujarContadorOrbes()
+    {
+        string texto = $"{_orbesRecogidos}/{TotalOrbes}";
+        Vector2 tamano = _fuenteContador.MeasureString(texto);
+        Vector2 origen = tamano * 0.5f;
+        Vector2 posicion = new(Core.GraphicsDevice.Viewport.Width * 0.5f, 24f + origen.Y);
+
+        float intensidad = _temblorContadorRestante / DuracionTemblorContador;
+        float amplitud = (PocosOrbes ? 3f : 2f) * intensidad * intensidad;
+        posicion += new Vector2(
+            MathF.Sin(_relojContador * 83f), MathF.Cos(_relojContador * 107f)) * amplitud;
+        posicion = new Vector2(MathF.Round(posicion.X), MathF.Round(posicion.Y));
+
+        float pulso = PocosOrbes
+            ? 0.5f - 0.5f * MathF.Cos(_relojContador * MathHelper.TwoPi * 1.35f)
+            : 0f;
+        float rebote = 0.1f * MathF.Sin(intensidad * MathHelper.Pi);
+        float escala = 1f + rebote + pulso * 0.025f;
+        Color rojo = new(230, 20, 35);
+
+        if (PocosOrbes)
+        {
+            // El halo respira alrededor del borde; el relleno siempre se dibuja negro encima.
+            float radioHalo = 3f + pulso * 3f;
+            Color brillo = rojo * (0.04f + pulso * 0.18f);
+            for (int i = 0; i < 12; i++)
+            {
+                float angulo = i * MathHelper.TwoPi / 12f;
+                Vector2 desplazamiento = new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * radioHalo;
+                Core.SpriteBatch.DrawString(_fuenteContador, texto, posicion + desplazamiento,
+                    brillo, 0f, origen, escala, SpriteEffects.None, 0f);
+            }
+        }
+
+        Color borde = Color.Lerp(rojo, new Color(255, 65, 65), pulso);
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                if (x == 0 && y == 0)
+                {
+                    continue;
+                }
+                Core.SpriteBatch.DrawString(_fuenteContador, texto,
+                    posicion + new Vector2(x, y) * 2f, borde,
+                    0f, origen, escala, SpriteEffects.None, 0f);
+            }
+        }
+        Core.SpriteBatch.DrawString(_fuenteContador, texto, posicion, Color.Black,
+            0f, origen, escala, SpriteEffects.None, 0f);
+    }
+
+    private void DibujarIndicadorOrbes(Matrix transformacion)
+    {
+        if (_orbes.Count == 0)
+        {
+            return;
+        }
+
+        Vector2 centroSinner = _sinner.Colision.Centro;
+        Vector2 objetivo = _orbes[0].Colision.Centro;
+        float distanciaMinima = Vector2.DistanceSquared(centroSinner, objetivo);
+        for (int i = 1; i < _orbes.Count; i++)
+        {
+            Vector2 candidato = _orbes[i].Colision.Centro;
+            float distancia = Vector2.DistanceSquared(centroSinner, candidato);
+            if (distancia < distanciaMinima)
+            {
+                distanciaMinima = distancia;
+                objetivo = candidato;
+            }
+        }
+
+        Vector2 direccion = objetivo - centroSinner;
+        if (direccion.LengthSquared() < 0.000001f)
+        {
+            direccion = -Vector2.UnitY;
+        }
+        Viewport viewport = Core.GraphicsDevice.Viewport;
+        Vector2 origen = Vector2.Transform(centroSinner, transformacion);
+        Vector2 pivote = new(_indicadorOrbes.Width * 0.5f, _indicadorOrbes.Height * 0.5f);
+        // La diagonal deja el icono completo dentro de la pantalla incluso al girar.
+        float margen = Math.Min(pivote.Length() + 16f,
+            Math.Min(viewport.Width, viewport.Height) * 0.5f - 1f);
+        float hastaX = direccion.X == 0f ? float.PositiveInfinity
+            : ((direccion.X > 0f ? viewport.Width - margen : margen) - origen.X) / direccion.X;
+        float hastaY = direccion.Y == 0f ? float.PositiveInfinity
+            : ((direccion.Y > 0f ? viewport.Height - margen : margen) - origen.Y) / direccion.Y;
+        Vector2 posicion = origen + direccion * Math.Min(hastaX, hastaY);
+
+        // El dibujo original apunta hacia arriba.
+        float rotacion = MathF.Atan2(direccion.Y, direccion.X) + MathHelper.PiOver2;
+        Core.SpriteBatch.Draw(_indicadorOrbes,
+            new Vector2(MathF.Round(posicion.X), MathF.Round(posicion.Y)),
+            null, Color.White, rotacion, pivote, 1f, SpriteEffects.None, 0f);
     }
 }

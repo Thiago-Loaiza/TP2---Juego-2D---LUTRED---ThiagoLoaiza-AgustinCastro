@@ -150,13 +150,6 @@
 /processorParam:Version=3.8.5.1
 /build:Fonts/PMingLiU Regular/PMingLiU Regular.ttf
 
-#begin Music/And the rest was silence - Grace OST.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/processorParam:Version=3.8.5.1
-/build:Music/And the rest was silence - Grace OST.mp3
-
 #begin Music/Eleccion/Eleccion_Continuar.MP3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
@@ -178,6 +171,12 @@
 /processorParam:Version=3.8.5.1
 /build:Music/Eleccion/Eleccion_Neutral.MP3
 
+#begin Music/Inicio.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Inicio.mp3
+
 #begin Music/Layers/Layers/Layer1.MP3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
@@ -187,49 +186,49 @@
 
 #begin Music/Layers/Layers/Layer2.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Layers/Layer2.MP3
 
 #begin Music/Layers/Layers/Layer3.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Layers/Layer3.MP3
 
 #begin Music/Layers/Layers/Layer4.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Layers/Layer4.MP3
 
 #begin Music/Layers/Layers/Layer5.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Layers/Layer5.MP3
 
 #begin Music/Layers/Layers/Layer6.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Layers/Layer6.MP3
 
 #begin Music/Layers/Layers/Layer7.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Layers/Layer7.MP3
 
 #begin Music/Layers/Layers/Layer8.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Layers/Layer8.MP3
@@ -243,59 +242,95 @@
 
 #begin Music/Layers/Transicciones/Iniciador2.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Transicciones/Iniciador2.MP3
 
 #begin Music/Layers/Transicciones/Iniciador3.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Transicciones/Iniciador3.MP3
 
 #begin Music/Layers/Transicciones/Iniciador4.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Transicciones/Iniciador4.MP3
 
 #begin Music/Layers/Transicciones/Iniciador5.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Transicciones/Iniciador5.MP3
 
 #begin Music/Layers/Transicciones/Iniciador6.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Transicciones/Iniciador6.MP3
 
 #begin Music/Layers/Transicciones/Iniciador7.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Transicciones/Iniciador7.MP3
 
 #begin Music/Layers/Transicciones/Iniciador8.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Transicciones/Iniciador8.MP3
 
 #begin Music/Layers/Transicciones/Iniciador9.MP3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Layers/Transicciones/Iniciador9.MP3
+
+#begin Music/Misc/Creditos.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Misc/Creditos.mp3
+
+#begin Music/Misc/Felldoor/Ambience1.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Misc/Felldoor/Ambience1.wav
+
+#begin Music/Misc/Felldoor/Ambience2.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Misc/Felldoor/Ambience2.mp3
+
+#begin Music/Misc/Felldoor/Ambience4.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Misc/Felldoor/Ambience4.wav
+
+#begin Music/Misc/Mejoras.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Misc/Mejoras.mp3
+
+#begin Music/Prologo.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Music/Prologo.mp3
 
 #begin SFX/Entities/Duck/DuckParry.wav
 /importer:WavImporter

@@ -284,8 +284,6 @@ c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCa
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Fonts\PMingLiU Regular\Font.fnt
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Fonts\PMingLiU Regular\Font_0.xnb
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Fonts\PMingLiU Regular\PMingLiU Regular.xnb
-c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\And the rest was silence - Grace OST.ogg
-c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\And the rest was silence - Grace OST.xnb
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Eleccion\Eleccion_Continuar.ogg
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Eleccion\Eleccion_Continuar.xnb
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Eleccion\Eleccion_Duda.ogg
@@ -406,3 +404,17 @@ c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCa
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Fonts\BoldPixels\BoldPixels.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Misc\Orbs\IndicadorPuntos.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Misc\Orbs\Punto-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Inicio.ogg
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Inicio.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Creditos.ogg
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Creditos.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Felldoor\Ambience1.ogg
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Felldoor\Ambience1.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Felldoor\Ambience2.ogg
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Felldoor\Ambience2.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Felldoor\Ambience4.ogg
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Felldoor\Ambience4.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Mejoras.ogg
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Misc\Mejoras.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Prologo.ogg
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Music\Prologo.xnb
