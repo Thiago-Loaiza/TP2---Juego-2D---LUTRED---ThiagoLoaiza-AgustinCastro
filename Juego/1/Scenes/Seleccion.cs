@@ -20,6 +20,13 @@ public sealed class Seleccion : Escena
     private readonly Action<Escena> _cambiarEscena;
     private readonly int _numeroNivel;
     private readonly bool _transicionReproducida;
+    private readonly int _cantidadDuke;
+    private readonly int _cantidadJarJar;
+    private readonly bool _sorakElegido;
+    private enum Enemigo { Sorak, JarJar, Duke }
+    private Enemigo? _enemigoSeleccionado;
+    private bool _entrando;
+    private readonly List<Enemigo> _opcionesRivales = new();
     private readonly SoundEffectInstance[] _musicas = new SoundEffectInstance[3];
     private readonly Texture2D[] _animaciones = new Texture2D[3];
     private readonly int[] _cantidadFrames = { 11, 30, 24 };
@@ -30,6 +37,11 @@ public sealed class Seleccion : Escena
     private readonly float[] _mezcla = { 1f, 0f, 0f };
     private Estado _estado;
     private TextRuntime _titulo;
+    private SpriteFont _fuenteRivales;
+    private Texture2D _pixelPanel;
+    private ColoredRectangleRuntime _destello;
+    private const float DuracionDestello = 0.3f;
+    private float _destelloRestante;
     private double _relojEstado;
     private double _relojFondo;
     private float _opacidadDuda;
@@ -38,17 +50,43 @@ public sealed class Seleccion : Escena
     private Color _sinner = Color.Black;
 
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
-        bool transicionReproducida = false)
+        bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false)
     {
         _cambiarEscena = cambiarEscena;
         _numeroNivel = numeroNivel;
         _transicionReproducida = transicionReproducida;
+        if (cantidadDuke < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(cantidadDuke));
+        }
+        if (cantidadJarJar < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(cantidadJarJar));
+        }
+        _cantidadDuke = cantidadDuke;
+        _cantidadJarJar = cantidadJarJar;
+        _sorakElegido = sorakElegido;
+        var pool = new List<Enemigo> { Enemigo.JarJar, Enemigo.Duke };
+        if (!sorakElegido)
+        {
+            pool.Add(Enemigo.Sorak);
+        }
+        // Dos rivales distintos por pantalla. Zorak sale de la pool una vez elegido.
+        for (int i = 0; i < 2; i++)
+        {
+            int indice = Random.Shared.Next(pool.Count);
+            _opcionesRivales.Add(pool[indice]);
+            pool.RemoveAt(indice);
+        }
     }
 
     protected override void LoadContent()
     {
         Core.Audio.StopSong();
         Core.Audio.SongVolume = 1f;
+        _fuenteRivales = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        _pixelPanel = new Texture2D(Core.GraphicsDevice, 1, 1);
+        _pixelPanel.SetData(new[] { Color.White });
         string[] fondos = { "ElegirV2", "DudaV2", "ContinuarV2" };
         string[] arte = { "Neutral", "Escapar", "Continuar" };
         string[] musica = { "Neutral", "Duda", "Continuar" };
@@ -93,9 +131,23 @@ public sealed class Seleccion : Escena
 
         AgregarBoton(panel, "Escapar", -350, 0, () => CambiarEstado(Estado.Escapar));
         AgregarBoton(panel, "Continuar", 350, 0, () => CambiarEstado(Estado.Continuar));
-        AgregarBoton(panel, "Confirmar", -350, 0, EntrarAPrueba);
+        AgregarBoton(panel, "Confirmar", -350, 0, () => _cambiarEscena(new Inicio(_cambiarEscena)));
         AgregarBoton(panel, "Volver", 350, 0, () => CambiarEstado(Estado.Neutral));
-        AgregarBoton(panel, "Entrar", 350, 0, EntrarAPrueba);
+        for (int i = 0; i < _opcionesRivales.Count; i++)
+        {
+            Enemigo rival = _opcionesRivales[i];
+            AgregarBoton(panel, NombreRival(rival), 0, -10 + i * 150,
+                () => ElegirEnemigo(rival));
+            var boton = _botones[i + 4].boton;
+            boton.Width = 560;
+            boton.Height = 110;
+            _botones[i + 4].texto.Visible = false;
+
+        }
+        _destello = new ColoredRectangleRuntime();
+        _destello.Dock(Dock.Fill);
+        _destello.Visible = false;
+        panel.Visual.Children.Add(_destello);
         ActualizarOpciones();
     }
 
@@ -111,6 +163,7 @@ public sealed class Seleccion : Escena
         visual.FocusedIndicator.Visible = false;
         var fondo = new ColoredRectangleRuntime();
         fondo.Dock(Dock.Fill);
+        fondo.Visible = false;
         visual.Children.Insert(0, fondo);
         var etiqueta = visual.TextInstance;
         etiqueta.UseCustomFont = true;
@@ -123,7 +176,16 @@ public sealed class Seleccion : Escena
 
     private void CambiarEstado(Estado estado)
     {
+        // Continuar compromete la eleccion: ya no se puede regresar a Neutral.
+        if (_estado == Estado.Continuar)
+        {
+            return;
+        }
         _estado = estado;
+        if (estado == Estado.Continuar)
+        {
+            _destelloRestante = DuracionDestello;
+        }
         _sinner = estado == Estado.Escapar ? Color.White : Color.Black;
         _relojEstado = 0;
         _titulo.Text = estado switch
@@ -144,19 +206,55 @@ public sealed class Seleccion : Escena
             {
                 Estado.Neutral => i < 2,
                 Estado.Escapar => i == 2 || i == 3,
-                _ => i == 4
+                _ => i >= 4
             };
-            _botones[i].boton.IsEnabled = _botones[i].boton.Visual.Visible;
+            _botones[i].boton.IsEnabled = _botones[i].boton.Visual.Visible
+                && !_entrando && _destelloRestante <= 0f;
         }
-        _botones[_estado == Estado.Neutral ? 0 : _estado == Estado.Escapar ? 3 : 4].boton.IsFocused = true;
+        int foco = _estado == Estado.Neutral ? 0 : _estado == Estado.Escapar ? 3 : 4;
+        _botones[foco].boton.IsFocused = true;
     }
 
-    private void EntrarAPrueba() => _cambiarEscena(
-        new Partida(_cambiarEscena, _numeroNivel, _transicionReproducida));
+    private void ElegirEnemigo(Enemigo enemigo)
+    {
+        if (_entrando || _estado != Estado.Continuar || _destelloRestante > 0f
+            || !_opcionesRivales.Contains(enemigo)
+            || (enemigo == Enemigo.Sorak && _sorakElegido))
+        {
+            return;
+        }
+        _enemigoSeleccionado = enemigo;
+        EntrarAPrueba();
+    }
+
+    private void EntrarAPrueba()
+    {
+        if (_entrando || _estado != Estado.Continuar || _destelloRestante > 0f
+            || !_enemigoSeleccionado.HasValue)
+        {
+            return;
+        }
+        _entrando = true;
+        ActualizarOpciones();
+        _cambiarEscena(new Partida(_cambiarEscena, _numeroNivel, _transicionReproducida,
+            _cantidadDuke + (_enemigoSeleccionado == Enemigo.Duke ? 1 : 0),
+            _cantidadJarJar + (_enemigoSeleccionado == Enemigo.JarJar ? 1 : 0),
+            _sorakElegido || _enemigoSeleccionado == Enemigo.Sorak));
+    }
 
     public override void Update(GameTime gameTime)
     {
         double dt = gameTime.ElapsedGameTime.TotalSeconds;
+        if (_destelloRestante > 0f)
+        {
+            _destelloRestante = Math.Max(0f, _destelloRestante - (float)dt);
+            if (_destelloRestante == 0f)
+            {
+                ActualizarOpciones();
+            }
+        }
+        _destello.Visible = _destelloRestante > 0f;
+        _destello.Color = new Color(255, 185, 190) * (_destelloRestante / DuracionDestello);
         _relojEstado += dt;
         _relojFondo += dt;
         float suavidad = 1f - MathF.Exp(-8f * (float)dt);
@@ -173,10 +271,11 @@ public sealed class Seleccion : Escena
             _mezcla[i] = MathHelper.Lerp(_mezcla[i], i == (int)_estado ? 1f : 0f, suavidad);
             Core.Audio.SetVolume(_musicas[i], _mezcla[i] * 0.45f);
         }
-        foreach (var item in _botones)
+        for (int i = 0; i < _botones.Count; i++)
         {
-            item.fondo.Color = _fondo;
-            item.texto.Color = _tinta;
+            var item = _botones[i];
+            // El foco no cambia la tinta a blanco sobre el fondo blanco.
+            item.texto.Color = item.boton.IsEnabled ? _tinta : Color.Lerp(_tinta, _fondo, 0.65f);
         }
     }
 
@@ -211,7 +310,39 @@ public sealed class Seleccion : Escena
             if (_opacidadDuda > 0f) DibujarFondo(1, area, _opacidadDuda);
         }
         Core.SpriteBatch.Draw(_animaciones[estado], area, origen, _sinner);
+        if (_estado == Estado.Continuar)
+        {
+            DibujarRivales(viewport);
+        }
         Core.SpriteBatch.End();
+    }
+
+    private static string NombreRival(Enemigo rival) => rival switch
+    {
+        Enemigo.Sorak => "Zorak",
+        Enemigo.JarJar => "Jarjar",
+        _ => "Duck"
+    };
+
+    private void DibujarRivales(Viewport viewport)
+    {
+        // Velo rojo oscuro sobre el arte y debajo de los textos para mantener el contraste.
+        Core.SpriteBatch.Draw(_pixelPanel, new Rectangle(0, 0, viewport.Width, viewport.Height),
+            new Color(65, 0, 8) * 0.82f);
+        const string titulo = "Elige un rival";
+        Vector2 centro = new Vector2(viewport.Width, viewport.Height) * 0.5f;
+        Core.SpriteBatch.DrawString(_fuenteRivales, titulo,
+            centro + new Vector2(0, -200f), new Color(255, 85, 95),
+            0f, _fuenteRivales.MeasureString(titulo) * 0.5f, 2f, SpriteEffects.None, 0f);
+        for (int i = 0; i < _opcionesRivales.Count; i++)
+        {
+            string nombre = NombreRival(_opcionesRivales[i]);
+            Color color = new Color(255, 65, 80);
+            const float escala = 2.6f;
+            Vector2 posicion = centro + new Vector2(0, -10 + i * 150);
+            Core.SpriteBatch.DrawString(_fuenteRivales, nombre, posicion, color,
+                0f, _fuenteRivales.MeasureString(nombre) * 0.5f, escala, SpriteEffects.None, 0f);
+        }
     }
 
     private void DibujarFondo(int estado, Rectangle destino, float opacidad)
@@ -225,6 +356,7 @@ public sealed class Seleccion : Escena
 
     protected override void UnloadContent()
     {
+        _pixelPanel?.Dispose();
         foreach (SoundEffectInstance pista in _musicas) Core.Audio.ReleaseSoundEffect(pista);
         foreach (var item in _botones) item.boton.IsFocused = false;
     }

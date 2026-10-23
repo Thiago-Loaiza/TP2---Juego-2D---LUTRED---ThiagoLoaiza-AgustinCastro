@@ -11,6 +11,9 @@ using _1.Mapa.Estructuras;
 using _1.Mapa;
 using System;
 using _1.UI;
+using Gum.Forms.Controls;
+using Gum.Wireframe;
+using MonoGameGum;
 
 namespace _1.Scenes;
 
@@ -22,6 +25,9 @@ public class Partida : Escena
     private readonly Action<Escena> _cambiarEscena;
     private readonly int _numeroNivel;
     private readonly bool _transicionReproducida;
+    private readonly int _cantidadDuke;
+    private readonly int _cantidadJarJar;
+    private readonly bool _sorakElegido;
     private readonly List<Orbe> _orbes = new();
     private Animation _animacionOrbe;
     private SpriteFont _fuenteContador;
@@ -35,7 +41,7 @@ public class Partida : Escena
     private bool PocosOrbes => _orbes.Count > 0 && _orbes.Count * 4 <= TotalOrbes;
 
     public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
-        bool transicionReproducida = false)
+        bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
         if (numeroNivel < 1)
@@ -44,13 +50,24 @@ public class Partida : Escena
         }
         _numeroNivel = numeroNivel;
         _transicionReproducida = transicionReproducida;
+        if (cantidadDuke < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(cantidadDuke));
+        }
+        if (cantidadJarJar < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(cantidadJarJar));
+        }
+        _cantidadDuke = cantidadDuke;
+        _cantidadJarJar = cantidadJarJar;
+        _sorakElegido = sorakElegido;
     }
 
     private enum FaseEntrada { Transicion, Aparicion, Jugando }
 
     private Sinner _sinner;
-    private Duck _duck;
-    private JarJar _jarJar;
+    private readonly List<Duck> _dukes = new();
+    private readonly List<JarJar> _jarJars = new();
     private Zorak _zorak;
     private readonly Camara2D _camara = new();
     private readonly GeneradorMapa _generador = new();
@@ -58,6 +75,7 @@ public class Partida : Escena
     private readonly List<ColisionSolida> _obstaculos = new();
     private Effect _tintaAntigua;
     private PantallaDerrota _pantallaDerrota;
+    private BotonAnimado _volverInicio;
     private bool _derrotado;
     private FaseEntrada _faseEntrada;
     private SoundEffectInstance _sonidoEntrada;
@@ -75,8 +93,36 @@ public class Partida : Escena
             Core.GraphicsDevice.Viewport.Height
         ) * 0.5f;
         _camara.Seguir(_sinner.Position);
-        _duck.Position = _sinner.Position + new Vector2(360f, 0f);
-        _jarJar.Ubicar(_sinner.Position + new Vector2(-300f, 280f));
+        for (int i = 0; i < _dukes.Count; i++)
+        {
+            float angulo = i * MathHelper.TwoPi / _dukes.Count;
+            _dukes[i].Position = _sinner.Position
+                + new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * 360f;
+        }
+        for (int i = 0; i < _jarJars.Count; i++)
+        {
+            float angulo = i * MathHelper.TwoPi / _jarJars.Count;
+            _jarJars[i].Ubicar(_sinner.Position
+                + Vector2.Transform(new Vector2(-300f, 280f), Matrix.CreateRotationZ(angulo)));
+        }
+
+        var panel = new Panel();
+        panel.Dock(Dock.Fill);
+        panel.AddToRoot();
+        _volverInicio = new BotonAnimado(
+            Content.Load<Texture2D>("Sprites/UI/Buttons/Button-Sheet"),
+            400, 200, 9, TimeSpan.FromSeconds(0.12), new Rectangle(32, 32, 336, 136))
+        {
+            Text = "Volver a la pantalla de inicio",
+            Width = 640,
+            Height = 100,
+            IsEnabled = false
+        };
+        _volverInicio.Anchor(Anchor.Center);
+        _volverInicio.Y = 190;
+        _volverInicio.Visual.Visible = false;
+        _volverInicio.Click += VolverAlInicio;
+        panel.AddChild(_volverInicio);
 
         Texture2D ladrillos = Content.Load<Texture2D>("Textures/LadrillosTextura");
         MapaGenerado mapa = _generador.Generar(_sinner.Position, ladrillos,
@@ -139,13 +185,23 @@ public class Partida : Escena
         _sinner = new Sinner();
         _sinner.LoadContent(Content);
 
-        _duck = new Duck();
-        _duck.LoadContent(Content);
-
-        _jarJar = new JarJar();
-        _jarJar.LoadContent(Content);
-        _zorak = new Zorak();
-        _zorak.LoadContent(Content);
+        for (int i = 0; i < _cantidadDuke; i++)
+        {
+            var duke = new Duck();
+            duke.LoadContent(Content);
+            _dukes.Add(duke);
+        }
+        for (int i = 0; i < _cantidadJarJar; i++)
+        {
+            var jarJar = new JarJar();
+            jarJar.LoadContent(Content);
+            _jarJars.Add(jarJar);
+        }
+        if (_sorakElegido)
+        {
+            _zorak = new Zorak();
+            _zorak.LoadContent(Content);
+        }
         _pantallaDerrota = new PantallaDerrota();
         _pantallaDerrota.LoadContent(Content);
 
@@ -155,8 +211,21 @@ public class Partida : Escena
     protected override void UnloadContent()
     {
         _sinner?.UnloadContent();
-        _duck?.UnloadContent();
-        _jarJar?.UnloadContent();
+        for (int i = 0; i < _dukes.Count; i++)
+        {
+            _dukes[i].UnloadContent();
+        }
+        for (int i = 0; i < _jarJars.Count; i++)
+        {
+            _jarJars[i].UnloadContent();
+        }
+        _dukes.Clear();
+        _jarJars.Clear();
+        if (_volverInicio != null)
+        {
+            _volverInicio.Click -= VolverAlInicio;
+            _volverInicio.Dispose();
+        }
         _zorak?.UnloadContent();
         Core.Audio.StopSong();
         Core.Audio.ReleaseSoundEffect(_sonidoEntrada);
@@ -174,7 +243,8 @@ public class Partida : Escena
             if (!Core.Audio.IsPaused && _sonidoSalida.State == SoundState.Stopped)
             {
                 _cambiarEscena(new Seleccion(_cambiarEscena, _numeroNivel + 1,
-                    transicionReproducida: true));
+                    transicionReproducida: true,
+                    cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido));
             }
             return;
         }
@@ -204,59 +274,72 @@ public class Partida : Escena
         if (_derrotado)
         {
             _pantallaDerrota.Update(gameTime);
+            _volverInicio.Update(gameTime);
         }
         else
         {
-            if (_zorak.BloqueandoJugador)
+            if (_zorak?.BloqueandoJugador == true)
             {
                 if (_zorak.Update(gameTime, false, false) == ResultadoZorak.Golpe)
                     Perder();
                 return;
             }
             Vector2 centroAnteriorSinner = _sinner.Colision.Centro;
-            Vector2 posicionAnteriorDuck = _duck.Position;
-            bool estabaRebotando = _duck.Rebotando;
+
             _sinner.Update(gameTime, _obstaculos);
             _camara.Seguir(_sinner.Position);
-            ResultadoZorak resultadoZorak = _zorak.Update(gameTime,
+            ResultadoZorak resultadoZorak = _zorak?.Update(gameTime,
                 Vector2.DistanceSquared(centroAnteriorSinner, _sinner.Colision.Centro) > 0.000001f,
-                _sinner.ParryIniciadoEsteFrame);
+                _sinner.ParryIniciadoEsteFrame) ?? ResultadoZorak.Nada;
             if (resultadoZorak == ResultadoZorak.Parreado)
                 _sinner.ConfirmarParry();
-            if (_zorak.BloqueandoJugador)
+            if (_zorak?.BloqueandoJugador == true)
             {
                 _sinner.DetenerSonidos();
-                _duck.DetenerSonidos();
-                _jarJar.DetenerSonidos();
+                DetenerSonidosEnemigos();
                 return;
             }
-            _duck.Update(gameTime, _sinner.Colision.Centro);
-
-            // el parry se resuelve antes del contacto para evitar una derrota cuando ambos ocurren juntos.
-            if (_sinner.HaciendoParry
-                && _sinner.ColisionParry.SeCruzan(centroAnteriorSinner,
-                    _duck.Colision, posicionAnteriorDuck))
+            for (int i = 0; i < _dukes.Count; i++)
             {
-                if (!estabaRebotando)
+                Duck duke = _dukes[i];
+                Vector2 posicionAnterior = duke.Position;
+                bool estabaRebotando = duke.Rebotando;
+                duke.Update(gameTime, _sinner.Colision.Centro);
+
+                // Resolver cada parry antes del contacto, conservando el recorrido de cada Duke.
+                if (_sinner.HaciendoParry
+                    && _sinner.ColisionParry.SeCruzan(centroAnteriorSinner,
+                        duke.Colision, posicionAnterior))
                 {
-                    _duck.Rebotar(_sinner.ColisionParry.Centro,
-                        _sinner.ColisionParry.Radio, posicionAnteriorDuck);
-                    _sinner.ConfirmarParry();
+                    if (!estabaRebotando)
+                    {
+                        duke.Rebotar(_sinner.ColisionParry.Centro,
+                            _sinner.ColisionParry.Radio, posicionAnterior);
+                        _sinner.ConfirmarParry();
+                    }
+                }
+                else if (_sinner.Colision.SeCruzan(centroAnteriorSinner,
+                    duke.Colision, posicionAnterior))
+                {
+                    Perder();
+                    return;
                 }
             }
-            else if (_sinner.Colision.SeCruzan(centroAnteriorSinner,
-                    _duck.Colision, posicionAnteriorDuck))
-            {
-                Perder();
-                return;
-            }
 
-            ResultadoJarJar resultadoJarJar = _jarJar.Update(gameTime,
-                _sinner.Colision.Centro, _sinner.HaciendoParry);
-            if (resultadoJarJar == ResultadoJarJar.Parreado)
-                _sinner.ConfirmarParry();
-            else if (resultadoJarJar == ResultadoJarJar.Golpe)
-                Perder();
+            for (int i = 0; i < _jarJars.Count; i++)
+            {
+                ResultadoJarJar resultadoJarJar = _jarJars[i].Update(gameTime,
+                    _sinner.Colision.Centro, _sinner.HaciendoParry);
+                if (resultadoJarJar == ResultadoJarJar.Parreado)
+                {
+                    _sinner.ConfirmarParry();
+                }
+                else if (resultadoJarJar == ResultadoJarJar.Golpe)
+                {
+                    Perder();
+                    return;
+                }
+            }
 
             if (!_derrotado && _faseEntrada == FaseEntrada.Jugando)
             {
@@ -283,9 +366,8 @@ public class Partida : Escena
             _nivelCompletado = true;
             Core.Audio.StopSoundEffect(_musicaNivel);
             _sinner.DetenerSonidos();
-            _duck.DetenerSonidos();
-            _jarJar.DetenerSonidos();
-            _zorak.DetenerSonidos();
+            DetenerSonidosEnemigos();
+            _zorak?.DetenerSonidos();
             Core.Audio.PlaySoundEffect(_sonidoSalida, restart: true);
         }
     }
@@ -296,10 +378,30 @@ public class Partida : Escena
         Core.Audio.StopSong();
         Core.Audio.StopSoundEffect(_musicaNivel);
         _sinner.DetenerSonidos();
-        _duck.DetenerSonidos();
-        _jarJar.DetenerSonidos();
-        _zorak.DetenerSonidos();
+        DetenerSonidosEnemigos();
+        _zorak?.DetenerSonidos();
         _pantallaDerrota.Mostrar();
+        _volverInicio.Visual.Visible = true;
+        _volverInicio.IsEnabled = true;
+        _volverInicio.IsFocused = true;
+    }
+
+    private void VolverAlInicio(object sender, EventArgs args)
+    {
+        _volverInicio.IsEnabled = false;
+        _cambiarEscena(new Inicio(_cambiarEscena));
+    }
+
+    private void DetenerSonidosEnemigos()
+    {
+        for (int i = 0; i < _dukes.Count; i++)
+        {
+            _dukes[i].DetenerSonidos();
+        }
+        for (int i = 0; i < _jarJars.Count; i++)
+        {
+            _jarJars[i].DetenerSonidos();
+        }
     }
 
     public override void Draw(GameTime gameTime)
@@ -351,9 +453,15 @@ public class Partida : Escena
             {
                 _orbes[i].Draw(Core.SpriteBatch);
             }
-            _jarJar.Draw(Core.SpriteBatch);
+            for (int i = 0; i < _jarJars.Count; i++)
+            {
+                _jarJars[i].Draw(Core.SpriteBatch);
+            }
             _sinner.Draw(Core.SpriteBatch);
-            _duck.Draw(Core.SpriteBatch);
+            for (int i = 0; i < _dukes.Count; i++)
+            {
+                _dukes[i].Draw(Core.SpriteBatch);
+            }
         }
 
         Core.SpriteBatch.End();
@@ -379,7 +487,7 @@ public class Partida : Escena
             // La capa negra cubre tambien el borde y Zorak queda encima de todo.
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                 blendState: BlendState.AlphaBlend);
-            _zorak.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+            _zorak?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
             Core.SpriteBatch.End();
         }
     }

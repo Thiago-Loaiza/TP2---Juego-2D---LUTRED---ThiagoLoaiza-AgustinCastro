@@ -6,7 +6,7 @@ using LutredLibrary;
 using LutredLibrary.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 using MonoGameGum;
 using _1.UI;
 
@@ -16,6 +16,7 @@ public class Inicio : Escena
 {
     private readonly Action<Escena> _cambiarEscena;
     private BotonAnimado _jugar;
+    private SoundEffectInstance _musicaInicio;
     private Texture2D _hojaBoton;
     private Texture2D _hojaCreditos;
     private readonly List<BotonAnimado> _botones = new();
@@ -28,7 +29,10 @@ public class Inicio : Escena
     protected override void LoadContent()
     {
         Core.Audio.SongVolume = 0.45f;
-        Core.Audio.PlaySong(Content.Load<Song>("Music/Inicio"), isRepeating: true);
+        Core.Audio.StopSong();
+        _musicaInicio = Core.Audio.CreateSoundEffectInstance(
+            Content.Load<SoundEffect>("Music/Inicio"), isLooped: true, isMusic: true);
+        Core.Audio.PlaySoundEffect(_musicaInicio);
         _hojaBoton = Content.Load<Texture2D>("Sprites/UI/Buttons/Button-Sheet");
         _hojaCreditos = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet");
     }
@@ -78,7 +82,7 @@ public class Inicio : Escena
 
     private void Jugar(object sender, EventArgs args)
     {
-        _cambiarEscena(new Seleccion(_cambiarEscena));
+        _cambiarEscena(new Partida(_cambiarEscena));
     }
 
     public override void Update(GameTime gameTime)
@@ -93,7 +97,7 @@ public class Inicio : Escena
 
     protected override void UnloadContent()
     {
-        Core.Audio.StopSong();
+        Core.Audio.ReleaseSoundEffect(_musicaInicio);
         if (_jugar != null)
             _jugar.Click -= Jugar;
         foreach (BotonAnimado boton in _botones) boton.Dispose();
