@@ -381,12 +381,30 @@
 /processorParam:Version=3.8.5.1
 /build:SFX/Entities/JarJar/JarJarParry.mp3
 
+#begin SFX/Entities/SHAME/AvisoShame.MP3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Entities/SHAME/AvisoShame.MP3
+
 #begin SFX/Entities/SHAME/Shame_Laugh.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:SFX/Entities/SHAME/Shame_Laugh.wav
+
+#begin SFX/Entities/SHAME/ShameAmbience.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Entities/SHAME/ShameAmbience.mp3
+
+#begin SFX/Entities/SHAME/Shameparry.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Entities/SHAME/Shameparry.mp3
 
 #begin SFX/Entities/Sinner/Caminata.MP3
 /importer:Mp3Importer
@@ -530,6 +548,15 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/JarJar/Sprite-JarJar-Sheet.png;Sprites/Enemies/JarJar/Sprite-JarJar-Sheet
+
+#begin Sprites/Enemies/SHAME/Shame-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Enemies/SHAME/Shame-Sheet.png
 
 #begin Sprites/Enemies/Zorak/Particulas-Sheet.png
 /importer:TextureImporter

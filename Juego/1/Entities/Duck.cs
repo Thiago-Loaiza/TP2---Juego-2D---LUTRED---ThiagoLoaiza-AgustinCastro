@@ -13,7 +13,7 @@ namespace _1.Entities;
 public class Duck
 {
     public const float RadioColision = 38f;
-    public const float VelocidadPersecucion = 190f;
+    public const float VelocidadPersecucion = 285f;
     public const float VelocidadRebote = 950f;
     public const float FrenadoRebote = 900f;
 

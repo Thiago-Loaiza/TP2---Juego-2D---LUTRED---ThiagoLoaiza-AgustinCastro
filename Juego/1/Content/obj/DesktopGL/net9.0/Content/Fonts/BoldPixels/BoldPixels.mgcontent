@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Fonts/BoldPixels/BoldPixels.spritefont</SourceFile>
+  <SourceFile>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Fonts/BoldPixels/BoldPixels.spritefont</SourceFile>
   <SourceTime>2026-10-19T18:51:21.0088765-03:00</SourceTime>
-  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Fonts/BoldPixels/BoldPixels.xnb</DestFile>
-  <DestTime>2026-10-23T17:29:28.0486688-03:00</DestTime>
+  <DestFile>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Fonts/BoldPixels/BoldPixels.xnb</DestFile>
+  <DestTime>2026-10-24T00:24:34.0958562-03:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

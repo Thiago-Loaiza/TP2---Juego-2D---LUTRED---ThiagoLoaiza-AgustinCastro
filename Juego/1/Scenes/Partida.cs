@@ -28,6 +28,7 @@ public class Partida : Escena
     private readonly int _cantidadDuke;
     private readonly int _cantidadJarJar;
     private readonly bool _sorakElegido;
+    private readonly double _duracionNivel;
     private readonly List<Orbe> _orbes = new();
     private Animation _animacionOrbe;
     private SpriteFont _fuenteContador;
@@ -41,7 +42,8 @@ public class Partida : Escena
     private bool PocosOrbes => _orbes.Count > 0 && _orbes.Count * 4 <= TotalOrbes;
 
     public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
-        bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false)
+        bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
+        double duracionNivel = RelojNivel.Duracion)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
         if (numeroNivel < 1)
@@ -61,11 +63,20 @@ public class Partida : Escena
         _cantidadDuke = cantidadDuke;
         _cantidadJarJar = cantidadJarJar;
         _sorakElegido = sorakElegido;
+        if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(duracionNivel));
+        }
+        _duracionNivel = duracionNivel;
     }
 
     private enum FaseEntrada { Transicion, Aparicion, Jugando }
 
     private Sinner _sinner;
+    private Shame _shame;
+    private RelojNivel _relojNivel;
+    private SoundEffectInstance _avisoShame;
+    private bool _shameParreadoEsteParry;
     private readonly List<Duck> _dukes = new();
     private readonly List<JarJar> _jarJars = new();
     private Zorak _zorak;
@@ -92,6 +103,7 @@ public class Partida : Escena
             Core.GraphicsDevice.Viewport.Width,
             Core.GraphicsDevice.Viewport.Height
         ) * 0.5f;
+        _relojNivel = new RelojNivel(_sinner.Colision.Centro, _duracionNivel);
         _camara.Seguir(_sinner.Position);
         for (int i = 0; i < _dukes.Count; i++)
         {
@@ -184,6 +196,10 @@ public class Partida : Escena
 
         _sinner = new Sinner();
         _sinner.LoadContent(Content);
+        _shame = new Shame();
+        _shame.LoadContent(Content);
+        _avisoShame = Core.Audio.CreateSoundEffectInstance(
+            Content.Load<SoundEffect>("SFX/Entities/SHAME/AvisoShame"), volume: 0.8f);
 
         for (int i = 0; i < _cantidadDuke; i++)
         {
@@ -211,6 +227,8 @@ public class Partida : Escena
     protected override void UnloadContent()
     {
         _sinner?.UnloadContent();
+        _shame?.UnloadContent();
+        Core.Audio.ReleaseSoundEffect(_avisoShame);
         for (int i = 0; i < _dukes.Count; i++)
         {
             _dukes[i].UnloadContent();
@@ -237,6 +255,7 @@ public class Partida : Escena
 
     public override void Update(GameTime gameTime)
     {
+        if (Core.Audio.IsPaused) { return; }
         _bordePantalla.Update(gameTime);
         if (_nivelCompletado)
         {
@@ -244,7 +263,8 @@ public class Partida : Escena
             {
                 _cambiarEscena(new Seleccion(_cambiarEscena, _numeroNivel + 1,
                     transicionReproducida: true,
-                    cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido));
+                    cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido,
+                    duracionNivel: _duracionNivel));
             }
             return;
         }
@@ -344,7 +364,56 @@ public class Partida : Escena
             if (!_derrotado && _faseEntrada == FaseEntrada.Jugando)
             {
                 RecogerOrbes(centroAnteriorSinner);
+                if (!_nivelCompletado)
+                {
+                    ActualizarShame(gameTime, centroAnteriorSinner);
+                }
             }
+        }
+    }
+
+    private void ActualizarShame(GameTime gameTime, Vector2 centroAnteriorSinner)
+    {
+        if (!_shame.Activo)
+        {
+            _relojNivel.Update(gameTime.ElapsedGameTime.TotalSeconds, _sinner.Colision.Centro);
+            if (_relojNivel.AvisoPendiente)
+            {
+                Core.Audio.PlaySoundEffect(_avisoShame, restart: true);
+            }
+            if (_relojNivel.Terminado)
+            {
+                Core.Audio.StopSoundEffect(_avisoShame);
+                _shame.Aparecer(_relojNivel.PosicionHaceDosSegundos);
+            }
+            return;
+        }
+
+        if (!_sinner.HaciendoParry || _sinner.ParryIniciadoEsteFrame)
+        {
+            _shameParreadoEsteParry = false;
+        }
+        Vector2 posicionAnterior = _shame.Position;
+        bool podiaMatar = _shame.PuedeMatar;
+        bool estabaRebotando = _shame.Rebotando;
+        _shame.Update(gameTime, _sinner.Colision.Centro);
+        if (!_shame.PuedeMatar) { return; }
+        // Si la espera termino este frame, ignorar el recorrido de Sinner durante la gracia.
+        Vector2 inicioSinner = podiaMatar ? centroAnteriorSinner : _sinner.Colision.Centro;
+        if (_sinner.HaciendoParry && _sinner.ColisionParry.SeCruzan(inicioSinner,
+            _shame.Colision, posicionAnterior))
+        {
+            if (!_shameParreadoEsteParry && !estabaRebotando)
+            {
+                _shame.Parrear(_sinner.ColisionParry.Centro,
+                    _sinner.ColisionParry.Radio, posicionAnterior);
+                _sinner.ConfirmarParry();
+                _shameParreadoEsteParry = true;
+            }
+        }
+        else if (_sinner.Colision.SeCruzan(inicioSinner, _shame.Colision, posicionAnterior))
+        {
+            Perder();
         }
     }
 
@@ -394,6 +463,8 @@ public class Partida : Escena
 
     private void DetenerSonidosEnemigos()
     {
+        _shame?.DetenerSonidos();
+        Core.Audio.StopSoundEffect(_avisoShame);
         for (int i = 0; i < _dukes.Count; i++)
         {
             _dukes[i].DetenerSonidos();
@@ -457,6 +528,7 @@ public class Partida : Escena
             {
                 _jarJars[i].Draw(Core.SpriteBatch);
             }
+            _shame.Draw(Core.SpriteBatch);
             _sinner.Draw(Core.SpriteBatch);
             for (int i = 0; i < _dukes.Count; i++)
             {
@@ -482,6 +554,7 @@ public class Partida : Escena
                 blendState: BlendState.AlphaBlend);
             DibujarIndicadorOrbes(transformacion);
             DibujarContadorOrbes();
+            DibujarTemporizador();
             Core.SpriteBatch.End();
 
             // La capa negra cubre tambien el borde y Zorak queda encima de todo.
@@ -499,12 +572,35 @@ public class Partida : Escena
         Core.SpriteBatch.End();
     }
 
+    private void DibujarTemporizador()
+    {
+        double tiempo = _shame.Activo
+            ? _shame.TiempoHastaContacto(_sinner.Colision) : _relojNivel.Restante;
+        string texto = RelojNivel.Formatear(tiempo);
+        Vector2 posicion = new(
+            MathF.Round((Core.GraphicsDevice.Viewport.Width - _fuenteContador.MeasureString(texto).X) * 0.5f),
+            24f);
+        Color color = _shame.Activo || _relojNivel.Rojo ? Color.Red : Color.White;
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                if (x != 0 || y != 0)
+                {
+                    Core.SpriteBatch.DrawString(_fuenteContador, texto,
+                        posicion + new Vector2(x, y) * 2f, Color.Black);
+                }
+            }
+        }
+        Core.SpriteBatch.DrawString(_fuenteContador, texto, posicion, color);
+    }
+
     private void DibujarContadorOrbes()
     {
         string texto = $"{_orbesRecogidos}/{TotalOrbes}";
         Vector2 tamano = _fuenteContador.MeasureString(texto);
         Vector2 origen = tamano * 0.5f;
-        Vector2 posicion = new(Core.GraphicsDevice.Viewport.Width * 0.5f, 24f + origen.Y);
+        Vector2 posicion = new(Core.GraphicsDevice.Viewport.Width * 0.5f, 24f + _fuenteContador.LineSpacing + 8f + origen.Y);
 
         float intensidad = _temblorContadorRestante / DuracionTemblorContador;
         float amplitud = (PocosOrbes ? 3f : 2f) * intensidad * intensidad;

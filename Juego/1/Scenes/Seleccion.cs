@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using _1.UI;
 using Gum.DataTypes.Variables;
 using Gum.Forms.Controls;
 using Gum.Forms.DefaultVisuals.V3;
@@ -23,6 +24,7 @@ public sealed class Seleccion : Escena
     private readonly int _cantidadDuke;
     private readonly int _cantidadJarJar;
     private readonly bool _sorakElegido;
+    private readonly double _duracionNivel;
     private enum Enemigo { Sorak, JarJar, Duke }
     private Enemigo? _enemigoSeleccionado;
     private bool _entrando;
@@ -50,7 +52,8 @@ public sealed class Seleccion : Escena
     private Color _sinner = Color.Black;
 
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
-        bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false)
+        bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
+        double duracionNivel = RelojNivel.Duracion)
     {
         _cambiarEscena = cambiarEscena;
         _numeroNivel = numeroNivel;
@@ -66,6 +69,11 @@ public sealed class Seleccion : Escena
         _cantidadDuke = cantidadDuke;
         _cantidadJarJar = cantidadJarJar;
         _sorakElegido = sorakElegido;
+        if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(duracionNivel));
+        }
+        _duracionNivel = duracionNivel;
         var pool = new List<Enemigo> { Enemigo.JarJar, Enemigo.Duke };
         if (!sorakElegido)
         {
@@ -136,7 +144,7 @@ public sealed class Seleccion : Escena
         for (int i = 0; i < _opcionesRivales.Count; i++)
         {
             Enemigo rival = _opcionesRivales[i];
-            AgregarBoton(panel, NombreRival(rival), 0, -10 + i * 150,
+            AgregarBoton(panel, NombreRival(rival), 0, -80 + i * 140,
                 () => ElegirEnemigo(rival));
             var boton = _botones[i + 4].boton;
             boton.Width = 560;
@@ -144,6 +152,11 @@ public sealed class Seleccion : Escena
             _botones[i + 4].texto.Visible = false;
 
         }
+        AgregarBoton(panel, "Menos tiempo", 0, 200, () => EntrarAPrueba(menosTiempo: true));
+        var opcionTiempo = _botones[_botones.Count - 1];
+        opcionTiempo.boton.Width = 680;
+        opcionTiempo.boton.Height = 110;
+        opcionTiempo.texto.Visible = false;
         _destello = new ColoredRectangleRuntime();
         _destello.Dock(Dock.Fill);
         _destello.Visible = false;
@@ -227,10 +240,10 @@ public sealed class Seleccion : Escena
         EntrarAPrueba();
     }
 
-    private void EntrarAPrueba()
+    private void EntrarAPrueba(bool menosTiempo = false)
     {
         if (_entrando || _estado != Estado.Continuar || _destelloRestante > 0f
-            || !_enemigoSeleccionado.HasValue)
+            || (!menosTiempo && !_enemigoSeleccionado.HasValue))
         {
             return;
         }
@@ -239,7 +252,8 @@ public sealed class Seleccion : Escena
         _cambiarEscena(new Partida(_cambiarEscena, _numeroNivel, _transicionReproducida,
             _cantidadDuke + (_enemigoSeleccionado == Enemigo.Duke ? 1 : 0),
             _cantidadJarJar + (_enemigoSeleccionado == Enemigo.JarJar ? 1 : 0),
-            _sorakElegido || _enemigoSeleccionado == Enemigo.Sorak));
+            _sorakElegido || _enemigoSeleccionado == Enemigo.Sorak,
+            duracionNivel: menosTiempo ? Math.Max(double.Epsilon, _duracionNivel * 0.67) : _duracionNivel));
     }
 
     public override void Update(GameTime gameTime)
@@ -329,20 +343,28 @@ public sealed class Seleccion : Escena
         // Velo rojo oscuro sobre el arte y debajo de los textos para mantener el contraste.
         Core.SpriteBatch.Draw(_pixelPanel, new Rectangle(0, 0, viewport.Width, viewport.Height),
             new Color(65, 0, 8) * 0.82f);
-        const string titulo = "Elige un rival";
+        const string titulo = "Elige una prueba";
         Vector2 centro = new Vector2(viewport.Width, viewport.Height) * 0.5f;
         Core.SpriteBatch.DrawString(_fuenteRivales, titulo,
-            centro + new Vector2(0, -200f), new Color(255, 85, 95),
+            centro + new Vector2(0, -230f), new Color(255, 85, 95),
             0f, _fuenteRivales.MeasureString(titulo) * 0.5f, 2f, SpriteEffects.None, 0f);
         for (int i = 0; i < _opcionesRivales.Count; i++)
         {
             string nombre = NombreRival(_opcionesRivales[i]);
             Color color = new Color(255, 65, 80);
             const float escala = 2.6f;
-            Vector2 posicion = centro + new Vector2(0, -10 + i * 150);
+            Vector2 posicion = centro + new Vector2(0, -80 + i * 140);
             Core.SpriteBatch.DrawString(_fuenteRivales, nombre, posicion, color,
                 0f, _fuenteRivales.MeasureString(nombre) * 0.5f, escala, SpriteEffects.None, 0f);
         }
+        const string opcionTiempo = "Menos tiempo";
+        Vector2 posicionTiempo = centro + new Vector2(0, 200);
+        Core.SpriteBatch.DrawString(_fuenteRivales, opcionTiempo, posicionTiempo, new Color(255, 65, 80),
+            0f, _fuenteRivales.MeasureString(opcionTiempo) * 0.5f, 2.6f, SpriteEffects.None, 0f);
+        string detalle = "-33% de tiempo: " + RelojNivel.Formatear(_duracionNivel * 0.67);
+        Core.SpriteBatch.DrawString(_fuenteRivales, detalle, posicionTiempo + new Vector2(0, 48),
+            new Color(255, 175, 180), 0f, _fuenteRivales.MeasureString(detalle) * 0.5f,
+            1f, SpriteEffects.None, 0f);
     }
 
     private void DibujarFondo(int estado, Rectangle destino, float opacidad)
