@@ -520,6 +520,10 @@ public class Partida : Escena
         }
         else
         {
+            for (int i = 0; i < _jarJars.Count; i++)
+            {
+                _jarJars[i].DrawAura(Core.SpriteBatch);
+            }
             for (int i = 0; i < _orbes.Count; i++)
             {
                 _orbes[i].Draw(Core.SpriteBatch);

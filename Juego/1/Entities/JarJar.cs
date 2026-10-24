@@ -25,6 +25,8 @@ public class JarJar
     // este margen permite realizar el parry sin exigir un cuadro exacto al aparecer el enemigo.
     private const float VentanaParry = 0.15f;
     private const float DuracionRecarga = 5f;
+    // radio en pixeles del circulo dibujado dentro de la textura del aura (500x500).
+    private const float RadioAuraEnTextura = 152f;
 
     private enum Estado
     {
@@ -35,6 +37,7 @@ public class JarJar
     }
 
     private AnimatedSprite _sprite;
+    private Sprite _aura;
     private Animation _carga;
     private Animation _recarga;
     private SoundEffectInstance _sonidoParry;
@@ -60,6 +63,11 @@ public class JarJar
         _sprite.Origin = new Vector2(TamanoFrame / 2f);
         _sprite.Scale = new Vector2(0.5f);
         ReiniciarCarga();
+
+        Texture2D texturaAura = content.Load<Texture2D>("Sprites/Enemies/JarJar/Sprite-JarJar-Aura");
+        _aura = new Sprite(new TextureRegion(texturaAura, 0, 0, texturaAura.Width, texturaAura.Height));
+        _aura.Origin = new Vector2(texturaAura.Width / 2f, texturaAura.Height / 2f);
+        _aura.Scale = new Vector2(RadioDeteccion / RadioAuraEnTextura);
 
         _sonidoParry = Core.Audio.CreateSoundEffectInstance(content.Load<SoundEffect>("SFX/Entities/JarJar/JarJarParry"));
         Core.Audio.SetVolume(_sonidoParry, 0.6f);
@@ -146,6 +154,15 @@ public class JarJar
         // reasignar la animacion vuelve al primer cuadro y reinicia su estado de finalizacion.
         _sprite.IsLooping = false;
         _sprite.Animation = _carga;
+    }
+
+    public void DrawAura(SpriteBatch spriteBatch)
+    {
+        // solo se muestra mientras la zona de deteccion puede activar un ataque.
+        if (_estado != Estado.Esperando && _estado != Estado.Cargando)
+            return;
+        _aura.Position = Position;
+        _aura.Draw(spriteBatch);
     }
 
     public void Draw(SpriteBatch spriteBatch)

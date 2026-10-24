@@ -37,3 +37,16 @@ c:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Lut
 c:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\refint\LutredLibrary.dll
 c:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.pdb
 c:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\ref\LutredLibrary.dll
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.deps.json
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.dll
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.pdb
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.csproj.AssemblyReference.cache
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.GeneratedMSBuildEditorConfig.editorconfig
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.AssemblyInfoInputs.cache
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.AssemblyInfo.cs
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.csproj.CoreCompileInputs.cache
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.sourcelink.json
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.dll
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\refint\LutredLibrary.dll
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.pdb
+D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\ref\LutredLibrary.dll
