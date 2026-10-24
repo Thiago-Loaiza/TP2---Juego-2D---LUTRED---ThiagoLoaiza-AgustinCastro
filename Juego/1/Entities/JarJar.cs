@@ -27,13 +27,18 @@ public class JarJar
     private const float DuracionRecarga = 5f;
     // radio en pixeles del circulo dibujado dentro de la textura del aura (500x500).
     private const float RadioAuraEnTextura = 152f;
+    // tiempo en el que no puede volver a teletransportarse, para dar tiempo a que Sinner llegue.
+    private const float DuracionRecienTeletransportado = 3f;
+    // radio alrededor del punto hacia donde va Sinner en el que se elige el destino.
+    private const float RadioBusquedaDestino = 300f;
 
     private enum Estado
     {
         Esperando,
         Cargando,
         Atacando,
-        Recargando
+        Recargando,
+        RecienTeletransportado
     }
 
     private AnimatedSprite _sprite;
@@ -89,7 +94,8 @@ public class JarJar
         _estado = Estado.Esperando;
     }
 
-    public ResultadoJarJar Update(GameTime gameTime, Vector2 centroSinner, bool sinnerHaciendoParry)
+    public ResultadoJarJar Update(GameTime gameTime, Vector2 centroSinner, Vector2 velocidadSinner,
+        bool sinnerHaciendoParry, Rectangle areaVisible, IReadOnlyList<Vector2> posicionesLibres)
     {
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
         bool sinnerEnRango = Vector2.DistanceSquared(centroSinner, Position)
@@ -100,6 +106,23 @@ public class JarJar
             case Estado.Esperando:
                 if (sinnerEnRango)
                     _estado = Estado.Cargando;
+                else if (!EsVisible(Position, areaVisible)
+                    && Teletransportar(centroSinner, velocidadSinner, areaVisible, posicionesLibres))
+                {
+                    _temporizador = DuracionRecienTeletransportado;
+                    _estado = Estado.RecienTeletransportado;
+                }
+                break;
+
+            case Estado.RecienTeletransportado:
+                if (sinnerEnRango)
+                {
+                    _estado = Estado.Cargando;
+                    break;
+                }
+                _temporizador -= segundos;
+                if (_temporizador <= 0f)
+                    _estado = Estado.Esperando;
                 break;
 
             case Estado.Cargando:
@@ -149,6 +172,60 @@ public class JarJar
         return ResultadoJarJar.Nada;
     }
 
+    private static bool EsVisible(Vector2 posicion, Rectangle areaVisible)
+    {
+        // se cuenta el aura para que no aparezca ni desaparezca un circulo de golpe en pantalla.
+        Rectangle area = areaVisible;
+        area.Inflate((int)RadioDeteccion, (int)RadioDeteccion);
+        return area.Contains(posicion);
+    }
+
+    private bool Teletransportar(Vector2 centroSinner, Vector2 velocidadSinner,
+        Rectangle areaVisible, IReadOnlyList<Vector2> posicionesLibres)
+    {
+        if (posicionesLibres == null || posicionesLibres.Count == 0)
+            return false;
+
+        Vector2 direccion = velocidadSinner;
+        if (direccion.LengthSquared() < 1f)
+        {
+            // si Sinner esta quieto no hay hacia donde anticiparse, se elige un lado al azar.
+            float angulo = Random.Shared.NextSingle() * MathHelper.TwoPi;
+            direccion = new Vector2(MathF.Cos(angulo), MathF.Sin(angulo));
+        }
+        direccion.Normalize();
+
+        // el objetivo queda justo fuera de la pantalla en la direccion en la que va Sinner.
+        float distanciaFueraDePantalla = new Vector2(areaVisible.Width, areaVisible.Height).Length() * 0.5f
+            + RadioDeteccion;
+        Vector2 objetivo = centroSinner + direccion * distanciaFueraDePantalla;
+
+        List<Vector2> cercanas = new();
+        Vector2? masCercana = null;
+        float distanciaMasCercana = float.MaxValue;
+        for (int i = 0; i < posicionesLibres.Count; i++)
+        {
+            Vector2 candidata = posicionesLibres[i];
+            if (EsVisible(candidata, areaVisible))
+                continue;
+            float distancia = Vector2.DistanceSquared(candidata, objetivo);
+            if (distancia <= RadioBusquedaDestino * RadioBusquedaDestino)
+                cercanas.Add(candidata);
+            if (distancia < distanciaMasCercana)
+            {
+                distanciaMasCercana = distancia;
+                masCercana = candidata;
+            }
+        }
+
+        // si cerca del objetivo hay paredes en todos lados, se usa la posicion libre mas cercana.
+        Vector2? destino = cercanas.Count > 0 ? cercanas[Random.Shared.Next(cercanas.Count)] : masCercana;
+        if (destino == null)
+            return false;
+        Position = destino.Value;
+        return true;
+    }
+
     private void ReiniciarCarga()
     {
         // reasignar la animacion vuelve al primer cuadro y reinicia su estado de finalizacion.
@@ -159,7 +236,8 @@ public class JarJar
     public void DrawAura(SpriteBatch spriteBatch)
     {
         // solo se muestra mientras la zona de deteccion puede activar un ataque.
-        if (_estado != Estado.Esperando && _estado != Estado.Cargando)
+        if (_estado != Estado.Esperando && _estado != Estado.Cargando
+            && _estado != Estado.RecienTeletransportado)
             return;
         _aura.Position = Position;
         _aura.Draw(spriteBatch);

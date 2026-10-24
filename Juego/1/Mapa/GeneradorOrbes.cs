@@ -16,6 +16,49 @@ public static class GeneradorOrbes
         IReadOnlyList<ColisionSolida> obstaculos, int cantidad, Random azar)
     {
         var candidatos = new List<Vector2>();
+        List<Vector2> accesibles = PosicionesAccesibles(limites, inicio, obstaculos);
+        for (int i = 0; i < accesibles.Count; i++)
+        {
+            if (Vector2.DistanceSquared(inicio, accesibles[i]) >= Separacion * Separacion)
+            {
+                candidatos.Add(accesibles[i]);
+            }
+        }
+
+        // Mezclar antes de elegir evita favorecer una zona del recorrido.
+        for (int i = candidatos.Count - 1; i > 0; i--)
+        {
+            int otro = azar.Next(i + 1);
+            (candidatos[i], candidatos[otro]) = (candidatos[otro], candidatos[i]);
+        }
+        var posiciones = new List<Vector2>();
+        for (int i = 0; i < candidatos.Count && posiciones.Count < cantidad; i++)
+        {
+            bool separado = true;
+            for (int j = 0; j < posiciones.Count; j++)
+            {
+                if (Vector2.DistanceSquared(candidatos[i], posiciones[j]) < Separacion * Separacion)
+                {
+                    separado = false;
+                    break;
+                }
+            }
+            if (separado)
+            {
+                posiciones.Add(candidatos[i]);
+            }
+        }
+        if (posiciones.Count != cantidad)
+        {
+            throw new InvalidOperationException("No hay suficiente espacio accesible para los orbes.");
+        }
+        return posiciones;
+    }
+
+    public static List<Vector2> PosicionesAccesibles(Rectangle limites, Vector2 inicio,
+        IReadOnlyList<ColisionSolida> obstaculos)
+    {
+        var accesibles = new List<Vector2>();
         var visitados = new HashSet<Point>();
         var pendientes = new Queue<Point>();
         Point[] direcciones = { new(1, 0), new(-1, 0), new(0, 1), new(0, -1) };
@@ -27,10 +70,7 @@ public static class GeneradorOrbes
         {
             Point celda = pendientes.Dequeue();
             Vector2 posicion = inicio + new Vector2(celda.X * Paso, celda.Y * Paso);
-            if (Vector2.DistanceSquared(inicio, posicion) >= Separacion * Separacion)
-            {
-                candidatos.Add(posicion);
-            }
+            accesibles.Add(posicion);
 
             for (int d = 0; d < direcciones.Length; d++)
             {
@@ -67,34 +107,6 @@ public static class GeneradorOrbes
                 }
             }
         }
-
-        // Mezclar antes de elegir evita favorecer una zona del recorrido.
-        for (int i = candidatos.Count - 1; i > 0; i--)
-        {
-            int otro = azar.Next(i + 1);
-            (candidatos[i], candidatos[otro]) = (candidatos[otro], candidatos[i]);
-        }
-        var posiciones = new List<Vector2>();
-        for (int i = 0; i < candidatos.Count && posiciones.Count < cantidad; i++)
-        {
-            bool separado = true;
-            for (int j = 0; j < posiciones.Count; j++)
-            {
-                if (Vector2.DistanceSquared(candidatos[i], posiciones[j]) < Separacion * Separacion)
-                {
-                    separado = false;
-                    break;
-                }
-            }
-            if (separado)
-            {
-                posiciones.Add(candidatos[i]);
-            }
-        }
-        if (posiciones.Count != cantidad)
-        {
-            throw new InvalidOperationException("No hay suficiente espacio accesible para los orbes.");
-        }
-        return posiciones;
+        return accesibles;
     }
 }

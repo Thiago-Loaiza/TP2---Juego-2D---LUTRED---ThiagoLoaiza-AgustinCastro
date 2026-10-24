@@ -127,6 +127,9 @@
 /processorParam:Version=3.8.5.1
 /build:Fonts/BoldPixels/BoldPixels.spritefont
 
+#begin Fonts/PMingLiU Regular/Font.fnt
+/copy:Fonts/PMingLiU Regular/Font.fnt
+
 #begin Fonts/PMingLiU Regular/Font_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -139,9 +142,6 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Fonts/PMingLiU Regular/Font_0.png
-
-#begin Fonts/PMingLiU Regular/Font.fnt
-/copy:Fonts/PMingLiU Regular/Font.fnt
 
 #begin Fonts/PMingLiU Regular/PMingLiU Regular.ttf
 /importer:FontImporter
@@ -521,6 +521,19 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/Duck/DuckSpriteSheet.png
 
+#begin Sprites/Enemies/JarJar/Sprite-JarJar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/JarJar/Sprite-JarJar.png;Sprites/Enemies/JarJar/Sprite-JarJar
+
 #begin Sprites/Enemies/JarJar/Sprite-JarJar-Aura.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -559,19 +572,6 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/JarJar/Sprite-JarJar-Sheet.png;Sprites/Enemies/JarJar/Sprite-JarJar-Sheet
-
-#begin Sprites/Enemies/JarJar/Sprite-JarJar.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Sprites/Enemies/JarJar/Sprite-JarJar.png;Sprites/Enemies/JarJar/Sprite-JarJar
 
 #begin Sprites/Enemies/SHAME/Shame-Sheet.png
 /importer:TextureImporter
@@ -677,19 +677,6 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Sinner/PantallaEleccion/Atlas/Neutral.png
 
-#begin Sprites/Sinner/Sinner-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Sprites/Sinner/Sinner-Sheet.png
-
 #begin Sprites/Sinner/SinnerParryFront-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -729,6 +716,19 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Sinner/SinnerRunUP-Sheet.png
 
+#begin Sprites/Sinner/Sinner-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Sinner/Sinner-Sheet.png
+
 #begin Sprites/Sinner/SinnerWalk-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -767,19 +767,6 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/BorderSreen/EfectoBorde-Sheet.png
-
-#begin Sprites/UI/Buttons/Button-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Sprites/UI/Buttons/Button-Sheet.png
 
 #begin Sprites/UI/Buttons/Buttons_50x50/Button-Configuration-Sheet.png
 /importer:TextureImporter
@@ -923,6 +910,19 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/Buttons/Buttons_50x50/Button-SFX-Sheet.png
+
+#begin Sprites/UI/Buttons/Button-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/UI/Buttons/Button-Sheet.png
 
 #begin Sprites/UI/DeatchScreen/DeathScreen-Eye-Sheet.png
 /importer:TextureImporter
@@ -1261,4 +1261,3 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Textures/Vidrio.png
-

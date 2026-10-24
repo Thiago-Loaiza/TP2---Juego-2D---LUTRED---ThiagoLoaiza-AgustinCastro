@@ -40,6 +40,7 @@ public class Sinner
     public bool UsarInercia { get; set; } = true;
     public bool HaciendoParry => _haciendoParry;
     public bool ParryIniciadoEsteFrame { get; private set; }
+    public Vector2 VelocidadActual => _velocidadActual;
     public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
     public CirculoColision ColisionParry => new(Colision.Centro, 28f);
 

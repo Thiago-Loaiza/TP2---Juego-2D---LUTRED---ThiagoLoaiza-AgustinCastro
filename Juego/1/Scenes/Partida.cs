@@ -84,6 +84,7 @@ public class Partida : Escena
     private readonly GeneradorMapa _generador = new();
     private readonly List<EstructuraSolida> _estructuras = new();
     private readonly List<ColisionSolida> _obstaculos = new();
+    private List<Vector2> _posicionesLibres = new();
     private Effect _tintaAntigua;
     private PantallaDerrota _pantallaDerrota;
     private BotonAnimado _volverInicio;
@@ -150,6 +151,9 @@ public class Partida : Escena
         {
             _orbes.Add(new Orbe(_animacionOrbe, posicionesOrbes[i]));
         }
+        // JarJar solo se teletransporta a lugares sin paredes y conectados con el inicio.
+        _posicionesLibres = GeneradorOrbes.PosicionesAccesibles(mapa.Limites,
+            _sinner.Colision.Centro, _obstaculos);
         _tintaAntigua.Parameters["TamanoTexel"].SetValue(
             new Vector2(1f / ladrillos.Width, 1f / ladrillos.Height));
         Core.Audio.SongVolume = 0.3f;
@@ -346,10 +350,12 @@ public class Partida : Escena
                 }
             }
 
+            Rectangle areaVisible = AreaVisible();
             for (int i = 0; i < _jarJars.Count; i++)
             {
                 ResultadoJarJar resultadoJarJar = _jarJars[i].Update(gameTime,
-                    _sinner.Colision.Centro, _sinner.HaciendoParry);
+                    _sinner.Colision.Centro, _sinner.VelocidadActual, _sinner.HaciendoParry,
+                    areaVisible, _posicionesLibres);
                 if (resultadoJarJar == ResultadoJarJar.Parreado)
                 {
                     _sinner.ConfirmarParry();
@@ -475,6 +481,15 @@ public class Partida : Escena
         }
     }
 
+    private Rectangle AreaVisible()
+    {
+        var viewport = Core.GraphicsDevice.Viewport;
+        return new Rectangle(
+            (int)MathF.Floor(_camara.Posicion.X - viewport.Width * 0.5f),
+            (int)MathF.Floor(_camara.Posicion.Y - viewport.Height * 0.5f),
+            viewport.Width + 1, viewport.Height + 1);
+    }
+
     public override void Draw(GameTime gameTime)
     {
         if (_nivelCompletado)
@@ -499,11 +514,7 @@ public class Partida : Escena
                 samplerState: SamplerState.PointWrap,
                 effect: _tintaAntigua,
                 transformMatrix: transformacion);
-            var viewport = Core.GraphicsDevice.Viewport;
-            var visible = new Rectangle(
-                (int)MathF.Floor(_camara.Posicion.X - viewport.Width * 0.5f),
-                (int)MathF.Floor(_camara.Posicion.Y - viewport.Height * 0.5f),
-                viewport.Width + 1, viewport.Height + 1);
+            Rectangle visible = AreaVisible();
             foreach (EstructuraSolida estructura in _estructuras)
                 if (estructura.Limites.Intersects(visible)) estructura.Draw(Core.SpriteBatch);
             Core.SpriteBatch.End();
