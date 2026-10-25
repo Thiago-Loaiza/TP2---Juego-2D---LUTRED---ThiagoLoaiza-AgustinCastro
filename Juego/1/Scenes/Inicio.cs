@@ -82,7 +82,9 @@ public class Inicio : Escena
 
     private void Jugar(object sender, EventArgs args)
     {
-        _cambiarEscena(new Partida(_cambiarEscena));
+        _cambiarEscena(Game1.EmpezarConEleccion
+            ? new Seleccion(_cambiarEscena)
+            : new Partida(_cambiarEscena));
     }
 
     public override void Update(GameTime gameTime)

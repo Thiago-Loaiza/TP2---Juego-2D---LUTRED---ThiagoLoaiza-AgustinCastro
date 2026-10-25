@@ -24,8 +24,9 @@ public sealed class Seleccion : Escena
     private readonly int _cantidadDuke;
     private readonly int _cantidadJarJar;
     private readonly bool _sorakElegido;
+    private readonly bool _erosionBirdElegido;
     private readonly double _duracionNivel;
-    private enum Enemigo { Sorak, JarJar, Duke }
+    private enum Enemigo { Sorak, JarJar, Duke, ErosionBird }
     private Enemigo? _enemigoSeleccionado;
     private bool _entrando;
     private readonly List<Enemigo> _opcionesRivales = new();
@@ -53,7 +54,7 @@ public sealed class Seleccion : Escena
 
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
-        double duracionNivel = RelojNivel.Duracion)
+        double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false)
     {
         _cambiarEscena = cambiarEscena;
         _numeroNivel = numeroNivel;
@@ -69,6 +70,7 @@ public sealed class Seleccion : Escena
         _cantidadDuke = cantidadDuke;
         _cantidadJarJar = cantidadJarJar;
         _sorakElegido = sorakElegido;
+        _erosionBirdElegido = erosionBirdElegido;
         if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(duracionNivel));
@@ -78,6 +80,10 @@ public sealed class Seleccion : Escena
         if (!sorakElegido)
         {
             pool.Add(Enemigo.Sorak);
+        }
+        if (!erosionBirdElegido)
+        {
+            pool.Add(Enemigo.ErosionBird);
         }
         // Dos rivales distintos por pantalla. Zorak sale de la pool una vez elegido.
         for (int i = 0; i < 2; i++)
@@ -232,7 +238,8 @@ public sealed class Seleccion : Escena
     {
         if (_entrando || _estado != Estado.Continuar || _destelloRestante > 0f
             || !_opcionesRivales.Contains(enemigo)
-            || (enemigo == Enemigo.Sorak && _sorakElegido))
+            || (enemigo == Enemigo.Sorak && _sorakElegido)
+            || (enemigo == Enemigo.ErosionBird && _erosionBirdElegido))
         {
             return;
         }
@@ -253,7 +260,8 @@ public sealed class Seleccion : Escena
             _cantidadDuke + (_enemigoSeleccionado == Enemigo.Duke ? 1 : 0),
             _cantidadJarJar + (_enemigoSeleccionado == Enemigo.JarJar ? 1 : 0),
             _sorakElegido || _enemigoSeleccionado == Enemigo.Sorak,
-            duracionNivel: menosTiempo ? Math.Max(double.Epsilon, _duracionNivel * 0.67) : _duracionNivel));
+            duracionNivel: menosTiempo ? Math.Max(double.Epsilon, _duracionNivel * 0.67) : _duracionNivel,
+            erosionBirdElegido: _erosionBirdElegido || _enemigoSeleccionado == Enemigo.ErosionBird));
     }
 
     public override void Update(GameTime gameTime)
@@ -335,6 +343,7 @@ public sealed class Seleccion : Escena
     {
         Enemigo.Sorak => "Zorak",
         Enemigo.JarJar => "Jarjar",
+        Enemigo.ErosionBird => "Erosion Bird",
         _ => "Duck"
     };
 

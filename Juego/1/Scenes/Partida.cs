@@ -28,6 +28,7 @@ public class Partida : Escena
     private readonly int _cantidadDuke;
     private readonly int _cantidadJarJar;
     private readonly bool _sorakElegido;
+    private readonly bool _erosionBirdElegido;
     private readonly double _duracionNivel;
     private readonly List<Orbe> _orbes = new();
     private Animation _animacionOrbe;
@@ -43,7 +44,7 @@ public class Partida : Escena
 
     public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
-        double duracionNivel = RelojNivel.Duracion)
+        double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
         if (numeroNivel < 1)
@@ -63,6 +64,7 @@ public class Partida : Escena
         _cantidadDuke = cantidadDuke;
         _cantidadJarJar = cantidadJarJar;
         _sorakElegido = sorakElegido;
+        _erosionBirdElegido = erosionBirdElegido;
         if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(duracionNivel));
@@ -80,6 +82,7 @@ public class Partida : Escena
     private readonly List<Duck> _dukes = new();
     private readonly List<JarJar> _jarJars = new();
     private Zorak _zorak;
+    private ErosionBird _erosionBird;
     private readonly Camara2D _camara = new();
     private readonly GeneradorMapa _generador = new();
     private readonly List<EstructuraSolida> _estructuras = new();
@@ -225,6 +228,11 @@ public class Partida : Escena
             _zorak = new Zorak();
             _zorak.LoadContent(Content);
         }
+        if (_erosionBirdElegido)
+        {
+            _erosionBird = new ErosionBird();
+            _erosionBird.LoadContent(Content);
+        }
         _pantallaDerrota = new PantallaDerrota();
         _pantallaDerrota.LoadContent(Content);
 
@@ -252,6 +260,7 @@ public class Partida : Escena
             _volverInicio.Dispose();
         }
         _zorak?.UnloadContent();
+        _erosionBird?.UnloadContent();
         Core.Audio.StopSong();
         Core.Audio.ReleaseSoundEffect(_sonidoEntrada);
         Core.Audio.ReleaseSoundEffect(_sonidoSalida);
@@ -271,7 +280,7 @@ public class Partida : Escena
                 _cambiarEscena(new Seleccion(_cambiarEscena, _numeroNivel + 1,
                     transicionReproducida: true,
                     cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido,
-                    duracionNivel: _duracionNivel));
+                    duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido));
             }
             return;
         }
@@ -317,7 +326,7 @@ public class Partida : Escena
             _camara.Seguir(_sinner.Position);
             ResultadoZorak resultadoZorak = _zorak?.Update(gameTime,
                 Vector2.DistanceSquared(centroAnteriorSinner, _sinner.Colision.Centro) > 0.000001f,
-                _sinner.ParryIniciadoEsteFrame) ?? ResultadoZorak.Nada;
+                _sinner.ParryIniciadoEsteFrame, _erosionBird?.AreaOcupada ?? Rectangle.Empty) ?? ResultadoZorak.Nada;
             if (resultadoZorak == ResultadoZorak.Parreado)
                 _sinner.ConfirmarParry();
             if (_zorak?.BloqueandoJugador == true)
@@ -353,6 +362,18 @@ public class Partida : Escena
                 }
             }
 
+            ResultadoErosionBird resultadoBird = _erosionBird?.Update(gameTime, _sinner,
+                centroAnteriorSinner, Core.GraphicsDevice.Viewport, _zorak?.AreaOcupada ?? Rectangle.Empty)
+                ?? ResultadoErosionBird.Nada;
+            if (resultadoBird == ResultadoErosionBird.Parreado)
+            {
+                _sinner.ConfirmarParry();
+            }
+            else if (resultadoBird == ResultadoErosionBird.Golpe)
+            {
+                Perder();
+                return;
+            }
             Rectangle areaVisible = AreaVisible();
             for (int i = 0; i < _jarJars.Count; i++)
             {
@@ -473,6 +494,7 @@ public class Partida : Escena
     private void DetenerSonidosEnemigos()
     {
         _shame?.DetenerSonidos();
+        _erosionBird?.DetenerSonidos();
         Core.Audio.StopSoundEffect(_avisoShame);
         for (int i = 0; i < _dukes.Count; i++)
         {
@@ -566,6 +588,7 @@ public class Partida : Escena
             {
                 _jarJars[i].Draw(Core.SpriteBatch);
             }
+            _erosionBird?.DrawLanzas(Core.SpriteBatch);
             _shame.Draw(Core.SpriteBatch);
             _sinner.Draw(Core.SpriteBatch);
             for (int i = 0; i < _dukes.Count; i++)
@@ -598,6 +621,7 @@ public class Partida : Escena
             // La capa negra cubre tambien el borde y Zorak queda encima de todo.
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                 blendState: BlendState.AlphaBlend);
+            _erosionBird?.Draw(Core.SpriteBatch);
             _zorak?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
             Core.SpriteBatch.End();
         }

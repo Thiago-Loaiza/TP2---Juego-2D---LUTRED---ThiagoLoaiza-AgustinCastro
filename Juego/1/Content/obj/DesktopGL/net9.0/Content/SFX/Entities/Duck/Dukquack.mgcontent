@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>d:/Users/AgustinCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/Duck/Dukquack.ogg</SourceFile>
-  <SourceTime>2026-10-24T19:11:28.8705345-03:00</SourceTime>
-  <DestFile>d:/Users/AgustinCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Entities/Duck/Dukquack.xnb</DestFile>
-  <DestTime>2026-10-24T20:54:08.0782196-03:00</DestTime>
+  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/Duck/Dukquack.ogg</SourceFile>
+  <SourceTime>2026-10-14T22:51:58.8091829-03:00</SourceTime>
+  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Entities/Duck/Dukquack.xnb</DestFile>
+  <DestTime>2026-10-25T14:06:37.7685367-03:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>

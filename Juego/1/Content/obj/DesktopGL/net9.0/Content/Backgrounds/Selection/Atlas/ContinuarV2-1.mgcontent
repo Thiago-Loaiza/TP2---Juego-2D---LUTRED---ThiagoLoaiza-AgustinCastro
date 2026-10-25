@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>d:/Users/AgustinCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Backgrounds/Selection/Atlas/ContinuarV2-1.png</SourceFile>
-  <SourceTime>2026-10-24T19:25:23.4985423-03:00</SourceTime>
-  <DestFile>d:/Users/AgustinCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Backgrounds/Selection/Atlas/ContinuarV2-1.xnb</DestFile>
-  <DestTime>2026-10-24T20:53:49.9396898-03:00</DestTime>
+  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Backgrounds/Selection/Atlas/ContinuarV2-1.png</SourceFile>
+  <SourceTime>2026-10-25T12:49:29.7287118-03:00</SourceTime>
+  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Backgrounds/Selection/Atlas/ContinuarV2-1.xnb</DestFile>
+  <DestTime>2026-10-25T14:06:15.8732476-03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

@@ -100,7 +100,7 @@ public class Zorak
         return frames;
     }
 
-    public ResultadoZorak Update(GameTime gameTime, bool jugadorMoviendose, bool parryIniciado)
+    public ResultadoZorak Update(GameTime gameTime, bool jugadorMoviendose, bool parryIniciado, Rectangle ocupado = default)
     {
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
         _hastaAparicion -= segundos;
@@ -109,8 +109,8 @@ public class Zorak
             case Estado.Oculto:
                 if (_hastaAparicion <= 0f)
                 {
-                    _hastaAparicion += IntervaloAtaque;
-                    ElegirPosicion(Core.GraphicsDevice.Viewport);
+                    if (!ElegirPosicion(Core.GraphicsDevice.Viewport, ocupado)) { break; }
+                    _hastaAparicion = IntervaloAtaque;
                     CambiarEstado(Estado.Avisando, _aviso);
                     Core.Audio.PlaySoundEffect(_tick, restart: true);
                 }
@@ -216,16 +216,25 @@ public class Zorak
         }
     }
 
-    private void ElegirPosicion(Viewport viewport)
+    public Rectangle AreaOcupada => _estado == Estado.Oculto || _estado == Estado.Explosion
+        ? Rectangle.Empty : new Rectangle((int)_posicion.X - 120, (int)_posicion.Y - 120, 240, 240);
+
+    private bool ElegirPosicion(Viewport viewport, Rectangle ocupado)
     {
-        // Reservar el tamano completo del sprite evita apariciones cortadas por el borde.
         float margenX = Math.Min(TamanoFrame * _sprite.Scale.X * 0.5f + 16f, viewport.Width * 0.5f);
         float margenY = Math.Min(TamanoFrame * _sprite.Scale.Y * 0.5f + 16f, viewport.Height * 0.5f);
-        _posicion = new Vector2(
-            margenX + _azar.NextSingle() * Math.Max(0f, viewport.Width - 2f * margenX),
-            margenY + _azar.NextSingle() * Math.Max(0f, viewport.Height - 2f * margenY));
+        for (int intento = 0; intento < 80; intento++)
+        {
+            Vector2 candidata = new(
+                margenX + _azar.NextSingle() * Math.Max(0f, viewport.Width - 2f * margenX),
+                margenY + _azar.NextSingle() * Math.Max(0f, viewport.Height - 2f * margenY));
+            Rectangle area = new((int)candidata.X - 136, (int)candidata.Y - 136, 272, 272);
+            if (!ocupado.IsEmpty && area.Intersects(ocupado)) { continue; }
+            _posicion = candidata;
+            return true;
+        }
+        return false;
     }
-
     public void Draw(SpriteBatch spriteBatch, Viewport viewport)
     {
         if (BloqueandoJugador)

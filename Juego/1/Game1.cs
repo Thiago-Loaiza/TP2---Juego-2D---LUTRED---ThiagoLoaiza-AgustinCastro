@@ -11,6 +11,9 @@ namespace _1;
 
 public class Game1 : Core
 {
+    // true = ON: Jugar abre la eleccion. false = OFF: entra directamente a la partida.
+    public static bool EmpezarConEleccion = true;
+
     private Escena _escenaActual;
     private Escena _escenaPendiente;
 

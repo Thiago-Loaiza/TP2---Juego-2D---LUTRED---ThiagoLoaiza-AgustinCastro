@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>d:/Users/AgustinCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/JarJar/Sprite-JarJar-Aura.png</SourceFile>
-  <SourceTime>2026-10-24T19:13:20.9122937-03:00</SourceTime>
-  <DestFile>d:/Users/AgustinCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Enemies/JarJar/Sprite-JarJar-Aura.xnb</DestFile>
-  <DestTime>2026-10-24T20:54:11.0188383-03:00</DestTime>
+  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/JarJar/Sprite-JarJar-Aura.png</SourceFile>
+  <SourceTime>2026-10-25T12:49:29.7480262-03:00</SourceTime>
+  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Enemies/JarJar/Sprite-JarJar-Aura.xnb</DestFile>
+  <DestTime>2026-10-25T14:06:42.2478316-03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>
