@@ -101,8 +101,30 @@ public sealed class GeneradorMapa
             huellas.Add(huella);
         }
 
-        return new MapaGenerado(semilla, new Rectangle(origen.X, origen.Y,
-            ChunksPorLado * TamanoChunk, ChunksPorLado * TamanoChunk), estructuras, obstaculos, huellas);
+        var limites = new Rectangle(origen.X, origen.Y,
+            ChunksPorLado * TamanoChunk, ChunksPorLado * TamanoChunk);
+        AgregarBorde(limites, textura, estructuras, obstaculos);
+        return new MapaGenerado(semilla, limites, estructuras, obstaculos, huellas);
+    }
+
+    // los muros quedan por fuera de los limites para no reducir el area jugable.
+    private void AgregarBorde(Rectangle limites, Texture2D textura,
+        List<EstructuraSolida> estructuras, List<ColisionSolida> obstaculos)
+    {
+        int grosor = TamanoChunk;
+        Rectangle[] muros =
+        {
+            new(limites.Left - grosor, limites.Top - grosor, limites.Width + grosor * 2, grosor),
+            new(limites.Left - grosor, limites.Bottom, limites.Width + grosor * 2, grosor),
+            new(limites.Left - grosor, limites.Top, grosor, limites.Height),
+            new(limites.Right, limites.Top, grosor, limites.Height)
+        };
+        foreach (Rectangle muro in muros)
+        {
+            var bloque = new BloqueSolido(muro, textura);
+            estructuras.Add(bloque);
+            obstaculos.AddRange(bloque.Colisiones);
+        }
     }
 
     private bool EstaLibre(bool[,] ocupados, Rectangle huella)

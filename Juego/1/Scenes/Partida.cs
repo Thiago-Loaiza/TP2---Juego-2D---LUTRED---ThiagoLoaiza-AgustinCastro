@@ -85,6 +85,7 @@ public class Partida : Escena
     private readonly List<EstructuraSolida> _estructuras = new();
     private readonly List<ColisionSolida> _obstaculos = new();
     private List<Vector2> _posicionesLibres = new();
+    private Rectangle _limitesExteriores;
     private Effect _tintaAntigua;
     private PantallaDerrota _pantallaDerrota;
     private BotonAnimado _volverInicio;
@@ -140,6 +141,8 @@ public class Partida : Escena
         Texture2D ladrillos = Content.Load<Texture2D>("Textures/LadrillosTextura");
         MapaGenerado mapa = _generador.Generar(_sinner.Position, ladrillos,
             CatalogoEstructuras.Crear(), Random.Shared.Next());
+        _limitesExteriores = mapa.Limites;
+        _limitesExteriores.Inflate(_generador.TamanoChunk, _generador.TamanoChunk);
         _estructuras.Clear();
         _obstaculos.Clear();
         _estructuras.AddRange(mapa.Estructuras);
@@ -490,6 +493,25 @@ public class Partida : Escena
             viewport.Width + 1, viewport.Height + 1);
     }
 
+    private void DibujarExterior()
+    {
+        Rectangle visible = AreaVisible();
+        Rectangle mapa = _limitesExteriores;
+        if (visible.Top < mapa.Top)
+            DibujarNegro(new Rectangle(visible.Left, visible.Top, visible.Width, mapa.Top - visible.Top));
+        if (visible.Bottom > mapa.Bottom)
+            DibujarNegro(new Rectangle(visible.Left, mapa.Bottom, visible.Width, visible.Bottom - mapa.Bottom));
+        if (visible.Left < mapa.Left)
+            DibujarNegro(new Rectangle(visible.Left, visible.Top, mapa.Left - visible.Left, visible.Height));
+        if (visible.Right > mapa.Right)
+            DibujarNegro(new Rectangle(mapa.Right, visible.Top, visible.Right - mapa.Right, visible.Height));
+    }
+
+    private void DibujarNegro(Rectangle region)
+    {
+        Core.SpriteBatch.Draw(_pixelTransicion, region, Color.Black);
+    }
+
     public override void Draw(GameTime gameTime)
     {
         if (_nivelCompletado)
@@ -531,6 +553,7 @@ public class Partida : Escena
         }
         else
         {
+            DibujarExterior();
             for (int i = 0; i < _jarJars.Count; i++)
             {
                 _jarJars[i].DrawAura(Core.SpriteBatch);

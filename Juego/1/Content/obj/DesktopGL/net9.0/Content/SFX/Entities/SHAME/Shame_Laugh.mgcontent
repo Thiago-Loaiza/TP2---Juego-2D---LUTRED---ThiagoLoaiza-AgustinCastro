@@ -3,7 +3,7 @@
   <SourceFile>d:/Users/AgustinCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/SHAME/Shame_Laugh.wav</SourceFile>
   <SourceTime>2026-10-24T19:11:28.8866255-03:00</SourceTime>
   <DestFile>d:/Users/AgustinCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Entities/SHAME/Shame_Laugh.xnb</DestFile>
-  <DestTime>2026-10-24T19:52:17.9717569-03:00</DestTime>
+  <DestTime>2026-10-24T20:54:09.0712789-03:00</DestTime>
   <Importer>WavImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>
