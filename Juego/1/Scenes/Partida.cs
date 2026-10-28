@@ -1,3 +1,4 @@
+using _1.Progression;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
@@ -23,6 +24,7 @@ public class Partida : Escena
     private const int CantidadLayers = 8;
     private const int CantidadTransiciones = 9;
     private readonly Action<Escena> _cambiarEscena;
+    private readonly EstadoMejoras _mejoras;
     private readonly int _numeroNivel;
     private readonly bool _transicionReproducida;
     private readonly int _cantidadDuke;
@@ -44,7 +46,7 @@ public class Partida : Escena
 
     public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
-        double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false)
+        double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
         if (numeroNivel < 1)
@@ -52,6 +54,7 @@ public class Partida : Escena
             throw new ArgumentOutOfRangeException(nameof(numeroNivel));
         }
         _numeroNivel = numeroNivel;
+        _mejoras = mejoras ?? new EstadoMejoras();
         _transicionReproducida = transicionReproducida;
         if (cantidadDuke < 0)
         {
@@ -110,11 +113,14 @@ public class Partida : Escena
         ) * 0.5f;
         _relojNivel = new RelojNivel(_sinner.Colision.Centro, _duracionNivel);
         _camara.Seguir(_sinner.Position);
+        // Radio fijo de 1000 px; rotacion aleatoria y un sector por Duck para dispersarlos.
+        float rotacionDukes = Random.Shared.NextSingle() * MathHelper.TwoPi;
+        float sectorDukes = MathHelper.TwoPi / Math.Max(1, _dukes.Count);
         for (int i = 0; i < _dukes.Count; i++)
         {
-            float angulo = i * MathHelper.TwoPi / _dukes.Count;
+            float angulo = rotacionDukes + (i + Random.Shared.NextSingle() * 0.7f) * sectorDukes;
             _dukes[i].Position = _sinner.Position
-                + new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * 360f;
+                + new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * 1000f;
         }
         for (int i = 0; i < _jarJars.Count; i++)
         {
@@ -204,7 +210,7 @@ public class Partida : Escena
         _bordePantalla = new BordeAnimado(
             Content.Load<Texture2D>("Sprites/UI/BorderSreen/EfectoBorde-Sheet"), TimeSpan.FromSeconds(0.12));
 
-        _sinner = new Sinner();
+        _sinner = new Sinner { Mejoras = _mejoras };
         _sinner.LoadContent(Content);
         _shame = new Shame();
         _shame.LoadContent(Content);
@@ -277,10 +283,18 @@ public class Partida : Escena
         {
             if (!Core.Audio.IsPaused && _sonidoSalida.State == SoundState.Stopped)
             {
-                _cambiarEscena(new Seleccion(_cambiarEscena, _numeroNivel + 1,
+                void AbrirPregunta() => _cambiarEscena(new Seleccion(_cambiarEscena, _numeroNivel + 1,
                     transicionReproducida: true,
                     cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido,
-                    duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido));
+                    duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras));
+                if (_numeroNivel % 4 == 0)
+                {
+                    _cambiarEscena(new Mejoras(AbrirPregunta, _mejoras, _numeroNivel));
+                }
+                else
+                {
+                    AbrirPregunta();
+                }
             }
             return;
         }

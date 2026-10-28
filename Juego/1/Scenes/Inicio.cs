@@ -82,9 +82,15 @@ public class Inicio : Escena
 
     private void Jugar(object sender, EventArgs args)
     {
+        var mejoras = new _1.Progression.EstadoMejoras();
+        if (Game1.EmpezarConMejoras)
+        {
+            _cambiarEscena(new Mejoras(() => _cambiarEscena(new Seleccion(_cambiarEscena, mejoras: mejoras)), mejoras));
+            return;
+        }
         _cambiarEscena(Game1.EmpezarConEleccion
-            ? new Seleccion(_cambiarEscena)
-            : new Partida(_cambiarEscena));
+            ? new Seleccion(_cambiarEscena, mejoras: mejoras)
+            : new Partida(_cambiarEscena, mejoras: mejoras));
     }
 
     public override void Update(GameTime gameTime)

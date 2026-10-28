@@ -37,6 +37,10 @@ public class Sinner
     private Vector2 _velocidadActual;
     private AnimatedSprite _sprite;
 
+    public _1.Progression.EstadoMejoras Mejoras { get; set; } = new();
+    private Vector2 _direccionCaliz;
+    private float _tiempoCaliz;
+
     public bool UsarInercia { get; set; } = true;
     public bool HaciendoParry => _haciendoParry;
     public bool ParryIniciadoEsteFrame { get; private set; }
@@ -82,7 +86,7 @@ public class Sinner
             content,
             "Sprites/Sinner/SinnerParryFront-Sheet",
             5,
-            SegundosPorFrameParry
+            SegundosPorFrameParry + Mejoras.ExtraParry / 5
         );
 
         _animaciones[SinnerAnimation.Correr] = CrearAnimacion(
@@ -127,7 +131,7 @@ public class Sinner
             content,
             "Effects/EstrellaParry-Sheet",
             4,
-            SegundosPorFrameParry * 5 / 4,
+            (SegundosPorFrameParry * 5 + Mejoras.ExtraParry) / 4,
             50,
             50
         ));
@@ -215,10 +219,21 @@ public class Sinner
 
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
         bool corriendo = teclado.IsKeyDown(Keys.LeftShift);
-        Vector2 velocidadObjetivo = direccion * Velocidad
+        if (direccion != _direccionCaliz || !corriendo || direccion == Vector2.Zero)
+        {
+            _tiempoCaliz = 0f;
+        }
+        else if (Mejoras.Cantidad("Caliz") > 0)
+        {
+            _tiempoCaliz = Math.Min(15f, _tiempoCaliz + segundos);
+        }
+        _direccionCaliz = direccion;
+        float velocidadCaminata = Velocidad * Mejoras.MultiplicadorVelocidad;
+        float bonusCaliz = Mejoras.Cantidad("Caliz") > 0 ? Math.Min(0.5f, MathF.Floor(_tiempoCaliz / 3f) * 0.1f) : 0f;
+        Vector2 velocidadObjetivo = direccion * Velocidad * (Mejoras.MultiplicadorVelocidad + bonusCaliz)
             * (corriendo ? MultiplicadorSprint : 1f);
 
-        if (UsarInercia)
+        if (UsarInercia && Mejoras.Cantidad("TETUTRED") == 0)
         {
             bool reduciendoVelocidad = velocidadObjetivo.LengthSquared()
                 < _velocidadActual.LengthSquared();
@@ -247,7 +262,7 @@ public class Sinner
         if (_velocidadActual != Vector2.Zero)
         {
             Core.Audio.SetPitch(_sonidoCaminata,
-                _velocidadActual.LengthSquared() > Velocidad * Velocidad
+                _velocidadActual.LengthSquared() > velocidadCaminata * velocidadCaminata
                 ? 0.5f
                 : 0f);
 
@@ -256,7 +271,7 @@ public class Sinner
 
             if (!_haciendoParry)
             {
-                if (_velocidadActual.LengthSquared() > Velocidad * Velocidad)
+                if (_velocidadActual.LengthSquared() > velocidadCaminata * velocidadCaminata)
                 {
                     CambiarAnimacion(_velocidadActual.Y != 0
                         ? SinnerAnimation.CorrerArriba

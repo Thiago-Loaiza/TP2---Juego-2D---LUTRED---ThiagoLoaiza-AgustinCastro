@@ -328,7 +328,7 @@
 
 #begin Music/Misc/Mejoras.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Misc/Mejoras.mp3
@@ -501,6 +501,12 @@
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:SFX/LUTRED_Salvation.MP3
+
+#begin SFX/Misc/MejoraAdquirida.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Misc/MejoraAdquirida.mp3
 
 #begin SFX/Puerta/Acercamiento1.MP3
 /importer:Mp3Importer

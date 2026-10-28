@@ -14,6 +14,9 @@ public class Game1 : Core
     // true = ON: Jugar abre la eleccion. false = OFF: entra directamente a la partida.
     public static bool EmpezarConEleccion = true;
 
+    // Jugar abre mejoras y despues la pregunta; desactivar para el inicio habitual.
+    public static bool EmpezarConMejoras = true;
+
     private Escena _escenaActual;
     private Escena _escenaPendiente;
 

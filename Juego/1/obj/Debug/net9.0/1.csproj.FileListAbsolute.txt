@@ -634,3 +634,4 @@ C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCa
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Efectos\Paz-Sheet.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Efectos\Shield\Shield-Sheet.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Efectos\Shield\ShieldBroken-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\SFX\Misc\MejoraAdquirida.xnb

@@ -1,3 +1,4 @@
+using _1.Progression;
 using System;
 using System.Collections.Generic;
 using _1.UI;
@@ -19,6 +20,7 @@ public sealed class Seleccion : Escena
 {
     private enum Estado { Neutral, Escapar, Continuar }
     private readonly Action<Escena> _cambiarEscena;
+    private readonly EstadoMejoras _mejoras;
     private readonly int _numeroNivel;
     private readonly bool _transicionReproducida;
     private readonly int _cantidadDuke;
@@ -54,10 +56,11 @@ public sealed class Seleccion : Escena
 
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
-        double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false)
+        double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null)
     {
         _cambiarEscena = cambiarEscena;
         _numeroNivel = numeroNivel;
+        _mejoras = mejoras ?? new EstadoMejoras();
         _transicionReproducida = transicionReproducida;
         if (cantidadDuke < 0)
         {
@@ -261,7 +264,7 @@ public sealed class Seleccion : Escena
             _cantidadJarJar + (_enemigoSeleccionado == Enemigo.JarJar ? 1 : 0),
             _sorakElegido || _enemigoSeleccionado == Enemigo.Sorak,
             duracionNivel: menosTiempo ? Math.Max(double.Epsilon, _duracionNivel * 0.67) : _duracionNivel,
-            erosionBirdElegido: _erosionBirdElegido || _enemigoSeleccionado == Enemigo.ErosionBird));
+            erosionBirdElegido: _erosionBirdElegido || _enemigoSeleccionado == Enemigo.ErosionBird, mejoras: _mejoras));
     }
 
     public override void Update(GameTime gameTime)
@@ -339,12 +342,12 @@ public sealed class Seleccion : Escena
         Core.SpriteBatch.End();
     }
 
-    private static string NombreRival(Enemigo rival) => rival switch
+    private string NombreRival(Enemigo rival) => rival switch
     {
         Enemigo.Sorak => "Zorak",
-        Enemigo.JarJar => "Jarjar",
+        Enemigo.JarJar => _cantidadJarJar > 0 ? "Otro Jarjar" : "Jarjar",
         Enemigo.ErosionBird => "Erosion Bird",
-        _ => "Duck"
+        _ => _cantidadDuke > 0 ? "Otro Duck" : "Duck"
     };
 
     private void DibujarRivales(Viewport viewport)

@@ -3,7 +3,7 @@
   <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/ErosionBird/MuerteLanza.ogg</SourceFile>
   <SourceTime>2026-10-25T13:14:24.5656527-03:00</SourceTime>
   <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Entities/ErosionBird/MuerteLanza.xnb</DestFile>
-  <DestTime>2026-10-25T14:06:39.0405454-03:00</DestTime>
+  <DestTime>2026-10-28T14:12:21.563801-03:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>

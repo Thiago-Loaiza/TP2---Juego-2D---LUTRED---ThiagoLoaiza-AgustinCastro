@@ -49,7 +49,7 @@ public sealed class Shame
             Origin = new Vector2(175f),
             Scale = Vector2.One
         };
-        CrearTexturaEstela();
+        _circuloEstela = CrearTexturaHumo();
         _ambiente = Core.Audio.CreateSoundEffectInstance(
             content.Load<SoundEffect>("SFX/Entities/SHAME/ShameAmbience"), volume: 0.5f, isLooped: true);
         _risa = Core.Audio.CreateSoundEffectInstance(
@@ -126,7 +126,7 @@ public sealed class Shame
         ActualizarEstela(posicionAnterior, segundosTotales);
     }
 
-    private void CrearTexturaEstela()
+    internal static Texture2D CrearTexturaHumo()
     {
         const int tamano = 256;
         const float radio = tamano * 0.5f;
@@ -144,8 +144,9 @@ public sealed class Shame
                     : distanciaCuadrada >= radioInterior * radioInterior ? Color.Red : Color.Black;
             }
         }
-        _circuloEstela = new Texture2D(Core.GraphicsDevice, tamano, tamano);
-        _circuloEstela.SetData(pixeles);
+        var textura = new Texture2D(Core.GraphicsDevice, tamano, tamano);
+        textura.SetData(pixeles);
+        return textura;
     }
 
     private void ActualizarEstela(Vector2 posicionAnterior, double segundos)
