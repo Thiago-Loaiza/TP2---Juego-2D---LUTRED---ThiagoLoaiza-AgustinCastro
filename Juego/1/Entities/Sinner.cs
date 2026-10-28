@@ -27,6 +27,7 @@ public class Sinner
     private SoundEffectInstance _sonidoParry;
     private SoundEffectInstance _sonidoParryExitoso;
     private AnimatedSprite _efectoParry;
+    private AnimatedSprite _auraDominio;
     private KeyboardState _tecladoAnterior;
     private bool _haciendoParry;
     private const double SegundosPorFrameParry = 0.05;
@@ -43,6 +44,8 @@ public class Sinner
 
     public bool UsarInercia { get; set; } = true;
     public bool HaciendoParry => _haciendoParry;
+    public bool AutoparryActivo => Mejoras.Dominio.Activo;
+    public bool PuedeParrear => HaciendoParry || AutoparryActivo;
     public bool ParryIniciadoEsteFrame { get; private set; }
     public Vector2 VelocidadActual => _velocidadActual;
     public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
@@ -135,6 +138,15 @@ public class Sinner
             50,
             50
         ));
+        if (Mejoras.Cantidad("Dominio") > 0)
+        {
+            _auraDominio = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/DominioV2-Sheet", 14, 0.07, 300, 300))
+            {
+                Origin = new Vector2(150f),
+                Scale = new Vector2(0.6f)
+            };
+        }
         _efectoParry.Position = Position;
         _efectoParry.IsLooping = false;
         _efectoParry.Origin = new Vector2(25, 25);
@@ -182,6 +194,11 @@ public class Sinner
 
     public void Update(GameTime gameTime, IReadOnlyList<ColisionSolida> obstaculos = null)
     {
+        Mejoras.Dominio.Actualizar(gameTime.ElapsedGameTime.TotalSeconds);
+        if (AutoparryActivo)
+        {
+            _auraDominio?.Update(gameTime);
+        }
         KeyboardState teclado = Keyboard.GetState();
         ParryIniciadoEsteFrame = false;
 
@@ -191,6 +208,7 @@ public class Sinner
 
         if (_haciendoParry && _sprite.IsFinished)
         {
+            Mejoras.Dominio.FinalizarParryManual();
             _haciendoParry = false;
             _sprite.IsLooping = true;
             CambiarAnimacion(SinnerAnimation.Reposo);
@@ -198,6 +216,7 @@ public class Sinner
 
         if (parryPresionado && !_haciendoParry)
         {
+            Mejoras.Dominio.ComenzarParryManual();
             ParryIniciadoEsteFrame = true;
             _haciendoParry = true;
             _sprite.IsLooping = false;
@@ -317,6 +336,11 @@ public class Sinner
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        if (AutoparryActivo && _auraDominio != null)
+        {
+            _auraDominio.Position = Colision.Centro;
+            _auraDominio.Draw(spriteBatch);
+        }
         _sprite.Draw(spriteBatch);
         if (_haciendoParry && !_efectoParry.IsFinished)
         {
@@ -328,13 +352,23 @@ public class Sinner
 
     public void UnloadContent()
     {
+        Mejoras.Dominio.FinalizarParryManual();
         Core.Audio.ReleaseSoundEffect(_sonidoCaminata);
         Core.Audio.ReleaseSoundEffect(_sonidoParry);
         Core.Audio.ReleaseSoundEffect(_sonidoParryExitoso);
     }
 
-    public void ConfirmarParry()
+    public void ConfirmarParry(bool automatico = false)
     {
+        bool auraActiva = AutoparryActivo;
+        if (!automatico)
+        {
+            Mejoras.Dominio.RegistrarParryManualExitoso(Mejoras.Cantidad("Dominio"));
+        }
+        if (!auraActiva && AutoparryActivo && _auraDominio != null)
+        {
+            _auraDominio.Animation = _auraDominio.Animation;
+        }
         Core.Audio.StopSoundEffect(_sonidoParryExitoso);
         Core.Audio.PlaySoundEffect(_sonidoParryExitoso);
     }

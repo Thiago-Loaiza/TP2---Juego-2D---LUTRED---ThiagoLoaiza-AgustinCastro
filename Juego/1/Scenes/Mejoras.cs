@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using LutredLibrary;
 using LutredLibrary.Scenes;
+using LutredLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -26,6 +27,7 @@ public sealed class Mejoras : Escena
     private const float RetrasoEntreIconos = 0.35f;
     private const float FinAparicion = DuracionFundido + PausaBlanca + DuracionAparicion + 2 * RetrasoEntreIconos;
     private Texture2D _humo;
+    private AnimatedSprite _fraseInicial;
     private SoundEffectInstance _musicaMejoras;
     private SoundEffect _aceptarMejora;
     private sealed class ParticulaHumo
@@ -79,6 +81,19 @@ public sealed class Mejoras : Escena
     protected override void LoadContent()
     {
         _fuente = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        // Una frase por visita; sus nueve cuadros se repiten sin cambiar de variante.
+        int variante = Random.Shared.Next(1, 4);
+        Texture2D hojaFrase = Content.Load<Texture2D>($"Pharses/Upgrades/MejorasFrase{variante}-Sheet");
+        int anchoFrase = hojaFrase.Width / 9;
+        var cuadrosFrase = new List<TextureRegion>();
+        for (int i = 0; i < 9; i++)
+        {
+            cuadrosFrase.Add(new TextureRegion(hojaFrase, i * anchoFrase, 0, anchoFrase, hojaFrase.Height));
+        }
+        _fraseInicial = new AnimatedSprite(new Animation(cuadrosFrase, TimeSpan.FromSeconds(0.12)))
+        {
+            Origin = new Vector2(anchoFrase, hojaFrase.Height) * 0.5f
+        };
         for (int i = 0; i < _iconos.Length; i++)
         {
             if (_opciones[i] >= 0)
@@ -126,6 +141,10 @@ public sealed class Mejoras : Escena
         }
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
         _tiempo += segundos;
+        if (_tiempo > DuracionFundido + PausaBlanca)
+        {
+            _fraseInicial.Update(gameTime);
+        }
         for (int i = 0; i < _particulasHumo.Length; i++)
         {
             var particula = _particulasHumo[i];
@@ -213,7 +232,10 @@ public sealed class Mejoras : Escena
         Core.SpriteBatch.Draw(_pixel, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White * 0.2f);
         Core.SpriteBatch.End();
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-        DibujarTexto("Elige una mejora", new Vector2(viewport.Width / 2f, viewport.Height / 2f - 245 * escala), 2.5f * escala, alfaInterfaz);
+        _fraseInicial.Position = new Vector2(viewport.Width / 2f, viewport.Height / 2f - 260 * escala);
+        _fraseInicial.Scale = new Vector2(0.9f * escala);
+        _fraseInicial.Color = Color.White * alfaInterfaz;
+        _fraseInicial.Draw(Core.SpriteBatch);
         for (int i = 0; i < _opciones.Length; i++)
         {
             if (_opciones[i] < 0)
@@ -295,7 +317,7 @@ public sealed class Mejoras : Escena
         {
             _indiceDescripcion = _seleccion;
             var mejora = Catalogo[_opciones[_seleccion]];
-            _textoDescripcion = mejora.Descripcion;
+            _textoDescripcion = _mejoras.Describir(mejora);
             // Al volver a una mejora ya visitada, se muestra toda la informacion.
             _caracteresDescripcion = _mejoras.DescripcionesVistas.Add(mejora.Id) ? 0f : _textoDescripcion.Length;
         }

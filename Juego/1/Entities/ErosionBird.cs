@@ -188,7 +188,7 @@ public sealed class ErosionBird
             if (lanza.Estado == EstadoLanza.Ataque)
             {
                 int actual = Frame(lanza);
-                if (sinner.HaciendoParry && Toca(lanza, anterior, actual, sinner.ColisionParry, centroAnterior))
+                if (sinner.PuedeParrear && Toca(lanza, anterior, actual, sinner.ColisionParry, centroAnterior))
                 {
                     lanza.Estado = EstadoLanza.Rota;
                     lanza.Tiempo = 0f;

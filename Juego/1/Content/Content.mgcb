@@ -340,6 +340,96 @@
 /processorParam:Version=3.8.5.1
 /build:Music/Prologo.mp3
 
+#begin Pharses/Selection/Acciones/EsoesTodo-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Selection/Acciones/EsoesTodo-Sheet.png
+
+#begin Pharses/Selection/Acciones/Espera-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Selection/Acciones/Espera-Sheet.png
+
+#begin Pharses/Selection/Acciones/SiEstoySeguro-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Selection/Acciones/SiEstoySeguro-Sheet.png
+
+#begin Pharses/Selection/Acciones/Si-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Selection/Acciones/Si-Sheet.png
+
+#begin Pharses/Selection/Duda_Frase-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Selection/Duda_Frase-Sheet.png
+
+#begin Pharses/Selection/Elejir_Frase1-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Selection/Elejir_Frase1-Sheet.png
+
+#begin Pharses/Selection/Elejir_Frase2-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Selection/Elejir_Frase2-Sheet.png
+
+#begin Pharses/Upgrades/MejorasFrase1-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Upgrades/MejorasFrase1-Sheet.png
+
+#begin Pharses/Upgrades/MejorasFrase2-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Upgrades/MejorasFrase2-Sheet.png
+
+#begin Pharses/Upgrades/MejorasFrase3-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Pharses/Upgrades/MejorasFrase3-Sheet.png
+
 #begin SFX/Entities/Duck/DuckParry.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -1023,6 +1113,15 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/DeatchScreen/DeathScreen-Line-Sheet.png
 
+#begin Sprites/UI/Titulo-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Titulo-Sheet.png
+
 #begin Sprites/Upgrades/Efectos/AureolaDivina-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1167,6 +1266,15 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Icons/Guantelet.png
+
+#begin Sprites/Upgrades/Icons/OrbesEfectivos.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Icons/OrbesEfectivos.png
 
 #begin Sprites/Upgrades/Icons/Paz.png
 /importer:TextureImporter

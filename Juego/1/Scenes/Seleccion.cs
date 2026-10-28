@@ -8,6 +8,7 @@ using Gum.Forms.DefaultVisuals.V3;
 using Gum.Wireframe;
 using LutredLibrary;
 using LutredLibrary.Scenes;
+using LutredLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,6 +20,10 @@ namespace _1.Scenes;
 public sealed class Seleccion : Escena
 {
     private enum Estado { Neutral, Escapar, Continuar }
+    private const float PrimeraOpcionY = -225f;
+    private const float SeparacionOpciones = 65f;
+    private const float OpcionTiempoY = -95f;
+    private const float EscalaOpciones = 1.7f;
     private readonly Action<Escena> _cambiarEscena;
     private readonly EstadoMejoras _mejoras;
     private readonly int _numeroNivel;
@@ -31,17 +36,21 @@ public sealed class Seleccion : Escena
     private enum Enemigo { Sorak, JarJar, Duke, ErosionBird }
     private Enemigo? _enemigoSeleccionado;
     private bool _entrando;
+    private int _opcionBajoCursor = -1;
+    private readonly float[] _brilloOpciones = new float[3];
     private readonly List<Enemigo> _opcionesRivales = new();
     private readonly SoundEffectInstance[] _musicas = new SoundEffectInstance[3];
     private readonly Texture2D[] _animaciones = new Texture2D[3];
     private readonly int[] _cantidadFrames = { 11, 30, 24 };
     private readonly Texture2D[,] _fondosAnimados = new Texture2D[3, 2];
     private readonly int[] _cuadrosFondo = { 20, 20, 22 };
-    private readonly List<(Button boton, ColoredRectangleRuntime fondo,
+    private readonly List<(Button boton,
         TextRuntime texto)> _botones = new();
     private readonly float[] _mezcla = { 1f, 0f, 0f };
     private Estado _estado;
-    private TextRuntime _titulo;
+    private readonly AnimatedSprite[] _frases = new AnimatedSprite[3];
+    private readonly List<BotonAnimado> _accionesAnimadas = new();
+    private int _varianteEleccion = Random.Shared.Next(2);
     private SpriteFont _fuenteRivales;
     private Texture2D _pixelPanel;
     private ColoredRectangleRuntime _destello;
@@ -104,6 +113,21 @@ public sealed class Seleccion : Escena
         _fuenteRivales = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
         _pixelPanel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixelPanel.SetData(new[] { Color.White });
+        string[] frases = { "Elejir_Frase1", "Elejir_Frase2", "Duda_Frase" };
+        for (int i = 0; i < frases.Length; i++)
+        {
+            Texture2D hoja = Content.Load<Texture2D>($"Pharses/Selection/{frases[i]}-Sheet");
+            int ancho = hoja.Width / 9;
+            var cuadros = new List<TextureRegion>();
+            for (int cuadro = 0; cuadro < 9; cuadro++)
+            {
+                cuadros.Add(new TextureRegion(hoja, cuadro * ancho, 0, ancho, hoja.Height));
+            }
+            _frases[i] = new AnimatedSprite(new Animation(cuadros, TimeSpan.FromSeconds(0.12)))
+            {
+                Origin = new Vector2(ancho, hoja.Height) * 0.5f
+            };
+        }
         string[] fondos = { "ElegirV2", "DudaV2", "ContinuarV2" };
         string[] arte = { "Neutral", "Escapar", "Continuar" };
         string[] musica = { "Neutral", "Duda", "Continuar" };
@@ -136,35 +160,29 @@ public sealed class Seleccion : Escena
         panel.Dock(Dock.Fill);
         panel.AddToRoot();
 
-        _titulo = new TextRuntime();
-        _titulo.UseCustomFont = true;
-        _titulo.CustomFontFile = "Fonts/PMingLiU Regular/Font.fnt";
-        _titulo.FontScale = 2f;
-        _titulo.Anchor(Anchor.Top);
-        _titulo.Y = 70;
-        _titulo.Text = "Y ahora que?";
-        _titulo.Color = Color.Black;
-        panel.Visual.Children.Add(_titulo);
-
-        AgregarBoton(panel, "Escapar", -350, 0, () => CambiarEstado(Estado.Escapar));
-        AgregarBoton(panel, "Continuar", 350, 0, () => CambiarEstado(Estado.Continuar));
-        AgregarBoton(panel, "Confirmar", -350, 0, () => _cambiarEscena(new Inicio(_cambiarEscena)));
-        AgregarBoton(panel, "Volver", 350, 0, () => CambiarEstado(Estado.Neutral));
+        AgregarAccionAnimada(panel, "Eso es todo", "EsoesTodo", -390,
+            () => CambiarEstado(Estado.Escapar));
+        AgregarAccionAnimada(panel, "Si...", "Si", 390,
+            () => CambiarEstado(Estado.Continuar));
+        AgregarAccionAnimada(panel, "Si, estoy seguro", "SiEstoySeguro", -390,
+            () => _cambiarEscena(new Inicio(_cambiarEscena)));
+        AgregarAccionAnimada(panel, "Espera...", "Espera", 390,
+            () => CambiarEstado(Estado.Neutral));
         for (int i = 0; i < _opcionesRivales.Count; i++)
         {
             Enemigo rival = _opcionesRivales[i];
-            AgregarBoton(panel, NombreRival(rival), 0, -80 + i * 140,
+            AgregarBoton(panel, NombreRival(rival), 0, PrimeraOpcionY + i * SeparacionOpciones,
                 () => ElegirEnemigo(rival));
             var boton = _botones[i + 4].boton;
-            boton.Width = 560;
-            boton.Height = 110;
+            boton.Width = 400;
+            boton.Height = 62;
             _botones[i + 4].texto.Visible = false;
 
         }
-        AgregarBoton(panel, "Menos tiempo", 0, 200, () => EntrarAPrueba(menosTiempo: true));
+        AgregarBoton(panel, "Menos tiempo", 0, OpcionTiempoY, () => EntrarAPrueba(menosTiempo: true));
         var opcionTiempo = _botones[_botones.Count - 1];
-        opcionTiempo.boton.Width = 680;
-        opcionTiempo.boton.Height = 110;
+        opcionTiempo.boton.Width = 450;
+        opcionTiempo.boton.Height = 62;
         opcionTiempo.texto.Visible = false;
         _destello = new ColoredRectangleRuntime();
         _destello.Dock(Dock.Fill);
@@ -183,19 +201,46 @@ public sealed class Seleccion : Escena
         visual.ButtonCategory.ResetAllStates();
         visual.Background.Visible = false;
         visual.FocusedIndicator.Visible = false;
-        var fondo = new ColoredRectangleRuntime();
-        fondo.Dock(Dock.Fill);
-        fondo.Visible = false;
-        visual.Children.Insert(0, fondo);
+
         var etiqueta = visual.TextInstance;
         etiqueta.UseCustomFont = true;
         etiqueta.CustomFontFile = "Fonts/PMingLiU Regular/Font.fnt";
         etiqueta.FontScale = 1.4f;
         boton.Click += (_, _) => accion();
         panel.AddChild(boton);
-        _botones.Add((boton, fondo, etiqueta));
+        int indiceOpcion = _botones.Count - 4;
+        boton.Visual.RollOn += (_, _) => _opcionBajoCursor = indiceOpcion;
+        boton.Visual.RollOff += (_, _) =>
+        {
+            if (_opcionBajoCursor == indiceOpcion)
+            {
+                _opcionBajoCursor = -1;
+            }
+        };
+        _botones.Add((boton, etiqueta));
     }
 
+    private void AgregarAccionAnimada(Panel panel, string nombre, string archivo, float x, Action accion)
+    {
+        Texture2D hoja = Content.Load<Texture2D>($"Pharses/Selection/Acciones/{archivo}-Sheet");
+        var boton = new BotonAnimado(hoja, hoja.Width / 9, hoja.Height, 9, TimeSpan.FromSeconds(0.12))
+        {
+            // La etiqueta conserva el nombre para la navegacion; el dibujo viene de la hoja.
+            Text = nombre,
+            Width = 340,
+            Height = 170,
+            ColorNormal = new Color(195, 195, 195),
+            ColorIluminado = Color.White
+        };
+        boton.Anchor(Anchor.Center);
+        boton.X = x;
+        var etiqueta = ((ButtonVisual)boton.Visual).TextInstance;
+        etiqueta.Visible = false;
+        boton.Click += (_, _) => accion();
+        panel.AddChild(boton);
+        _accionesAnimadas.Add(boton);
+        _botones.Add((boton, etiqueta));
+    }
     private void CambiarEstado(Estado estado)
     {
         // Continuar compromete la eleccion: ya no se puede regresar a Neutral.
@@ -203,19 +248,24 @@ public sealed class Seleccion : Escena
         {
             return;
         }
+        if (_estado == estado)
+        {
+            return;
+        }
+        if (estado == Estado.Escapar)
+        {
+            // Nuevo sorteo por visita a duda; al volver se conserva esta variante de eleccion.
+            _varianteEleccion = Random.Shared.Next(2);
+        }
         _estado = estado;
+        int indiceFrase = estado == Estado.Escapar ? 2 : _varianteEleccion;
+        _frases[indiceFrase].Animation = _frases[indiceFrase].Animation;
         if (estado == Estado.Continuar)
         {
             _destelloRestante = DuracionDestello;
         }
         _sinner = estado == Estado.Escapar ? Color.White : Color.Black;
         _relojEstado = 0;
-        _titulo.Text = estado switch
-        {
-            Estado.Neutral => "Y ahora que?",
-            Estado.Escapar => "Estas seguro?",
-            _ => ""
-        };
         ActualizarOpciones();
     }
 
@@ -285,12 +335,26 @@ public sealed class Seleccion : Escena
         float suavidad = 1f - MathF.Exp(-8f * (float)dt);
         bool escapar = _estado == Estado.Escapar;
         bool continuar = _estado == Estado.Continuar;
+        for (int i = 0; i < _brilloOpciones.Length; i++)
+        {
+            Button opcion = _botones[i + 4].boton;
+            bool resaltada = _opcionBajoCursor >= 0 ? _opcionBajoCursor == i : opcion.IsFocused;
+            float objetivo = continuar && opcion.IsEnabled && resaltada ? 1f : 0f;
+            _brilloOpciones[i] = MathHelper.Lerp(_brilloOpciones[i], objetivo, suavidad);
+        }
         _opacidadDuda = MathHelper.Clamp(_opacidadDuda
             + (escapar ? 1f : -1f) * (float)dt / 0.45f, 0f, 1f);
         Color rojo = new Color(165, 12, 24);
         _fondo = Color.Lerp(_fondo, continuar ? rojo : escapar ? Color.Black : Color.White, suavidad);
         _tinta = Color.Lerp(_tinta, escapar ? Color.White : Color.Black, suavidad);
-        _titulo.Color = _tinta;
+        if (_estado != Estado.Continuar)
+        {
+            _frases[_estado == Estado.Escapar ? 2 : _varianteEleccion].Update(gameTime);
+        }
+        for (int i = 0; i < _accionesAnimadas.Count; i++)
+        {
+            _accionesAnimadas[i].Update(gameTime);
+        }
         for (int i = 0; i < 3; i++)
         {
             _mezcla[i] = MathHelper.Lerp(_mezcla[i], i == (int)_estado ? 1f : 0f, suavidad);
@@ -339,6 +403,14 @@ public sealed class Seleccion : Escena
         {
             DibujarRivales(viewport);
         }
+        else
+        {
+            AnimatedSprite frase = _frases[_estado == Estado.Escapar ? 2 : _varianteEleccion];
+            float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
+            frase.Position = new Vector2(viewport.Width * 0.5f, 110f * escala);
+            frase.Scale = new Vector2(1.2f * escala);
+            frase.Draw(Core.SpriteBatch);
+        }
         Core.SpriteBatch.End();
     }
 
@@ -352,33 +424,79 @@ public sealed class Seleccion : Escena
 
     private void DibujarRivales(Viewport viewport)
     {
-        // Velo rojo oscuro sobre el arte y debajo de los textos para mantener el contraste.
-        Core.SpriteBatch.Draw(_pixelPanel, new Rectangle(0, 0, viewport.Width, viewport.Height),
-            new Color(65, 0, 8) * 0.82f);
-        const string titulo = "Elige una prueba";
+        // El velo cubre las opciones y se disuelve antes de la parte inferior de Sinner.
+        int inicioFundido = (int)(viewport.Height * 0.36f);
+        int finFundido = (int)(viewport.Height * 0.48f);
+        Color velo = new Color(65, 0, 8) * 0.82f;
+        Core.SpriteBatch.Draw(_pixelPanel, new Rectangle(0, 0, viewport.Width, inicioFundido), velo);
+        for (int y = inicioFundido; y < finFundido; y++)
+        {
+            float opacidad = 1f - (y - inicioFundido) / (float)(finFundido - inicioFundido);
+            Core.SpriteBatch.Draw(_pixelPanel, new Rectangle(0, y, viewport.Width, 1), velo * opacidad);
+        }
+        const string titulo = "ELIGE";
         Vector2 centro = new Vector2(viewport.Width, viewport.Height) * 0.5f;
+        Vector2 posicionTitulo = centro + new Vector2(0, -310f);
+        // Mismo pulso continuo y halo de doce muestras que el contador de orbes.
+        float pulso = 0.5f - 0.5f * MathF.Cos((float)_relojEstado * MathHelper.TwoPi * 1.35f);
+        float escalaTitulo = 2f * (1f + pulso * 0.025f);
+        Color rojoTitulo = Color.Lerp(new Color(230, 20, 35), new Color(255, 65, 65), pulso);
+        Vector2 origenTitulo = _fuenteRivales.MeasureString(titulo) * 0.5f;
+        float radioHalo = 3f + pulso * 3f;
+        Color brillo = new Color(230, 20, 35) * (0.04f + pulso * 0.18f);
+        for (int i = 0; i < 12; i++)
+        {
+            float angulo = i * MathHelper.TwoPi / 12f;
+            Vector2 desplazamiento = new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * radioHalo;
+            Core.SpriteBatch.DrawString(_fuenteRivales, titulo, posicionTitulo + desplazamiento,
+                brillo, 0f, origenTitulo, escalaTitulo, SpriteEffects.None, 0f);
+        }
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                if (x == 0 && y == 0)
+                {
+                    continue;
+                }
+                Core.SpriteBatch.DrawString(_fuenteRivales, titulo,
+                    posicionTitulo + new Vector2(x, y) * 3f, Color.Black,
+                    0f, origenTitulo, escalaTitulo, SpriteEffects.None, 0f);
+            }
+        }
         Core.SpriteBatch.DrawString(_fuenteRivales, titulo,
-            centro + new Vector2(0, -230f), new Color(255, 85, 95),
-            0f, _fuenteRivales.MeasureString(titulo) * 0.5f, 2f, SpriteEffects.None, 0f);
+            posicionTitulo, rojoTitulo,
+            0f, origenTitulo, escalaTitulo, SpriteEffects.None, 0f);
         for (int i = 0; i < _opcionesRivales.Count; i++)
         {
             string nombre = NombreRival(_opcionesRivales[i]);
-            Color color = new Color(255, 65, 80);
-            const float escala = 2.6f;
-            Vector2 posicion = centro + new Vector2(0, -80 + i * 140);
-            Core.SpriteBatch.DrawString(_fuenteRivales, nombre, posicion, color,
-                0f, _fuenteRivales.MeasureString(nombre) * 0.5f, escala, SpriteEffects.None, 0f);
+            Vector2 posicion = centro + new Vector2(0, PrimeraOpcionY + i * SeparacionOpciones);
+            DibujarOpcion(nombre, posicion, _brilloOpciones[i]);
         }
         const string opcionTiempo = "Menos tiempo";
-        Vector2 posicionTiempo = centro + new Vector2(0, 200);
-        Core.SpriteBatch.DrawString(_fuenteRivales, opcionTiempo, posicionTiempo, new Color(255, 65, 80),
-            0f, _fuenteRivales.MeasureString(opcionTiempo) * 0.5f, 2.6f, SpriteEffects.None, 0f);
-        string detalle = "-33% de tiempo: " + RelojNivel.Formatear(_duracionNivel * 0.67);
-        Core.SpriteBatch.DrawString(_fuenteRivales, detalle, posicionTiempo + new Vector2(0, 48),
-            new Color(255, 175, 180), 0f, _fuenteRivales.MeasureString(detalle) * 0.5f,
-            1f, SpriteEffects.None, 0f);
+        Vector2 posicionTiempo = centro + new Vector2(0, OpcionTiempoY);
+        DibujarOpcion(opcionTiempo, posicionTiempo, _brilloOpciones[2]);
     }
 
+    private void DibujarOpcion(string texto, Vector2 posicion, float brillo)
+    {
+        Vector2 origen = _fuenteRivales.MeasureString(texto) * 0.5f;
+        float escala = EscalaOpciones * (1f + brillo * 0.025f);
+        if (brillo > 0.01f)
+        {
+            for (int i = 0; i < 12; i++)
+            {
+                float angulo = i * MathHelper.TwoPi / 12f;
+                Vector2 halo = new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * 3f;
+                Core.SpriteBatch.DrawString(_fuenteRivales, texto, posicion + halo,
+                    new Color(255, 65, 80) * (brillo * 0.13f),
+                    0f, origen, escala, SpriteEffects.None, 0f);
+            }
+        }
+        Color color = Color.Lerp(new Color(255, 65, 80), new Color(255, 175, 170), brillo);
+        Core.SpriteBatch.DrawString(_fuenteRivales, texto, posicion, color,
+            0f, origen, escala, SpriteEffects.None, 0f);
+    }
     private void DibujarFondo(int estado, Rectangle destino, float opacidad)
     {
         int cuadro = (int)(_relojFondo * 8) % _cuadrosFondo[estado];
@@ -390,6 +508,10 @@ public sealed class Seleccion : Escena
 
     protected override void UnloadContent()
     {
+        for (int i = 0; i < _accionesAnimadas.Count; i++)
+        {
+            _accionesAnimadas[i].Dispose();
+        }
         _pixelPanel?.Dispose();
         foreach (SoundEffectInstance pista in _musicas) Core.Audio.ReleaseSoundEffect(pista);
         foreach (var item in _botones) item.boton.IsFocused = false;

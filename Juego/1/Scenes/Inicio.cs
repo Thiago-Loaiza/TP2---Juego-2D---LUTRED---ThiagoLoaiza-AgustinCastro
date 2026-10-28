@@ -4,6 +4,7 @@ using Gum.Forms.Controls;
 using Gum.Wireframe;
 using LutredLibrary;
 using LutredLibrary.Scenes;
+using LutredLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
@@ -16,9 +17,12 @@ public class Inicio : Escena
 {
     private readonly Action<Escena> _cambiarEscena;
     private BotonAnimado _jugar;
+    private AnimatedSprite _titulo;
     private SoundEffectInstance _musicaInicio;
     private Texture2D _hojaBoton;
     private Texture2D _hojaCreditos;
+    private Texture2D _hojaMusica;
+    private Texture2D _hojaMisc;
     private readonly List<BotonAnimado> _botones = new();
 
     public Inicio(Action<Escena> cambiarEscena)
@@ -35,6 +39,18 @@ public class Inicio : Escena
         Core.Audio.PlaySoundEffect(_musicaInicio);
         _hojaBoton = Content.Load<Texture2D>("Sprites/UI/Buttons/Button-Sheet");
         _hojaCreditos = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet");
+        _hojaMusica = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Music-Sheet");
+        _hojaMisc = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Misc-Sheet");
+        Texture2D hojaTitulo = Content.Load<Texture2D>("Sprites/UI/Titulo-Sheet");
+        var cuadrosTitulo = new List<TextureRegion>();
+        for (int i = 0; i < 16; i++)
+        {
+            cuadrosTitulo.Add(new TextureRegion(hojaTitulo, i * 800, 0, 800, 400));
+        }
+        _titulo = new AnimatedSprite(new Animation(cuadrosTitulo, TimeSpan.FromSeconds(0.12)))
+        {
+            Origin = new Vector2(400, 200)
+        };
     }
 
     public override void Initialize()
@@ -45,25 +61,32 @@ public class Inicio : Escena
         panel.Dock(Dock.Fill);
         panel.AddToRoot();
 
-        _jugar = AgregarBoton(panel, "Jugar", -150);
+        _jugar = AgregarBoton(panel, "Jugar", -50);
         _jugar.Click += Jugar;
-        AgregarBoton(panel, "Opciones", 0);
-        AgregarBoton(panel, "Records", 150);
+        AgregarBoton(panel, "Opciones", 85);
+        AgregarBoton(panel, "Records", 220);
 
-        var creditos = new BotonAnimado(_hojaCreditos, 50, 50, 9, TimeSpan.FromSeconds(0.12))
+        // Musica, Misc y Creditos, de izquierda a derecha, con 12 px de separacion.
+        AgregarBotonInferior(panel, _hojaMusica, -148);
+        AgregarBotonInferior(panel, _hojaMisc, -86);
+        AgregarBotonInferior(panel, _hojaCreditos, -24);
+        _jugar.IsFocused = true;
+    }
+
+    private void AgregarBotonInferior(Panel panel, Texture2D hoja, float x)
+    {
+        var boton = new BotonAnimado(hoja, 50, 50, 9, TimeSpan.FromSeconds(0.12))
         {
             Text = "",
             Width = 50,
             Height = 50
         };
-        creditos.Anchor(Anchor.BottomRight);
-        creditos.X = -24;
-        creditos.Y = -24;
-        panel.AddChild(creditos);
-        _botones.Add(creditos);
-        _jugar.IsFocused = true;
+        boton.Anchor(Anchor.BottomRight);
+        boton.X = x;
+        boton.Y = -24;
+        panel.AddChild(boton);
+        _botones.Add(boton);
     }
-
     private BotonAnimado AgregarBoton(Panel panel, string texto, float y)
     {
         var boton = new BotonAnimado(_hojaBoton, 400, 200, 9,
@@ -95,12 +118,20 @@ public class Inicio : Escena
 
     public override void Update(GameTime gameTime)
     {
+        _titulo.Update(gameTime);
         foreach (BotonAnimado boton in _botones) boton.Update(gameTime);
     }
 
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(Color.Black);
+        var viewport = Core.GraphicsDevice.Viewport;
+        float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
+        _titulo.Position = new Vector2(viewport.Width * 0.5f, viewport.Height * 0.5f - 210f * escala);
+        _titulo.Scale = new Vector2(0.85f * escala);
+        Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        _titulo.Draw(Core.SpriteBatch);
+        Core.SpriteBatch.End();
     }
 
     protected override void UnloadContent()

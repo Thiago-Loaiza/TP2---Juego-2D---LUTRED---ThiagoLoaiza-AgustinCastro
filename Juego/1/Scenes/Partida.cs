@@ -340,9 +340,9 @@ public class Partida : Escena
             _camara.Seguir(_sinner.Position);
             ResultadoZorak resultadoZorak = _zorak?.Update(gameTime,
                 Vector2.DistanceSquared(centroAnteriorSinner, _sinner.Colision.Centro) > 0.000001f,
-                _sinner.ParryIniciadoEsteFrame, _erosionBird?.AreaOcupada ?? Rectangle.Empty) ?? ResultadoZorak.Nada;
+                (_sinner.ParryIniciadoEsteFrame || _sinner.AutoparryActivo), _erosionBird?.AreaOcupada ?? Rectangle.Empty) ?? ResultadoZorak.Nada;
             if (resultadoZorak == ResultadoZorak.Parreado)
-                _sinner.ConfirmarParry();
+                _sinner.ConfirmarParry(automatico: !_sinner.ParryIniciadoEsteFrame);
             if (_zorak?.BloqueandoJugador == true)
             {
                 _sinner.DetenerSonidos();
@@ -357,7 +357,7 @@ public class Partida : Escena
                 duke.Update(gameTime, _sinner.Colision.Centro);
 
                 // Resolver cada parry antes del contacto, conservando el recorrido de cada Duke.
-                if (_sinner.HaciendoParry
+                if (_sinner.PuedeParrear
                     && _sinner.ColisionParry.SeCruzan(centroAnteriorSinner,
                         duke.Colision, posicionAnterior))
                 {
@@ -365,7 +365,7 @@ public class Partida : Escena
                     {
                         duke.Rebotar(_sinner.ColisionParry.Centro,
                             _sinner.ColisionParry.Radio, posicionAnterior);
-                        _sinner.ConfirmarParry();
+                        _sinner.ConfirmarParry(automatico: !_sinner.HaciendoParry);
                     }
                 }
                 else if (_sinner.Colision.SeCruzan(centroAnteriorSinner,
@@ -381,7 +381,7 @@ public class Partida : Escena
                 ?? ResultadoErosionBird.Nada;
             if (resultadoBird == ResultadoErosionBird.Parreado)
             {
-                _sinner.ConfirmarParry();
+                _sinner.ConfirmarParry(automatico: !_sinner.HaciendoParry);
             }
             else if (resultadoBird == ResultadoErosionBird.Golpe)
             {
@@ -392,11 +392,11 @@ public class Partida : Escena
             for (int i = 0; i < _jarJars.Count; i++)
             {
                 ResultadoJarJar resultadoJarJar = _jarJars[i].Update(gameTime,
-                    _sinner.Colision.Centro, _sinner.VelocidadActual, _sinner.HaciendoParry,
+                    _sinner.Colision.Centro, _sinner.VelocidadActual, _sinner.PuedeParrear,
                     areaVisible, _posicionesLibres);
                 if (resultadoJarJar == ResultadoJarJar.Parreado)
                 {
-                    _sinner.ConfirmarParry();
+                    _sinner.ConfirmarParry(automatico: !_sinner.HaciendoParry);
                 }
                 else if (resultadoJarJar == ResultadoJarJar.Golpe)
                 {
@@ -433,7 +433,7 @@ public class Partida : Escena
             return;
         }
 
-        if (!_sinner.HaciendoParry || _sinner.ParryIniciadoEsteFrame)
+        if (_sinner.AutoparryActivo || !_sinner.HaciendoParry || _sinner.ParryIniciadoEsteFrame)
         {
             _shameParreadoEsteParry = false;
         }
@@ -444,14 +444,14 @@ public class Partida : Escena
         if (!_shame.PuedeMatar) { return; }
         // Si la espera termino este frame, ignorar el recorrido de Sinner durante la gracia.
         Vector2 inicioSinner = podiaMatar ? centroAnteriorSinner : _sinner.Colision.Centro;
-        if (_sinner.HaciendoParry && _sinner.ColisionParry.SeCruzan(inicioSinner,
+        if (_sinner.PuedeParrear && _sinner.ColisionParry.SeCruzan(inicioSinner,
             _shame.Colision, posicionAnterior))
         {
             if (!_shameParreadoEsteParry && !estabaRebotando)
             {
                 _shame.Parrear(_sinner.ColisionParry.Centro,
                     _sinner.ColisionParry.Radio, posicionAnterior);
-                _sinner.ConfirmarParry();
+                _sinner.ConfirmarParry(automatico: !_sinner.HaciendoParry);
                 _shameParreadoEsteParry = true;
             }
         }
@@ -744,13 +744,16 @@ public class Partida : Escena
             }
         }
 
-        Vector2 direccion = objetivo - centroSinner;
-        if (direccion.LengthSquared() < 0.000001f)
-        {
-            direccion = -Vector2.UnitY;
-        }
         Viewport viewport = Core.GraphicsDevice.Viewport;
         Vector2 origen = Vector2.Transform(centroSinner, transformacion);
+        Vector2 objetivoPantalla = Vector2.Transform(objetivo, transformacion);
+        Vector2 direccion = objetivoPantalla - origen;
+        float distanciaObjetivo = direccion.Length();
+        if (distanciaObjetivo < 0.001f)
+        {
+            return;
+        }
+        direccion /= distanciaObjetivo;
         Vector2 pivote = new(_indicadorOrbes.Width * 0.5f, _indicadorOrbes.Height * 0.5f);
         // La diagonal deja el icono completo dentro de la pantalla incluso al girar.
         float margen = Math.Min(pivote.Length() + 16f,
@@ -759,8 +762,12 @@ public class Partida : Escena
             : ((direccion.X > 0f ? viewport.Width - margen : margen) - origen.X) / direccion.X;
         float hastaY = direccion.Y == 0f ? float.PositiveInfinity
             : ((direccion.Y > 0f ? viewport.Height - margen : margen) - origen.Y) / direccion.Y;
-        Vector2 posicion = origen + direccion * Math.Min(hastaX, hastaY);
-
+        float distanciaBorde = Math.Max(0f, Math.Min(hastaX, hastaY));
+        // Apuntar antes del orbe: cerca sigue al objetivo, lejos queda limitado al borde.
+        float separacionOrbe = Orbe.Radio + pivote.Length() + 8f;
+        float distanciaIndicador = MathHelper.Clamp(distanciaObjetivo - separacionOrbe,
+            Math.Min(64f, distanciaBorde), distanciaBorde);
+        Vector2 posicion = origen + direccion * distanciaIndicador;
         // El dibujo original apunta hacia arriba.
         float rotacion = MathF.Atan2(direccion.Y, direccion.X) + MathHelper.PiOver2;
         Core.SpriteBatch.Draw(_indicadorOrbes,

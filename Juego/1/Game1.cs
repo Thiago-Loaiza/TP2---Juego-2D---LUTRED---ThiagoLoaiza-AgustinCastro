@@ -17,6 +17,9 @@ public class Game1 : Core
     // Jugar abre mejoras y despues la pregunta; desactivar para el inicio habitual.
     public static bool EmpezarConMejoras = true;
 
+    // Permite ofrecer mejoras sin exigir su piso minimo; conserva requisitos y limites.
+    public static bool IgnorarNivelMinimoMejoras = false;
+
     private Escena _escenaActual;
     private Escena _escenaPendiente;
 
