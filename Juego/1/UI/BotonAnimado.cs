@@ -7,6 +7,7 @@ using Gum.Forms.DefaultVisuals.V3;
 using Gum.Managers;
 using Gum.Wireframe;
 using LutredLibrary.Graphics;
+using LutredLibrary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,9 +17,12 @@ namespace _1.UI;
 
 public sealed class BotonAnimado : Button, IDisposable
 {
+    private static readonly List<BotonAnimado> BotonesConTexto = new();
+    private readonly SpriteFont _fuenteSuave;
     private readonly AnimatedSprite _animacion;
     private readonly SpriteRuntime _imagen;
     private readonly TextRuntime _etiqueta;
+    private Color _colorTexto;
     private bool _cursorEncima;
     private bool _usarFoco;
     private bool _disposed;
@@ -26,6 +30,7 @@ public sealed class BotonAnimado : Button, IDisposable
 
     public Color ColorNormal { get; set; } = new Color(155, 155, 155);
     public Color ColorIluminado { get; set; } = Color.White;
+    public float Opacidad { get; set; } = 1f;
     public bool Iluminado => IsEnabled && (_cursorEncima || (IsFocused && _usarFoco));
 
     public BotonAnimado(Texture2D hoja, int anchoCuadro, int altoCuadro,
@@ -71,6 +76,11 @@ public sealed class BotonAnimado : Button, IDisposable
         _etiqueta.UseCustomFont = true;
         _etiqueta.CustomFontFile = "Fonts/PMingLiU Regular/Font.fnt";
         _etiqueta.FontScale = 1.5f;
+        // Conservamos la etiqueta para medir su tamano y posicion originales.
+        // Sus letras se dibujan con la fuente de alta resolucion al terminar Gum.
+        _etiqueta.Alpha = 0;
+        _fuenteSuave = Core.Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
+        BotonesConTexto.Add(this);
         Width = area.Width;
         Height = area.Height;
         _mouseAnterior = Mouse.GetState();
@@ -124,8 +134,30 @@ public sealed class BotonAnimado : Button, IDisposable
         _imagen.TextureHeight = cuadro.Height;
         Color color = !IsEnabled ? ColorNormal * 0.5f
             : Iluminado ? ColorIluminado : ColorNormal;
-        _imagen.Color = color;
-        _etiqueta.Color = color;
+        _imagen.Color = color * Opacidad;
+        _colorTexto = color * Opacidad;
+        _etiqueta.Alpha = 0;
+    }
+
+    public static void DibujarTextosSuaves()
+    {
+        Core.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp);
+        foreach (BotonAnimado boton in BotonesConTexto)
+        {
+            if (boton._disposed || !boton._etiqueta.AbsoluteVisible || string.IsNullOrEmpty(boton.Text))
+                continue;
+            TextRuntime etiqueta = boton._etiqueta;
+            etiqueta.BitmapFont.GetRequiredWidthAndHeight(new[] { boton.Text }, out int ancho, out int alto);
+            Vector2 medida = boton._fuenteSuave.MeasureString(boton.Text);
+            if (medida.X <= 0 || medida.Y <= 0) continue;
+            // Ajustar a las medidas anteriores mantiene el tamano y la ubicacion del texto.
+            Vector2 escala = new(ancho * etiqueta.FontScale / medida.X, alto * etiqueta.FontScale / medida.Y);
+            Vector2 centro = new(etiqueta.AbsoluteLeft + etiqueta.GetAbsoluteWidth() * 0.5f,
+                etiqueta.AbsoluteTop + etiqueta.GetAbsoluteHeight() * 0.5f);
+            Core.SpriteBatch.DrawString(boton._fuenteSuave, boton.Text, centro,
+                boton._colorTexto, 0f, medida * 0.5f, escala, SpriteEffects.None, 0f);
+        }
+        Core.SpriteBatch.End();
     }
 
     public void Dispose()
@@ -135,6 +167,7 @@ public sealed class BotonAnimado : Button, IDisposable
         Visual.RollOff -= Salir;
         IsFocused = false;
         IsEnabled = false;
+        BotonesConTexto.Remove(this);
         _disposed = true;
     }
 }

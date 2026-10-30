@@ -29,6 +29,7 @@ public class Sinner
     private AnimatedSprite _efectoParry;
     private AnimatedSprite _auraDominio;
     private KeyboardState _tecladoAnterior;
+    private bool _correrAlternado;
     private bool _haciendoParry;
     private const double SegundosPorFrameParry = 0.05;
     private const float Velocidad = 220f;
@@ -204,6 +205,12 @@ public class Sinner
 
         bool parryPresionado = teclado.IsKeyDown(Keys.F)
             && _tecladoAnterior.IsKeyUp(Keys.F);
+        bool shiftPresionado = (teclado.IsKeyDown(Keys.LeftShift) && _tecladoAnterior.IsKeyUp(Keys.LeftShift))
+            || (teclado.IsKeyDown(Keys.RightShift) && _tecladoAnterior.IsKeyUp(Keys.RightShift));
+        if (OpcionesJuego.AlternarCorrer && shiftPresionado)
+            _correrAlternado = !_correrAlternado;
+        if (!OpcionesJuego.AlternarCorrer)
+            _correrAlternado = false;
         _tecladoAnterior = teclado;
 
         if (_haciendoParry && _sprite.IsFinished)
@@ -237,7 +244,9 @@ public class Sinner
             direccion.Normalize();
 
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        bool corriendo = teclado.IsKeyDown(Keys.LeftShift);
+        bool corriendo = OpcionesJuego.AlternarCorrer
+            ? _correrAlternado
+            : teclado.IsKeyDown(Keys.LeftShift) || teclado.IsKeyDown(Keys.RightShift);
         if (direccion != _direccionCaliz || !corriendo || direccion == Vector2.Zero)
         {
             _tiempoCaliz = 0f;
@@ -379,4 +388,6 @@ public class Sinner
         Core.Audio.StopSoundEffect(_sonidoParry);
         Core.Audio.StopSoundEffect(_sonidoParryExitoso);
     }
+
+    public void SincronizarEntrada() => _tecladoAnterior = Keyboard.GetState();
 }

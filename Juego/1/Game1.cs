@@ -22,6 +22,8 @@ public class Game1 : Core
 
     private Escena _escenaActual;
     private Escena _escenaPendiente;
+    private bool _salirPresionadoAnterior;
+    private _1.UI.ConfiguracionPausa _configuracionPausa;
 
     public Game1() : base("LUTRED", 1280, 720, false)
     {
@@ -54,24 +56,42 @@ public class Game1 : Core
             return;
 
         // el cambio se aplica despues de procesar la entrada para evitar modificar la interfaz durante el clic.
+        _configuracionPausa?.Dispose();
+        _configuracionPausa = null;
         _escenaActual?.Dispose();
         GumService.Default.Root.Children.Clear();
         _escenaActual = _escenaPendiente;
         _escenaPendiente = null;
         _escenaActual.Initialize();
+        if (_escenaActual is Partida partida)
+            _configuracionPausa = new _1.UI.ConfiguracionPausa(partida.SincronizarEntrada);
+        else if (_escenaActual is Mejoras mejoras)
+            _configuracionPausa = new _1.UI.ConfiguracionPausa(mejoras.SincronizarEntrada);
     }
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
-            || Keyboard.GetState().IsKeyDown(Keys.Escape))
+        bool salirPresionado = GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
+            || Keyboard.GetState().IsKeyDown(Keys.Escape);
+        bool salirPulsado = salirPresionado && !_salirPresionadoAnterior;
+        _salirPresionadoAnterior = salirPresionado;
+        bool bloquearEscena = _configuracionPausa?.Update(gameTime, salirPulsado) == true;
+        if (salirPulsado && !bloquearEscena)
         {
-            Exit();
-            return;
+            if (_escenaActual is Inicio inicio && (inicio.OpcionesAbiertas || inicio.EnTransicion))
+                inicio.CerrarOpciones();
+            else
+            {
+                Exit();
+                return;
+            }
         }
 
-        _escenaActual.Update(gameTime);
-        GumService.Default.Update(gameTime);
+        if (!bloquearEscena)
+        {
+            _escenaActual.Update(gameTime);
+            GumService.Default.Update(gameTime);
+        }
         AplicarCambioDeEscena();
         base.Update(gameTime);
     }
@@ -80,11 +100,15 @@ public class Game1 : Core
     {
         _escenaActual.Draw(gameTime);
         GumService.Default.Draw();
+        _1.UI.BotonAnimado.DibujarTextosSuaves();
+        _configuracionPausa?.Draw();
         base.Draw(gameTime);
     }
 
     protected override void UnloadContent()
     {
+        _configuracionPausa?.Dispose();
+        _configuracionPausa = null;
         _escenaActual?.Dispose();
         _escenaPendiente?.Dispose();
         GumService.Default.Root.Children.Clear();

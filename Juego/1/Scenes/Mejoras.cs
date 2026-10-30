@@ -14,6 +14,11 @@ namespace _1.Scenes;
 // Eleccion de mejoras y descripcion progresiva; el estado se conserva entre pisos.
 public sealed class Mejoras : Escena
 {
+    public void SincronizarEntrada()
+    {
+        _tecladoAnterior = Keyboard.GetState();
+        _ratonAnterior = Mouse.GetState();
+    }
     private static readonly DefinicionMejora[] Catalogo = EstadoMejoras.Catalogo;
     private readonly EstadoMejoras _mejoras;
     private readonly int _piso;

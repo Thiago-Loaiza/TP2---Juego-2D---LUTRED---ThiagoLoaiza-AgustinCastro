@@ -20,6 +20,7 @@ namespace _1.Scenes;
 
 public class Partida : Escena
 {
+    public void SincronizarEntrada() => _sinner?.SincronizarEntrada();
     private const int TotalOrbes = 10;
     private const int CantidadLayers = 8;
     private const int CantidadTransiciones = 9;

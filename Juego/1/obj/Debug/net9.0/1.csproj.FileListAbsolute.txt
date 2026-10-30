@@ -647,3 +647,8 @@ C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCa
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Pharses\Upgrades\MejorasFrase3-Sheet.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\UI\Titulo-Sheet.xnb
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\OrbesEfectivos.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Fonts\PMingLiU Regular\Opciones.xnb
+c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Pharses\Misc\Credits\Sprite-AC-Sheet.xnb
+c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Pharses\Misc\Credits\TL-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\UI\Buttons\ON-OFF-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\UI\Cuadro-Sheet.xnb
