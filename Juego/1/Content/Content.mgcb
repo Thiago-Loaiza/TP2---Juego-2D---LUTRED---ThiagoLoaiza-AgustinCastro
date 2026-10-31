@@ -20,6 +20,15 @@
 /processorParam:Version=3.8.5.1
 /build:And the rest was silence - Grace OST.mp3
 
+#begin Backgrounds/LUTRED_ESCAPE.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Backgrounds/LUTRED_ESCAPE.png
+
 #begin Backgrounds/Selection/Atlas/ContinuarV2-0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -98,6 +107,24 @@
 /processorParam:Version=3.8.5.1
 /build:Backgrounds/Selection/Atlas/ElegirV2-1.png
 
+#begin Effects/Escombros2-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Effects/Escombros2-Sheet.png
+
+#begin Effects/Escombros-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Effects/Escombros-Sheet.png
+
 #begin Effects/EstrellaParry-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -110,6 +137,15 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Effects/EstrellaParry-Sheet.png
+
+#begin Effects/RangoMejor-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Effects/RangoMejor-Sheet.png
 
 #begin Effects/TintaAntigua.fx
 /importer:EffectImporter

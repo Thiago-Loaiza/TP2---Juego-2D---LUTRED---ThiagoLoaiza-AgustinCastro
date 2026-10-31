@@ -165,7 +165,7 @@ public sealed class Seleccion : Escena
         AgregarAccionAnimada(panel, "Si...", "Si", 390,
             () => CambiarEstado(Estado.Continuar));
         AgregarAccionAnimada(panel, "Si, estoy seguro", "SiEstoySeguro", -390,
-            () => _cambiarEscena(new Inicio(_cambiarEscena)));
+            Escapar);
         AgregarAccionAnimada(panel, "Espera...", "Espera", 390,
             () => CambiarEstado(Estado.Neutral));
         for (int i = 0; i < _opcionesRivales.Count; i++)
@@ -189,6 +189,14 @@ public sealed class Seleccion : Escena
         _destello.Visible = false;
         panel.Visual.Children.Add(_destello);
         ActualizarOpciones();
+    }
+
+    private void Escapar()
+    {
+        if (_entrando || _estado != Estado.Escapar) return;
+        _entrando = true;
+        ActualizarOpciones();
+        _cambiarEscena(new Salvacion(_cambiarEscena, _mejoras.Puntaje.Total));
     }
 
     private void AgregarBoton(Panel panel, string texto, float x, float y, Action accion)

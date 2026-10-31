@@ -26,6 +26,7 @@ public sealed class EstadoMejoras
     };
     private readonly Dictionary<string, int> _acumulaciones = new();
     public EstadoDominio Dominio { get; } = new();
+    public EstadoPuntaje Puntaje { get; } = new();
     public HashSet<string> DescripcionesVistas { get; } = new();
     public int Cantidad(string id) => _acumulaciones.TryGetValue(id, out int valor) ? valor : 0;
     public float MultiplicadorVelocidad => 1f + Cantidad("PiezAgiles") * 0.3f

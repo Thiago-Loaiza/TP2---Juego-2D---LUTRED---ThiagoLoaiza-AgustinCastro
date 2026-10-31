@@ -14,6 +14,7 @@ $entries = @{}
 foreach ($section in $sections | Select-Object -Skip 1) {
     $path = (($section -split '\r?\n', 2)[0]).Replace('\', '/')
     if ($path -match '(^|/)(bin|obj)/' -or $path -match '\.(mgcb|xnb|mgcontent|mgstats)$' -or
+        $path -in @('Backgrounds/REPRIEVE_end.gif', 'Backgrounds/Escape/Manos.png') -or
         $path -match '^Backgrounds/Selection/(ElegirV2|DudaV2|ContinuarV2)-Sheet\.png$') {
         continue
     }
@@ -38,6 +39,7 @@ $importers = @{
 foreach ($file in Get-ChildItem -LiteralPath $contentRoot -Recurse -File) {
     $path = $file.FullName.Substring($contentRoot.Length + 1).Replace('\', '/')
     if ($path -match '(^|/)(bin|obj)/' -or $entries.ContainsKey($path) -or
+        $path -in @('Backgrounds/REPRIEVE_end.gif', 'Backgrounds/Escape/Manos.png') -or
         $path -match '^Backgrounds/Selection/(ElegirV2|DudaV2|ContinuarV2)-Sheet\.png$') {
         continue
     }

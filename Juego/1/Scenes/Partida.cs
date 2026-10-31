@@ -26,6 +26,8 @@ public class Partida : Escena
     private const int CantidadTransiciones = 9;
     private readonly Action<Escena> _cambiarEscena;
     private readonly EstadoMejoras _mejoras;
+    private EstadoPuntaje Puntaje => _mejoras.Puntaje;
+    private MarcadorPuntaje _marcador;
     private readonly int _numeroNivel;
     private readonly bool _transicionReproducida;
     private readonly int _cantidadDuke;
@@ -87,6 +89,7 @@ public class Partida : Escena
     private readonly List<JarJar> _jarJars = new();
     private Zorak _zorak;
     private ErosionBird _erosionBird;
+    private int _tandaLanzas;
     private readonly Camara2D _camara = new();
     private readonly GeneradorMapa _generador = new();
     private readonly List<EstructuraSolida> _estructuras = new();
@@ -186,6 +189,8 @@ public class Partida : Escena
     protected override void LoadContent()
     {
         _fuenteContador = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        Puntaje.ComenzarNivel();
+        _marcador = new MarcadorPuntaje(Content, Puntaje);
         _indicadorOrbes = Content.Load<Texture2D>("Sprites/Misc/Orbs/IndicadorPuntos");
         _animacionOrbe = Orbe.CrearAnimacion(
             Content.Load<Texture2D>("Sprites/Misc/Orbs/Punto-Sheet"));
@@ -248,6 +253,7 @@ public class Partida : Escena
 
     protected override void UnloadContent()
     {
+        _marcador?.Dispose();
         _sinner?.UnloadContent();
         _shame?.UnloadContent();
         Core.Audio.ReleaseSoundEffect(_avisoShame);
@@ -300,6 +306,8 @@ public class Partida : Escena
             return;
         }
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (!_derrotado && _faseEntrada == FaseEntrada.Jugando) Puntaje.Actualizar(segundos);
+        _marcador.Update(segundos);
         _relojContador = (_relojContador + segundos) % 100f;
         _temblorContadorRestante = Math.Max(0f, _temblorContadorRestante - segundos);
         for (int i = 0; i < _orbes.Count; i++)
@@ -343,7 +351,8 @@ public class Partida : Escena
                 Vector2.DistanceSquared(centroAnteriorSinner, _sinner.Colision.Centro) > 0.000001f,
                 (_sinner.ParryIniciadoEsteFrame || _sinner.AutoparryActivo), _erosionBird?.AreaOcupada ?? Rectangle.Empty) ?? ResultadoZorak.Nada;
             if (resultadoZorak == ResultadoZorak.Parreado)
-                _sinner.ConfirmarParry(automatico: !_sinner.ParryIniciadoEsteFrame);
+                RegistrarParry(TipoParry.Zorak, _zorak, !_sinner.ParryIniciadoEsteFrame,
+                    _zorak.ParryUltimoInstante);
             if (_zorak?.BloqueandoJugador == true)
             {
                 _sinner.DetenerSonidos();
@@ -366,7 +375,7 @@ public class Partida : Escena
                     {
                         duke.Rebotar(_sinner.ColisionParry.Centro,
                             _sinner.ColisionParry.Radio, posicionAnterior);
-                        _sinner.ConfirmarParry(automatico: !_sinner.HaciendoParry);
+                        RegistrarParry(TipoParry.Duck, duke, !_sinner.HaciendoParry);
                     }
                 }
                 else if (_sinner.Colision.SeCruzan(centroAnteriorSinner,
@@ -380,9 +389,17 @@ public class Partida : Escena
             ResultadoErosionBird resultadoBird = _erosionBird?.Update(gameTime, _sinner,
                 centroAnteriorSinner, Core.GraphicsDevice.Viewport, _zorak?.AreaOcupada ?? Rectangle.Empty)
                 ?? ResultadoErosionBird.Nada;
+            if (_erosionBird != null && _tandaLanzas != _erosionBird.TandaActual)
+            {
+                _tandaLanzas = _erosionBird.TandaActual;
+                Puntaje.ComenzarTandaLanzas();
+            }
             if (resultadoBird == ResultadoErosionBird.Parreado)
             {
-                _sinner.ConfirmarParry(automatico: !_sinner.HaciendoParry);
+                bool automatico = !_sinner.HaciendoParry;
+                for (int i = 0; i < _erosionBird.ParrysEsteFrame; i++)
+                    RegistrarParry(TipoParry.Lanza, _erosionBird, automatico);
+                if (_erosionBird.TandaParreadaEsteFrame) Puntaje.RegistrarBadBird();
             }
             else if (resultadoBird == ResultadoErosionBird.Golpe)
             {
@@ -397,7 +414,7 @@ public class Partida : Escena
                     areaVisible, _posicionesLibres);
                 if (resultadoJarJar == ResultadoJarJar.Parreado)
                 {
-                    _sinner.ConfirmarParry(automatico: !_sinner.HaciendoParry);
+                    RegistrarParry(TipoParry.JarJar, _jarJars[i], !_sinner.HaciendoParry);
                 }
                 else if (resultadoJarJar == ResultadoJarJar.Golpe)
                 {
@@ -450,9 +467,10 @@ public class Partida : Escena
         {
             if (!_shameParreadoEsteParry && !estabaRebotando)
             {
+                bool ultimoInstante = EsParryShameUltimoInstante(inicioSinner, posicionAnterior);
                 _shame.Parrear(_sinner.ColisionParry.Centro,
                     _sinner.ColisionParry.Radio, posicionAnterior);
-                _sinner.ConfirmarParry(automatico: !_sinner.HaciendoParry);
+                RegistrarParry(TipoParry.Shame, _shame, !_sinner.HaciendoParry, ultimoInstante);
                 _shameParreadoEsteParry = true;
             }
         }
@@ -460,6 +478,22 @@ public class Partida : Escena
         {
             Perder();
         }
+    }
+
+    private void RegistrarParry(TipoParry tipo, object enemigo, bool automatico, bool ultimoInstante = false)
+    {
+        _sinner.ConfirmarParry(automatico);
+        Puntaje.RegistrarParry(tipo, enemigo, automatico, ultimoInstante);
+    }
+
+    private bool EsParryShameUltimoInstante(Vector2 inicioSinner, Vector2 inicioShame)
+    {
+        // Usa la distancia previa al movimiento: un SHAME rapido no convierte un parry temprano
+        // en uno tardio por atravesar todo el margen durante un solo frame.
+        float separacion = Vector2.Distance(inicioSinner, inicioShame)
+            - _sinner.Colision.Radio - _shame.Colision.Radio;
+        // Los ultimos 5 pixeles entre las colisiones, antes del contacto mortal.
+        return separacion > 0f && separacion <= 5f;
     }
 
     private void RecogerOrbes(Vector2 centroAnterior)
@@ -472,6 +506,7 @@ public class Partida : Escena
             {
                 _orbes.RemoveAt(i);
                 _orbesRecogidos++;
+                Puntaje.Sumar("BEACON", 200);
                 _temblorContadorRestante = DuracionTemblorContador;
             }
         }
@@ -488,6 +523,7 @@ public class Partida : Escena
 
     private void Perder()
     {
+        Puntaje.Perder();
         _derrotado = true;
         Core.Audio.StopSong();
         Core.Audio.StopSoundEffect(_musicaNivel);
@@ -631,6 +667,7 @@ public class Partida : Escena
             DibujarIndicadorOrbes(transformacion);
             DibujarContadorOrbes();
             DibujarTemporizador();
+            _marcador.Draw(Core.GraphicsDevice.Viewport);
             Core.SpriteBatch.End();
 
             // La capa negra cubre tambien el borde y Zorak queda encima de todo.

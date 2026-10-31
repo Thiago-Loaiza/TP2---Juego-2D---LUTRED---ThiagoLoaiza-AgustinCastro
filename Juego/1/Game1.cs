@@ -79,7 +79,7 @@ public class Game1 : Core
         bool salirPulsado = salirPresionado && !_salirPresionadoAnterior;
         _salirPresionadoAnterior = salirPresionado;
         bool bloquearEscena = _configuracionPausa?.Update(gameTime, salirPulsado) == true;
-        if (salirPulsado && !bloquearEscena)
+        if (salirPulsado && !bloquearEscena && _escenaActual is not Salvacion)
         {
             if (_escenaActual is Inicio inicio && (inicio.OpcionesAbiertas || inicio.EnTransicion))
                 inicio.CerrarOpciones();

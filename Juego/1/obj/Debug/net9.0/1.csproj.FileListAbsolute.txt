@@ -33,7 +33,6 @@ c:\Users\alumno.ET26\Desktop\Juego\1\obj\Debug\net9.0\refint\1.dll
 c:\Users\alumno.ET26\Desktop\Juego\1\obj\Debug\net9.0\1.pdb
 c:\Users\alumno.ET26\Desktop\Juego\1\obj\Debug\net9.0\1.genruntimeconfig.cache
 c:\Users\alumno.ET26\Desktop\Juego\1\obj\Debug\net9.0\ref\1.dll
-c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\obj\Debug\net9.0\mgcb.tool.restore
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\obj\Debug\net9.0\1.dll
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\obj\Debug\net9.0\refint\1.dll
 c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\obj\Debug\net9.0\1.pdb
@@ -1498,3 +1497,7 @@ C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e42
 C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\1.runtimeconfig.json
 C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\1.dll
 C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\1.pdb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Backgrounds\LUTRED_ESCAPE.xnb
+c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Effects\Escombros-Sheet.xnb
+c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Effects\Escombros2-Sheet.xnb
+c:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Effects\RangoMejor-Sheet.xnb

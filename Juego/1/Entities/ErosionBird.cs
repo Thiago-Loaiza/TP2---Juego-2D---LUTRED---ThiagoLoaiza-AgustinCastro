@@ -53,6 +53,11 @@ public sealed class ErosionBird
     private Vector2 _posicion;
     private Vector2 _centroPortales;
     private float _seguimientoRestante = float.PositiveInfinity;
+    private int _lanzasParreadasTanda;
+    private int _totalLanzasTanda;
+    public int ParrysEsteFrame { get; private set; }
+    public bool TandaParreadaEsteFrame { get; private set; }
+    public int TandaActual { get; private set; }
 
     // El ave vive en coordenadas de pantalla; las lanzas viven en el mapa.
     public Rectangle AreaOcupada => _estado == Estado.Oculto ? Rectangle.Empty
@@ -96,6 +101,8 @@ public sealed class ErosionBird
     public ResultadoErosionBird Update(GameTime gameTime, Sinner sinner,
         Vector2 centroAnterior, Viewport viewport, Rectangle ocupado)
     {
+        ParrysEsteFrame = 0;
+        TandaParreadaEsteFrame = false;
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         _tiempo += dt;
         switch (_estado)
@@ -125,6 +132,9 @@ public sealed class ErosionBird
                             PosicionAnterior = _centroPortales + radial * RadioPortales,
                             Direccion = -radial });
                     }
+                    _lanzasParreadasTanda = 0;
+                    _totalLanzasTanda = _lanzas.Count;
+                    TandaActual++;
                     Sonar("SpawnerLanzas");
                     CambiarEstado(Estado.Preparando);
                 }
@@ -193,6 +203,10 @@ public sealed class ErosionBird
                     lanza.Estado = EstadoLanza.Rota;
                     lanza.Tiempo = 0f;
                     parreado = true;
+                    ParrysEsteFrame++;
+                    _lanzasParreadasTanda++;
+                    if (_lanzasParreadasTanda == _totalLanzasTanda)
+                        TandaParreadaEsteFrame = true;
                 }
                 else if (Toca(lanza, anterior, actual, sinner.Colision, centroAnterior))
                 {

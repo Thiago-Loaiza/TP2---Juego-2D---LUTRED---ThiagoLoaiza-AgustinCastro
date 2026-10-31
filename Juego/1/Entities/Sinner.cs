@@ -50,7 +50,7 @@ public class Sinner
     public bool ParryIniciadoEsteFrame { get; private set; }
     public Vector2 VelocidadActual => _velocidadActual;
     public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
-    public CirculoColision ColisionParry => new(Colision.Centro, 28f);
+    public CirculoColision ColisionParry => new(Colision.Centro, 35f);
 
     private readonly Dictionary<SinnerAnimation, Animation>
         _animaciones = new();

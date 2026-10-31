@@ -52,6 +52,7 @@ public class Zorak
     private float _tiempoAviso;
     private bool _movimientoDetectado;
     private Vector2 _posicion;
+    public bool ParryUltimoInstante { get; private set; }
 
     // La derrota se entrega al terminar la animacion para que el ataque sea visible.
     public bool BloqueandoJugador => _estado == Estado.Atacando;
@@ -102,6 +103,7 @@ public class Zorak
 
     public ResultadoZorak Update(GameTime gameTime, bool jugadorMoviendose, bool parryIniciado, Rectangle ocupado = default)
     {
+        ParryUltimoInstante = false;
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
         _hastaAparicion -= segundos;
         switch (_estado)
@@ -157,6 +159,8 @@ public class Zorak
     {
         if (parryIniciado && _tiempoMirada <= VentanaParry)
         {
+            ParryUltimoInstante = (_movimientoDetectado || movimiento)
+                && _tiempoMirada >= VentanaParry - 0.2f;
             CambiarEstado(Estado.Parreado, _parry);
             return ResultadoZorak.Parreado;
         }
