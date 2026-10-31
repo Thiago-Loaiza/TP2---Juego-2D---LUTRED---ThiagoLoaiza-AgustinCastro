@@ -9,6 +9,18 @@ public sealed class EstadoDominio
     public double TiempoActivo { get; private set; }
     public double RecargaRestante { get; private set; }
     public bool Activo => TiempoActivo > 0;
+    public float OpacidadAura
+    {
+        get
+        {
+            if (!Activo) return 0f;
+            if (TiempoActivo > 2.0) return 1f;
+            double transcurrido = 2.0 - TiempoActivo;
+            // El parpadeo se acelera al agotarse; el autoparry sigue funcionando durante el aviso.
+            double fase = (2.0 * transcurrido + transcurrido * transcurrido) * Math.PI * 2.0;
+            return (float)(0.2 + 0.8 * (0.5 + 0.5 * Math.Cos(fase)));
+        }
+    }
     private bool _manualEnCurso;
     private bool _manualExitoso;
     private bool _ignorarIntento;
@@ -55,7 +67,7 @@ public sealed class EstadoDominio
         if (Cadena >= (nivel >= 2 ? 2 : 3))
         {
             Cadena = 0;
-            TiempoActivo = nivel >= 2 ? 10.0 : 5.0;
+            TiempoActivo = nivel >= 2 ? 12.0 : 5.0;
             RecargaRestante = 15.0;
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LutredLibrary;
 using LutredLibrary.Graphics;
 using LutredLibrary.Scenes;
+using _1.Progression;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +21,9 @@ public sealed class Salvacion : Escena
     private const float InicioSalida = InicioFrase + DuracionFrase;
     private readonly Action<Escena> _cambiarEscena;
     private readonly string _puntaje;
+    private readonly int _puntajeFinal;
+    private bool _registroProcesado;
+    private string _mensajeRecord;
     private readonly string _frase = Random.Shared.Next(2) == 0
         ? "Al final pudiste.\nSabía que lo lograrías."
         : "Tuve fe en ti,\npero tú tuviste mucha más.";
@@ -32,7 +36,8 @@ public sealed class Salvacion : Escena
     public Salvacion(Action<Escena> cambiarEscena, int puntaje = 0)
     {
         _cambiarEscena = cambiarEscena;
-        _puntaje = Math.Clamp(puntaje, 0, _1.Progression.EstadoPuntaje.PuntajeMaximo).ToString("D8");
+        _puntajeFinal = Math.Clamp(puntaje, 0, EstadoPuntaje.PuntajeMaximo);
+        _puntaje = _puntajeFinal.ToString("D8");
     }
 
     protected override void LoadContent()
@@ -60,6 +65,17 @@ public sealed class Salvacion : Escena
         if (_terminado) return;
         if (_tiempo < DuracionManos) _manos.Update(gameTime);
         _tiempo += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (!_registroProcesado && _tiempo >= InicioFrase)
+        {
+            _registroProcesado = true;
+            ResultadoRegistro resultado = new HistorialRecords().GuardarSiSupera(_puntajeFinal);
+            _mensajeRecord = resultado switch
+            {
+                ResultadoRegistro.Guardado => "NUEVO RÉCORD",
+                ResultadoRegistro.Error => "NO SE PUDO GUARDAR EL RÉCORD",
+                _ => null
+            };
+        }
         float salida = Math.Clamp((_tiempo - InicioSalida) / DuracionSalida, 0f, 1f);
         Core.Audio.SetVolume(_audio, 1f - salida);
         if (_tiempo >= InicioSalida + DuracionSalida + DuracionNegro)
@@ -160,6 +176,13 @@ public sealed class Salvacion : Escena
         _1.UI.MarcadorPuntaje.DibujarTexto(_fuente, puntaje,
             centro + new Vector2(-_fuente.MeasureString(puntaje).X * escalaPuntaje * 0.5f, 110f * escala),
             escalaPuntaje, opacidad * entradaPuntaje);
+        if (_mensajeRecord != null)
+        {
+            float tamanoMensaje = Math.Min(0.9f * escala, ancho * 0.85f / _fuente.MeasureString(_mensajeRecord).X);
+            _1.UI.MarcadorPuntaje.DibujarTexto(_fuente, _mensajeRecord,
+                centro + new Vector2(-_fuente.MeasureString(_mensajeRecord).X * tamanoMensaje * 0.5f, 155f * escala),
+                tamanoMensaje, opacidad * entradaPuntaje);
+        }
         string[] lineas = _frase.Split('\n');
         int indiceLetra = 0;
         float retrasoLetra = 1.6f / Math.Max(1, _frase.Length - 1);

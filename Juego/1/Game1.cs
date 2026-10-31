@@ -85,6 +85,8 @@ public class Game1 : Core
                 inicio.CerrarOpciones();
             else if (_escenaActual is Creditos creditos)
                 creditos.VolverAlInicio();
+            else if (_escenaActual is Records records)
+                records.VolverAlInicio();
             else
             {
                 Exit();

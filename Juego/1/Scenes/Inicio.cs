@@ -19,6 +19,7 @@ public class Inicio : Escena
     private readonly Action<Escena> _cambiarEscena;
     private BotonAnimado _jugar;
     private BotonAnimado _opciones;
+    private BotonAnimado _records;
     private ListaOpciones _listaOpciones;
     private BotonAnimado _botonMusica;
     private BotonAnimado _botonCreditos;
@@ -32,6 +33,7 @@ public class Inicio : Escena
     private bool _entrando;
     private bool _destinoOpciones;
     private bool _abrirCreditos;
+    private bool _abrirRecords;
     private float _tiempoTransicion;
     private float _opacidadInterfaz = 1f;
     private float _desplazamientoInterfaz;
@@ -97,7 +99,8 @@ public class Inicio : Escena
         _jugar.Click += Jugar;
         _opciones = AgregarBoton(panel, "Opciones", 85);
         _opciones.Click += AbrirOpciones;
-        AgregarBoton(panel, "Records", 220);
+        _records = AgregarBoton(panel, "Records", 220);
+        _records.Click += AbrirRecords;
 
         // Musica, Misc y Creditos, de izquierda a derecha, con 12 px de separacion.
         _botonMusica = AgregarBotonInferior(panel,
@@ -139,6 +142,16 @@ public class Inicio : Escena
     }
 
     private void Volver(object sender, EventArgs args) => CerrarOpciones();
+
+    private void AbrirRecords(object sender, EventArgs args)
+    {
+        if (_enTransicion) return;
+        _abrirRecords = true;
+        _enTransicion = true;
+        _entrando = false;
+        _tiempoTransicion = 0f;
+        foreach (BotonAnimado boton in _botones) boton.IsFocused = false;
+    }
 
     private void CambiarMusica(object sender, EventArgs args)
     {
@@ -216,6 +229,11 @@ public class Inicio : Escena
             _tiempoTransicion += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (_tiempoTransicion >= DuracionFase)
             {
+                if (_abrirRecords)
+                {
+                    _cambiarEscena(new Records(_cambiarEscena));
+                    return;
+                }
                 if (_abrirCreditos)
                 {
                     _cambiarEscena(new Creditos(_cambiarEscena));
@@ -336,6 +354,7 @@ public class Inicio : Escena
         if (_jugar != null)
             _jugar.Click -= Jugar;
         if (_opciones != null) _opciones.Click -= AbrirOpciones;
+        if (_records != null) _records.Click -= AbrirRecords;
         _listaOpciones?.Dispose();
         if (_botonMusica != null) _botonMusica.Click -= CambiarMusica;
         if (_botonCreditos != null) _botonCreditos.Click -= AbrirCreditos;

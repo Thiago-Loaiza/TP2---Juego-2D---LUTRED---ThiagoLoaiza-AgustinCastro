@@ -50,7 +50,7 @@ public class Sinner
     public bool ParryIniciadoEsteFrame { get; private set; }
     public Vector2 VelocidadActual => _velocidadActual;
     public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
-    public CirculoColision ColisionParry => new(Colision.Centro, 35f);
+    public CirculoColision ColisionParry => new(Colision.Centro, 35f * Mejoras.MultiplicadorRadioParry);
 
     private readonly Dictionary<SinnerAnimation, Animation>
         _animaciones = new();
@@ -348,6 +348,7 @@ public class Sinner
         if (AutoparryActivo && _auraDominio != null)
         {
             _auraDominio.Position = Colision.Centro;
+            _auraDominio.Color = Color.White * Mejoras.Dominio.OpacidadAura;
             _auraDominio.Draw(spriteBatch);
         }
         _sprite.Draw(spriteBatch);

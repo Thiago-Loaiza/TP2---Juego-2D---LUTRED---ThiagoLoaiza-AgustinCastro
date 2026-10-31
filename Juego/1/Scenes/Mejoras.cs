@@ -358,8 +358,8 @@ public sealed class Mejoras : Escena
         DibujarBorde(area, Math.Max(1, (int)(2 * escala)), new Color(255, 35, 45) * (brillo * alfa));
         var mejora = Catalogo[_opciones[_indiceDescripcion]];
         Core.SpriteBatch.DrawString(_fuente, mejora.Nombre,
-            new Vector2(area.X + 20 * escala, area.Y + 10 * escala), new Color(255, 70, 80) * alfa,
-            0f, Vector2.Zero, escala, SpriteEffects.None, 0f);
+            new Vector2(area.Center.X, area.Y + 10 * escala), new Color(255, 70, 80) * alfa,
+            0f, new Vector2(_fuente.MeasureString(mejora.Nombre).X * 0.5f, 0f), escala, SpriteEffects.None, 0f);
         // El ajuste de linea se calcula sobre el texto completo, para que no salte al escribir.
         int visibles = (int)_caracteresDescripcion;
         int longitud = 0;
@@ -373,9 +373,17 @@ public sealed class Mejoras : Escena
             longitud++;
         }
         string texto = _caracteresDescripcion >= _textoDescripcion.Length ? envuelto : envuelto.Substring(0, longitud);
-        Core.SpriteBatch.DrawString(_fuente, texto,
-            new Vector2(area.X + 18 * escala, area.Y + 40 * escala), Color.White * alfa,
-            0f, Vector2.Zero, escalaTexto, SpriteEffects.None, 0f);
+        string[] lineasCompletas = envuelto.Split('\n');
+        string[] lineasVisibles = texto.Split('\n');
+        float inicioY = area.Y + 40 * escala + Math.Max(0f, (area.Height - 52 * escala - altoTexto) * 0.5f);
+        for (int i = 0; i < lineasVisibles.Length; i++)
+        {
+            // La linea completa fija el centrado para que el texto no se mueva mientras se revela.
+            float anchoLinea = _fuente.MeasureString(lineasCompletas[i]).X * escalaTexto;
+            Core.SpriteBatch.DrawString(_fuente, lineasVisibles[i],
+                new Vector2(area.Center.X - anchoLinea * 0.5f, inicioY + i * _fuente.LineSpacing * escalaTexto),
+                Color.White * alfa, 0f, Vector2.Zero, escalaTexto, SpriteEffects.None, 0f);
+        }
     }
 
     private string EnvolverTexto(string texto, float ancho, float escala)

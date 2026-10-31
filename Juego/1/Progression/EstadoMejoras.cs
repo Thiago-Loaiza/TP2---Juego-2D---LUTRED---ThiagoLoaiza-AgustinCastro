@@ -12,8 +12,8 @@ public sealed class EstadoMejoras
     public static readonly DefinicionMejora[] Catalogo =
     {
         new("PiezAgiles", "Pies agiles", "+30% de velocidad de movimiento.", 0, 2, true),
-        new("TipoDuro", "Tipo duro", "+0,25 segundos de ventana de parry.", 0, 2, true),
-        new("Dominio", "Dominio", "3 parrys manuales exitosos seguidos otorgan 5 s de autoparry.\nRecarga: 15 segundos.", 0, 2, true),
+        new("TipoDuro", "Tipo duro", "+0,1 s de ventana de parry.\n+15% al radio del parry por acumulacion.", 0, 2, true),
+        new("Dominio", "Dominio", "3 parrys manuales exitosos seguidos otorgan 5 s de autoparry.\nEl aura parpadea en los ultimos 2 s.\nRecarga: 15 segundos.", 0, 2, true),
         new("Precipitacion", "Precipitacion", "Un indicador avisa de una posible colision mortal.\nRecarga: 10 segundos.", 0, 1, false),
         new("GranJabalina", "Gran jabalina", "Lanza una jabalina dorada que parrea todo a su paso.\nRecarga: 30 segundos.", 8, 1, false),
         new("Guantelet", "Guantelet", "Potencia los parrys contra las entidades.\nDuck retrocede mas y JarJar queda aturdido mas tiempo.", 8, 1, false),
@@ -31,12 +31,13 @@ public sealed class EstadoMejoras
     public int Cantidad(string id) => _acumulaciones.TryGetValue(id, out int valor) ? valor : 0;
     public float MultiplicadorVelocidad => 1f + Cantidad("PiezAgiles") * 0.3f
         + Cantidad("TETUTRED") * 0.2f + Cantidad("Caliz") * 0.2f;
-    public double ExtraParry => Cantidad("TipoDuro") * 0.25;
+    public double ExtraParry => Cantidad("TipoDuro") * 0.1;
+    public float MultiplicadorRadioParry => 1f + Cantidad("TipoDuro") * 0.15f;
     public bool Disponible(DefinicionMejora mejora, int piso) => (Game1.IgnorarNivelMinimoMejoras || piso >= mejora.PisoMinimo)
         && Cantidad(mejora.Id) < mejora.Maximo
         && (mejora.Id != "TETUTRED" || Cantidad("PiezAgiles") == 2);
     public string Describir(DefinicionMejora mejora) => mejora.Id == "Dominio" && Cantidad("Dominio") >= 1
-        ? "2 parrys manuales exitosos seguidos otorgan 10 s de autoparry.\nRecarga: 15 segundos."
+        ? "2 parrys manuales exitosos seguidos otorgan 12 s de autoparry.\nEl aura parpadea en los ultimos 2 s.\nRecarga: 15 segundos."
         : mejora.Descripcion;
 
     public bool Aplicar(DefinicionMejora mejora, int piso)
