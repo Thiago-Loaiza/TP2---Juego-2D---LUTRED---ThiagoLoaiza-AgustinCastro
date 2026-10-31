@@ -305,7 +305,7 @@
 
 #begin Music/Misc/Creditos.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Misc/Creditos.mp3
@@ -663,6 +663,60 @@
 /processorParam:Version=3.8.5.1
 /build:SFX/Puerta/PuertaCerrandose.mp3
 
+#begin SFX/Ranks/Asombroso.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/Asombroso.mp3
+
+#begin SFX/Ranks/Bueno.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/Bueno.mp3
+
+#begin SFX/Ranks/Capaz.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/Capaz.mp3
+
+#begin SFX/Ranks/Deficiente.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/Deficiente.mp3
+
+#begin SFX/Ranks/LUTRED.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/LUTRED.mp3
+
+#begin SFX/Ranks/Perfecto.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/Perfecto.mp3
+
+#begin SFX/Ranks/SantoSuperior.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/SantoSuperior.mp3
+
+#begin SFX/Ranks/Superior.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/Superior.mp3
+
+#begin SFX/Ranks/SuperSantoSuperior.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Ranks/SuperSantoSuperior.mp3
+
 #begin Sprites/Enemies/Duck/DuckSpriteSheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -810,6 +864,87 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/Misc/Orbs/Punto-Sheet.png
+
+#begin Sprites/Ranks/Asombroso.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/Asombroso.png
+
+#begin Sprites/Ranks/Bueno.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/Bueno.png
+
+#begin Sprites/Ranks/Capaz.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/Capaz.png
+
+#begin Sprites/Ranks/Deficiente.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/Deficiente.png
+
+#begin Sprites/Ranks/LUTRED.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/LUTRED.png
+
+#begin Sprites/Ranks/Perfecto.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/Perfecto.png
+
+#begin Sprites/Ranks/SantoSuperior.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/SantoSuperior.png
+
+#begin Sprites/Ranks/Superior.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/Superior.png
+
+#begin Sprites/Ranks/SuperSantoSuperior.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Ranks/SuperSantoSuperior.png
 
 #begin Sprites/Sinner/PantallaEleccion/Atlas/Continuar.png
 /importer:TextureImporter

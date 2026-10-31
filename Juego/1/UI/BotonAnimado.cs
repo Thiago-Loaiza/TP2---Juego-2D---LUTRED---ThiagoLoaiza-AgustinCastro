@@ -89,6 +89,14 @@ public sealed class BotonAnimado : Button, IDisposable
         ActualizarVisual();
     }
 
+    public void CambiarHoja(Texture2D hoja)
+    {
+        ArgumentNullException.ThrowIfNull(hoja);
+        if (hoja.Width != _imagen.Texture.Width || hoja.Height != _imagen.Texture.Height)
+            throw new ArgumentException("La nueva hoja debe tener las mismas dimensiones.", nameof(hoja));
+        _imagen.Texture = hoja;
+    }
+
     public void Update(GameTime gameTime)
     {
         if (_disposed) return;
@@ -98,6 +106,7 @@ public sealed class BotonAnimado : Button, IDisposable
         var teclado = Keyboard.GetState();
         var mando = GamePad.GetState(PlayerIndex.One);
         if (teclado.IsKeyDown(Keys.Tab) || teclado.IsKeyDown(Keys.Up)
+            || teclado.IsKeyDown(Keys.W) || teclado.IsKeyDown(Keys.S)
             || teclado.IsKeyDown(Keys.Down) || teclado.IsKeyDown(Keys.Left)
             || teclado.IsKeyDown(Keys.Right)
             || mando.DPad.Up == ButtonState.Pressed || mando.DPad.Down == ButtonState.Pressed

@@ -18,19 +18,40 @@ public sealed class AudioController : IDisposable
     private readonly List<ManagedSound> _sounds = new();
     private float _songVolume = 1f;
     private float _soundEffectVolume = 1f;
+    private bool _isMusicMuted;
+    private float _musicVolume = 0.5f;
+    private float _effectsVolume = 0.5f;
     public bool IsDisposed { get; private set; }
     public bool IsMuted { get; private set; }
     public bool IsPaused { get; private set; }
 
+    public bool IsMusicMuted
+    {
+        get => _isMusicMuted;
+        set { _isMusicMuted = value; ApplyVolumes(); }
+    }
+
+    public float MusicVolume
+    {
+        get => _musicVolume;
+        set { _musicVolume = Math.Clamp(value, 0f, 1f); ApplyVolumes(); }
+    }
+
+    public float EffectsVolume
+    {
+        get => _effectsVolume;
+        set { _effectsVolume = Math.Clamp(value, 0f, 1f); ApplyVolumes(); }
+    }
+
     public float SongVolume
     {
-        get => IsMuted ? 0f : _songVolume;
+        get => IsMuted || IsMusicMuted ? 0f : _songVolume * MusicVolume;
         set { _songVolume = Math.Clamp(value, 0f, 1f); ApplyVolumes(); }
     }
 
     public float SoundEffectVolume
     {
-        get => IsMuted ? 0f : _soundEffectVolume;
+        get => IsMuted ? 0f : _soundEffectVolume * EffectsVolume;
         set { _soundEffectVolume = Math.Clamp(value, 0f, 1f); ApplyVolumes(); }
     }
 

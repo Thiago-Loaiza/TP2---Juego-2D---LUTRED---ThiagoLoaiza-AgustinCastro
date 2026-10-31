@@ -14,13 +14,12 @@ public sealed class ConfiguracionPausa : IDisposable
     private readonly Rectangle[] _recortesMarco;
     private readonly Texture2D _pixel;
     private readonly SpriteFont _fuente;
-    private readonly BotonInterruptor _interruptor;
+    private readonly ListaOpciones _listaOpciones;
     private readonly Action _reanudar;
     private MouseState _ratonAnterior;
     private KeyboardState _tecladoAnterior;
     private double _tiempo;
     private bool _pausoAudio;
-    private bool _focoControl;
     public bool Abierto { get; private set; }
 
     public ConfiguracionPausa(Action reanudar)
@@ -30,8 +29,7 @@ public sealed class ConfiguracionPausa : IDisposable
         _recuadro = Core.Content.Load<Texture2D>("Sprites/UI/Cuadro-Sheet");
         _recortesMarco = CalcularRecortesMarco(_recuadro);
         _fuente = Core.Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
-        _interruptor = new BotonInterruptor(Core.Content.Load<Texture2D>("Sprites/UI/Buttons/ON-OFF-Sheet"),
-            OpcionesJuego.AlternarCorrer);
+        _listaOpciones = new ListaOpciones();
         _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
         _ratonAnterior = Mouse.GetState();
@@ -51,20 +49,18 @@ public sealed class ConfiguracionPausa : IDisposable
 
     private Rectangle AreaBoton => new((int)(24 * Escala), (int)(24 * Escala),
         (int)(50 * Escala), (int)(50 * Escala));
-    private Rectangle AreaNombre => Area(-290, -65, 350, 80);
-    private Rectangle AreaInterruptor => Area(100, -70, 200, 100);
-    private Rectangle AreaReanudar => Area(-130, 65, 260, 60);
-    private Rectangle AreaAyuda => Area(-300, 204, 600, 100);
+    private Rectangle AreaLista => Area(-550, -165, 620, 340);
+    private Rectangle AreaReanudar => Area(-370, 195, 260, 55);
+    private Rectangle AreaAyuda => Area(150, -140, 450, 240);
 
     // Tambien bloquea el fotograma de apertura/cierre para que el clic no llegue a la escena.
     public bool Update(GameTime gameTime, bool escapePulsado)
     {
         _tiempo += gameTime.ElapsedGameTime.TotalSeconds;
-        _interruptor.Update(gameTime);
+        _listaOpciones.Update(gameTime, AreaLista, Abierto, usarTab: true);
         MouseState raton = Mouse.GetState();
         KeyboardState teclado = Keyboard.GetState();
         bool clic = raton.LeftButton == ButtonState.Pressed && _ratonAnterior.LeftButton == ButtonState.Released;
-        bool Pulsado(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         bool bloquear = Abierto;
         if (Core.Instance.IsActive)
         {
@@ -76,27 +72,17 @@ public sealed class ConfiguracionPausa : IDisposable
                     _pausoAudio = !Core.Audio.IsPaused;
                     if (_pausoAudio) Core.Audio.PauseAudio();
                     bloquear = true;
-                    _focoControl = false;
+                    _listaOpciones.SincronizarEntrada();
                 }
             }
-            else if (escapePulsado || (clic && AreaReanudar.Contains(raton.Position)))
+            else if (escapePulsado || (clic && AreaReanudar.Contains(raton.Position))
+                || (_listaOpciones.ReanudarSeleccionado && ((teclado.IsKeyDown(Keys.Enter)
+                    && _tecladoAnterior.IsKeyUp(Keys.Enter)) || (teclado.IsKeyDown(Keys.F)
+                    && _tecladoAnterior.IsKeyUp(Keys.F)))))
             {
                 Cerrar();
             }
-            else
-            {
-                if (Pulsado(Keys.Tab)) _focoControl = !_focoControl;
-                bool confirmar = Pulsado(Keys.Enter) || Pulsado(Keys.F);
-                if ((clic && AreaInterruptor.Contains(raton.Position)) || (confirmar && _focoControl))
-                {
-                    if (!_interruptor.Animando)
-                    {
-                        OpcionesJuego.AlternarCorrer = !OpcionesJuego.AlternarCorrer;
-                        _interruptor.CambiarEstado(OpcionesJuego.AlternarCorrer);
-                    }
-                }
-                else if (confirmar && !_focoControl) Cerrar();
-            }
+
         }
         _ratonAnterior = raton;
         _tecladoAnterior = teclado;
@@ -115,7 +101,6 @@ public sealed class ConfiguracionPausa : IDisposable
     {
         var batch = Core.SpriteBatch;
         var raton = Mouse.GetState();
-        bool ayudaVisible = AreaNombre.Contains(raton.Position) || _focoControl;
         int cuadro = (int)(_tiempo / 0.12) % 9;
         batch.Begin(samplerState: SamplerState.PointClamp);
         if (!Abierto)
@@ -126,27 +111,20 @@ public sealed class ConfiguracionPausa : IDisposable
             return;
         }
         batch.Draw(_pixel, Core.GraphicsDevice.Viewport.Bounds, Color.Black * 0.7f);
-        Rectangle modal = Area(-360, -190, 720, 380);
+        Rectangle modal = Area(-600, -265, 720, 530);
         batch.Draw(_pixel, modal, Color.Black);
         DibujarMarco(modal, cuadro);
-        _interruptor.Draw(batch, AreaInterruptor);
-        if (ayudaVisible)
-        {
-            batch.Draw(_pixel, AreaAyuda, Color.Black);
-            DibujarMarco(AreaAyuda, cuadro);
-        }
+
         batch.End();
 
         batch.Begin(samplerState: SamplerState.LinearClamp);
-        Texto("CONFIGURACION", Area(-300, -145, 600, 50), 0.45f, Color.White);
-        Texto("Alternar correr", AreaNombre, 0.34f, ayudaVisible ? Color.White : new Color(210, 210, 210));
-        if (ayudaVisible)
-            Texto("OFF: manten Shift para correr.\nON: pulsa Shift para alternar correr y caminar.",
-                Area(-280, 220, 560, 68), 0.24f, Color.White);
+        Texto("CONFIGURACION", Area(-540, -235, 600, 50), 0.45f, Color.White);
         Texto("Reanudar", AreaReanudar, 0.34f,
-            AreaReanudar.Contains(raton.Position) || !_focoControl ? Color.White : new Color(180, 180, 180));
-        Texto("Esc para volver", Area(-160, 132, 320, 24), 0.18f, new Color(150, 150, 150));
+            AreaReanudar.Contains(raton.Position) || _listaOpciones.ReanudarSeleccionado
+                ? Color.White : new Color(180, 180, 180));
         batch.End();
+        _listaOpciones.Draw(AreaLista);
+        _listaOpciones.DibujarAyuda(AreaAyuda);
     }
 
     private void Texto(string texto, Rectangle area, float escala, Color color)
@@ -204,7 +182,7 @@ public sealed class ConfiguracionPausa : IDisposable
     public void Dispose()
     {
         if (Abierto) Cerrar();
-        _interruptor.Dispose();
+        _listaOpciones.Dispose();
         _pixel.Dispose();
     }
 }

@@ -38,6 +38,9 @@ public class Game1 : Core
         GumService.Default.CanvasWidth = GraphicsDevice.Viewport.Width;
         GumService.Default.CanvasHeight = GraphicsDevice.Viewport.Height;
         FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
+        FrameworkElement.TabKeyCombos.Add(new KeyCombo { PushedKey = Keys.S });
+        FrameworkElement.TabReverseKeyCombos.Add(new KeyCombo { PushedKey = Keys.W });
+        FrameworkElement.ClickCombos.Add(new KeyCombo { PushedKey = Keys.F });
         FrameworkElement.GamePadsForUiControl.AddRange(GumService.Default.Gamepads);
 
         CambiarEscena(new Inicio(CambiarEscena));
@@ -80,6 +83,8 @@ public class Game1 : Core
         {
             if (_escenaActual is Inicio inicio && (inicio.OpcionesAbiertas || inicio.EnTransicion))
                 inicio.CerrarOpciones();
+            else if (_escenaActual is Creditos creditos)
+                creditos.VolverAlInicio();
             else
             {
                 Exit();
@@ -90,7 +95,17 @@ public class Game1 : Core
         if (!bloquearEscena)
         {
             _escenaActual.Update(gameTime);
-            GumService.Default.Update(gameTime);
+            // La lista desplazable gestiona su propio foco; Gum conserva el raton y el mando.
+            bool opcionesAbiertas = _escenaActual is Inicio menu && menu.OpcionesAbiertas;
+            if (opcionesAbiertas) FrameworkElement.KeyboardsForUiControl.Remove(GumService.Default.Keyboard);
+            try
+            {
+                GumService.Default.Update(gameTime);
+            }
+            finally
+            {
+                if (opcionesAbiertas) FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
+            }
         }
         AplicarCambioDeEscena();
         base.Update(gameTime);

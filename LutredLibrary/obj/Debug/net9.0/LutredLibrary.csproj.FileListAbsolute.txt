@@ -50,3 +50,15 @@ D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\
 D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\refint\LutredLibrary.dll
 D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.pdb
 D:\Users\AgustinCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\ref\LutredLibrary.dll
+C:\Users\juanl\AppData\Local\Packages\sandbox.{7d7f3648-beaf-44d1-8b2e-550eb18a5e81}\AC\Temp\Lutred-creditos-build\LutredLibrary.deps.json
+C:\Users\juanl\AppData\Local\Packages\sandbox.{7d7f3648-beaf-44d1-8b2e-550eb18a5e81}\AC\Temp\Lutred-creditos-build\LutredLibrary.dll
+C:\Users\juanl\AppData\Local\Packages\sandbox.{7d7f3648-beaf-44d1-8b2e-550eb18a5e81}\AC\Temp\Lutred-creditos-build\LutredLibrary.pdb
+C:\Users\juanl\AppData\Local\Packages\sandbox.{8f3e13d7-12a9-4664-b759-5de895b64372}\AC\Temp\Lutred-creditos-build\LutredLibrary.deps.json
+C:\Users\juanl\AppData\Local\Packages\sandbox.{8f3e13d7-12a9-4664-b759-5de895b64372}\AC\Temp\Lutred-creditos-build\LutredLibrary.dll
+C:\Users\juanl\AppData\Local\Packages\sandbox.{8f3e13d7-12a9-4664-b759-5de895b64372}\AC\Temp\Lutred-creditos-build\LutredLibrary.pdb
+C:\Users\juanl\AppData\Local\Packages\sandbox.{baaa0ddb-eeb1-46d9-9cd3-ab9c55aeef35}\AC\Temp\Lutred-Creditos-Transicion\LutredLibrary.deps.json
+C:\Users\juanl\AppData\Local\Packages\sandbox.{baaa0ddb-eeb1-46d9-9cd3-ab9c55aeef35}\AC\Temp\Lutred-Creditos-Transicion\LutredLibrary.dll
+C:\Users\juanl\AppData\Local\Packages\sandbox.{baaa0ddb-eeb1-46d9-9cd3-ab9c55aeef35}\AC\Temp\Lutred-Creditos-Transicion\LutredLibrary.pdb
+C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\LutredLibrary.deps.json
+C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\LutredLibrary.dll
+C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\LutredLibrary.pdb

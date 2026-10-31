@@ -8,6 +8,7 @@ using LutredLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
 using _1.UI;
 
@@ -18,7 +19,9 @@ public class Inicio : Escena
     private readonly Action<Escena> _cambiarEscena;
     private BotonAnimado _jugar;
     private BotonAnimado _opciones;
-    private BotonInterruptor _alternarCorrer;
+    private ListaOpciones _listaOpciones;
+    private BotonAnimado _botonMusica;
+    private BotonAnimado _botonCreditos;
     private BotonAnimado _volver;
     private Panel _panelInicio;
     private Panel _panelOpciones;
@@ -28,6 +31,7 @@ public class Inicio : Escena
     private bool _enTransicion;
     private bool _entrando;
     private bool _destinoOpciones;
+    private bool _abrirCreditos;
     private float _tiempoTransicion;
     private float _opacidadInterfaz = 1f;
     private float _desplazamientoInterfaz;
@@ -38,13 +42,21 @@ public class Inicio : Escena
     private Texture2D _hojaBoton;
     private Texture2D _hojaCreditos;
     private Texture2D _hojaMusica;
+    private Texture2D _hojaMusicaSilenciada;
     private Texture2D _hojaMisc;
-    private Texture2D _hojaInterruptor;
     private readonly List<BotonAnimado> _botones = new();
+    private KeyboardState _tecladoAnterior = Keyboard.GetState();
 
-    public Inicio(Action<Escena> cambiarEscena)
+    public Inicio(Action<Escena> cambiarEscena, bool animarEntrada = false)
     {
         _cambiarEscena = cambiarEscena;
+        if (animarEntrada)
+        {
+            _enTransicion = true;
+            _entrando = true;
+            _opacidadInterfaz = 0f;
+            _desplazamientoInterfaz = DesplazamientoTransicion;
+        }
     }
 
     protected override void LoadContent()
@@ -56,9 +68,9 @@ public class Inicio : Escena
             Content.Load<SoundEffect>("Music/Inicio"), isLooped: true, isMusic: true);
         Core.Audio.PlaySoundEffect(_musicaInicio);
         _hojaBoton = Content.Load<Texture2D>("Sprites/UI/Buttons/Button-Sheet");
-        _hojaInterruptor = Content.Load<Texture2D>("Sprites/UI/Buttons/ON-OFF-Sheet");
         _hojaCreditos = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet");
         _hojaMusica = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Music-Sheet");
+        _hojaMusicaSilenciada = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Music-NO-Sheet");
         _hojaMisc = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Misc-Sheet");
         Texture2D hojaTitulo = Content.Load<Texture2D>("Sprites/UI/Titulo-Sheet");
         var cuadrosTitulo = new List<TextureRegion>();
@@ -88,22 +100,27 @@ public class Inicio : Escena
         AgregarBoton(panel, "Records", 220);
 
         // Musica, Misc y Creditos, de izquierda a derecha, con 12 px de separacion.
-        AgregarBotonInferior(panel, _hojaMusica, -148);
+        _botonMusica = AgregarBotonInferior(panel,
+            OpcionesJuego.SilenciarMusica ? _hojaMusicaSilenciada : _hojaMusica, -148);
+        _botonMusica.Click += CambiarMusica;
         AgregarBotonInferior(panel, _hojaMisc, -86);
-        AgregarBotonInferior(panel, _hojaCreditos, -24);
+        _botonCreditos = AgregarBotonInferior(panel, _hojaCreditos, -24);
+        _botonCreditos.Click += AbrirCreditos;
 
         _panelOpciones = new Panel();
         _panelOpciones.Dock(Dock.Fill);
         _panelOpciones.AddToRoot();
-        _alternarCorrer = new BotonInterruptor(_hojaInterruptor, OpcionesJuego.AlternarCorrer);
-        _alternarCorrer.Anchor(Anchor.Center);
-        _alternarCorrer.Y = -10;
-        _panelOpciones.AddChild(_alternarCorrer);
-        _alternarCorrer.Click += AlternarCorrer;
-        _volver = AgregarBoton(_panelOpciones, "Volver", 180);
+        _listaOpciones = new ListaOpciones();
+        _volver = AgregarBoton(_panelOpciones, "Volver", 240);
         _volver.Click += Volver;
         _panelOpciones.IsVisible = false;
         _jugar.IsFocused = true;
+        _panelInicio.Y = _desplazamientoInterfaz;
+        foreach (BotonAnimado boton in _botones)
+        {
+            boton.Opacidad = _opacidadInterfaz;
+            boton.Update(new GameTime());
+        }
     }
 
     private void AbrirOpciones(object sender, EventArgs args)
@@ -111,14 +128,24 @@ public class Inicio : Escena
         IniciarTransicion(true);
     }
 
-    private void AlternarCorrer(object sender, EventArgs args)
+    private void AbrirCreditos(object sender, EventArgs args)
     {
-        if (_enTransicion || _alternarCorrer.Animando) return;
-        OpcionesJuego.AlternarCorrer = !OpcionesJuego.AlternarCorrer;
-        _alternarCorrer.CambiarEstado(OpcionesJuego.AlternarCorrer);
+        if (_enTransicion) return;
+        _abrirCreditos = true;
+        _enTransicion = true;
+        _entrando = false;
+        _tiempoTransicion = 0f;
+        foreach (BotonAnimado boton in _botones) boton.IsFocused = false;
     }
 
     private void Volver(object sender, EventArgs args) => CerrarOpciones();
+
+    private void CambiarMusica(object sender, EventArgs args)
+    {
+        if (_enTransicion) return;
+        OpcionesJuego.SilenciarMusica = !OpcionesJuego.SilenciarMusica;
+        _botonMusica.CambiarHoja(OpcionesJuego.SilenciarMusica ? _hojaMusicaSilenciada : _hojaMusica);
+    }
 
     public void CerrarOpciones()
     {
@@ -133,10 +160,10 @@ public class Inicio : Escena
         _destinoOpciones = haciaOpciones;
         _tiempoTransicion = 0f;
         foreach (BotonAnimado boton in _botones) boton.IsFocused = false;
-        _alternarCorrer.IsFocused = false;
+        _listaOpciones.SincronizarEntrada();
     }
 
-    private void AgregarBotonInferior(Panel panel, Texture2D hoja, float x)
+    private BotonAnimado AgregarBotonInferior(Panel panel, Texture2D hoja, float x)
     {
         var boton = new BotonAnimado(hoja, 50, 50, 9, TimeSpan.FromSeconds(0.12))
         {
@@ -149,6 +176,7 @@ public class Inicio : Escena
         boton.Y = -24;
         panel.AddChild(boton);
         _botones.Add(boton);
+        return boton;
     }
     private BotonAnimado AgregarBoton(Panel panel, string texto, float y)
     {
@@ -188,6 +216,11 @@ public class Inicio : Escena
             _tiempoTransicion += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (_tiempoTransicion >= DuracionFase)
             {
+                if (_abrirCreditos)
+                {
+                    _cambiarEscena(new Creditos(_cambiarEscena));
+                    return;
+                }
                 if (!_entrando)
                 {
                     _panelInicio.IsVisible = !_destinoOpciones;
@@ -200,8 +233,8 @@ public class Inicio : Escena
                 else
                 {
                     _enTransicion = false;
-                    if (_destinoOpciones) _alternarCorrer.IsFocused = true;
-                    else _opciones.IsFocused = true;
+                    if (!_destinoOpciones) _opciones.IsFocused = true;
+                    _listaOpciones.SincronizarEntrada();
                 }
             }
             float t = Math.Clamp(_tiempoTransicion / DuracionFase, 0f, 1f);
@@ -217,8 +250,34 @@ public class Inicio : Escena
         (_panelOpciones.IsVisible ? _panelOpciones : _panelInicio).Y = _desplazamientoInterfaz;
         foreach (BotonAnimado boton in _botones) boton.Opacidad = _opacidadInterfaz;
         foreach (BotonAnimado boton in _botones) boton.Update(gameTime);
-        _alternarCorrer.Opacidad = _opacidadInterfaz;
-        _alternarCorrer.Update(gameTime);
+        bool ratonEnLista = AreaListaOpciones.Contains(Mouse.GetState().Position);
+        if (OpcionesAbiertas && ratonEnLista && Mouse.GetState().LeftButton == ButtonState.Pressed)
+            _volver.IsFocused = false;
+        _listaOpciones.Update(gameTime, AreaListaOpciones,
+            OpcionesAbiertas && !_enTransicion, usarTab: true);
+        var teclado = Keyboard.GetState();
+        if (OpcionesAbiertas && !_enTransicion)
+        {
+            _volver.IsFocused = _listaOpciones.ReanudarSeleccionado;
+            if (_listaOpciones.ReanudarSeleccionado && Core.Instance.IsActive
+                && ((teclado.IsKeyDown(Keys.Enter) && _tecladoAnterior.IsKeyUp(Keys.Enter))
+                    || (teclado.IsKeyDown(Keys.F) && _tecladoAnterior.IsKeyUp(Keys.F))))
+                CerrarOpciones();
+        }
+        _tecladoAnterior = teclado;
+        _botonMusica.CambiarHoja(OpcionesJuego.SilenciarMusica ? _hojaMusicaSilenciada : _hojaMusica);
+    }
+
+    private Rectangle AreaListaOpciones
+    {
+        get
+        {
+            var vista = Core.GraphicsDevice.Viewport;
+            float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
+            return new Rectangle((int)(vista.Width * 0.5f - 580 * escala),
+                (int)(vista.Height * 0.5f - 175 * escala + _desplazamientoInterfaz),
+                (int)(620 * escala), (int)(345 * escala));
+        }
     }
 
     public override void Draw(GameTime gameTime)
@@ -233,18 +292,20 @@ public class Inicio : Escena
         Core.SpriteBatch.Begin(samplerState: OpcionesAbiertas ? SamplerState.LinearClamp : SamplerState.PointClamp);
         if (OpcionesAbiertas)
         {
-            DibujarTextoOpciones("OPCIONES", -210f, 0.625f, 2f, escala);
-            DibujarTextoOpciones("Alternar correr", -85f, 0.375f, 0f, escala);
-            string ayuda = OpcionesJuego.AlternarCorrer
-                ? "Pulsa Shift para correr. Pulsa otra vez para caminar."
-                : "Manten Shift presionado para correr.";
-            DibujarTextoOpciones(ayuda, 75f, 0.2875f, 0f, escala);
+            DibujarTextoOpciones("OPCIONES", -240f, 0.625f, 2f, escala);
         }
         else
         {
             _titulo.Draw(Core.SpriteBatch);
         }
         Core.SpriteBatch.End();
+        if (OpcionesAbiertas)
+        {
+            _listaOpciones.Draw(AreaListaOpciones, _opacidadInterfaz);
+            _listaOpciones.DibujarAyuda(new Rectangle((int)(viewport.Width * 0.5f + 100 * escala),
+                (int)(viewport.Height * 0.5f - 140 * escala + _desplazamientoInterfaz),
+                (int)(480 * escala), (int)(240 * escala)), _opacidadInterfaz);
+        }
     }
 
     private void DibujarTextoOpciones(string texto, float y, float escalaFuente, float borde, float escalaPantalla)
@@ -275,8 +336,9 @@ public class Inicio : Escena
         if (_jugar != null)
             _jugar.Click -= Jugar;
         if (_opciones != null) _opciones.Click -= AbrirOpciones;
-        if (_alternarCorrer != null) _alternarCorrer.Click -= AlternarCorrer;
-        _alternarCorrer?.Dispose();
+        _listaOpciones?.Dispose();
+        if (_botonMusica != null) _botonMusica.Click -= CambiarMusica;
+        if (_botonCreditos != null) _botonCreditos.Click -= AbrirCreditos;
         if (_volver != null) _volver.Click -= Volver;
         foreach (BotonAnimado boton in _botones) boton.Dispose();
         _botones.Clear();
