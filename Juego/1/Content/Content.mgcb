@@ -23,10 +23,14 @@
 #begin Backgrounds/LUTRED_ESCAPE.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Backgrounds/LUTRED_ESCAPE.png
 
 #begin Backgrounds/Selection/Atlas/ContinuarV2-0.png
@@ -107,25 +111,7 @@
 /processorParam:Version=3.8.5.1
 /build:Backgrounds/Selection/Atlas/ElegirV2-1.png
 
-#begin Effects/Escombros2-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Color
-/build:Effects/Escombros2-Sheet.png
-
-#begin Effects/Escombros-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Color
-/build:Effects/Escombros-Sheet.png
-
-#begin Effects/EstrellaParry-Sheet.png
+#begin Effects/EfectoParry-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -136,15 +122,54 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:Effects/EstrellaParry-Sheet.png
+/build:Effects/EfectoParry-Sheet.png
 
-#begin Effects/RangoMejor-Sheet.png
+#begin Effects/Escombros2-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Effects/Escombros2-Sheet.png
+
+#begin Effects/Escombros-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Effects/Escombros-Sheet.png
+
+#begin Effects/EstrellaParry-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
+/build:Effects/EstrellaParry-Sheet.png
+
+#begin Effects/RangoMejor-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Effects/RangoMejor-Sheet.png
 
 #begin Effects/TintaAntigua.fx
@@ -182,6 +207,9 @@
 #begin Fonts/PMingLiU Regular/Opciones.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/processorParam:Version=3.8.5.1
 /build:Fonts/PMingLiU Regular/Opciones.spritefont
 
 #begin Fonts/PMingLiU Regular/PMingLiU Regular.ttf
@@ -384,109 +412,157 @@
 #begin Pharses/Misc/Credits/Sprite-AC-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Misc/Credits/Sprite-AC-Sheet.png
 
 #begin Pharses/Misc/Credits/TL-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Misc/Credits/TL-Sheet.png
 
 #begin Pharses/Selection/Acciones/EsoesTodo-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Acciones/EsoesTodo-Sheet.png
 
 #begin Pharses/Selection/Acciones/Espera-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Acciones/Espera-Sheet.png
 
 #begin Pharses/Selection/Acciones/SiEstoySeguro-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Acciones/SiEstoySeguro-Sheet.png
 
 #begin Pharses/Selection/Acciones/Si-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Acciones/Si-Sheet.png
 
 #begin Pharses/Selection/Duda_Frase-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Duda_Frase-Sheet.png
 
 #begin Pharses/Selection/Elejir_Frase1-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Elejir_Frase1-Sheet.png
 
 #begin Pharses/Selection/Elejir_Frase2-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Elejir_Frase2-Sheet.png
 
 #begin Pharses/Upgrades/MejorasFrase1-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Upgrades/MejorasFrase1-Sheet.png
 
 #begin Pharses/Upgrades/MejorasFrase2-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Upgrades/MejorasFrase2-Sheet.png
 
 #begin Pharses/Upgrades/MejorasFrase3-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Pharses/Upgrades/MejorasFrase3-Sheet.png
 
 #begin SFX/Entities/Duck/DuckParry.wav
@@ -535,36 +611,42 @@
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/ErosionBird/Aparicion.ogg
 
 #begin SFX/Entities/ErosionBird/AtaqueLanza.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/ErosionBird/AtaqueLanza.ogg
 
 #begin SFX/Entities/ErosionBird/DespawnLanzas.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/ErosionBird/DespawnLanzas.ogg
 
 #begin SFX/Entities/ErosionBird/MuerteLanza.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/ErosionBird/MuerteLanza.ogg
 
 #begin SFX/Entities/ErosionBird/Salida.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/ErosionBird/Salida.ogg
 
 #begin SFX/Entities/ErosionBird/SpawnerLanzas.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Entities/ErosionBird/SpawnerLanzas.ogg
 
 #begin SFX/Entities/JarJar/JarJarParry.mp3
@@ -655,6 +737,7 @@
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Misc/MejoraAdquirida.mp3
 
 #begin SFX/Puerta/Acercamiento1.MP3
@@ -703,54 +786,63 @@
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/Asombroso.mp3
 
 #begin SFX/Ranks/Bueno.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/Bueno.mp3
 
 #begin SFX/Ranks/Capaz.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/Capaz.mp3
 
 #begin SFX/Ranks/Deficiente.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/Deficiente.mp3
 
 #begin SFX/Ranks/LUTRED.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/LUTRED.mp3
 
 #begin SFX/Ranks/Perfecto.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/Perfecto.mp3
 
 #begin SFX/Ranks/SantoSuperior.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/SantoSuperior.mp3
 
 #begin SFX/Ranks/Superior.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/Superior.mp3
 
 #begin SFX/Ranks/SuperSantoSuperior.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
+/processorParam:Version=3.8.5.1
 /build:SFX/Ranks/SuperSantoSuperior.mp3
 
 #begin Sprites/Enemies/Duck/DuckSpriteSheet.png
@@ -769,19 +861,27 @@
 #begin Sprites/Enemies/ErosionBird/EB_Attack-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/ErosionBird/EB_Attack-Sheet.png
 
 #begin Sprites/Enemies/ErosionBird/Erosion Bird-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/ErosionBird/Erosion Bird-Sheet.png
 
 #begin Sprites/Enemies/JarJar/Sprite-JarJar.png
@@ -904,82 +1004,118 @@
 #begin Sprites/Ranks/Asombroso.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/Asombroso.png
 
 #begin Sprites/Ranks/Bueno.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/Bueno.png
 
 #begin Sprites/Ranks/Capaz.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/Capaz.png
 
 #begin Sprites/Ranks/Deficiente.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/Deficiente.png
 
 #begin Sprites/Ranks/LUTRED.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/LUTRED.png
 
 #begin Sprites/Ranks/Perfecto.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/Perfecto.png
 
 #begin Sprites/Ranks/SantoSuperior.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/SantoSuperior.png
 
 #begin Sprites/Ranks/Superior.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/Superior.png
 
 #begin Sprites/Ranks/SuperSantoSuperior.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/SuperSantoSuperior.png
 
 #begin Sprites/Sinner/PantallaEleccion/Atlas/Continuar.png
@@ -1271,19 +1407,27 @@
 #begin Sprites/UI/Buttons/ON-OFF-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/UI/Buttons/ON-OFF-Sheet.png
 
 #begin Sprites/UI/Cuadro-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/UI/Cuadro-Sheet.png
 
 #begin Sprites/UI/DeatchScreen/DeathScreen-Eye-Sheet.png
@@ -1328,64 +1472,92 @@
 #begin Sprites/UI/Titulo-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/UI/Titulo-Sheet.png
 
 #begin Sprites/Upgrades/Efectos/AureolaDivina-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Efectos/AureolaDivina-Sheet.png
 
 #begin Sprites/Upgrades/Efectos/DominioV2-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Efectos/DominioV2-Sheet.png
 
 #begin Sprites/Upgrades/Efectos/Felldoor-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Efectos/Felldoor-Sheet.png
 
 #begin Sprites/Upgrades/Efectos/Paz-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Efectos/Paz-Sheet.png
 
 #begin Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet.png
 
 #begin Sprites/Upgrades/Efectos/Shield/Shield-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Efectos/Shield/Shield-Sheet.png
 
 #begin Sprites/Upgrades/Icons/AureolaDivina.png
@@ -1482,10 +1654,14 @@
 #begin Sprites/Upgrades/Icons/OrbesEfectivos.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Icons/OrbesEfectivos.png
 
 #begin Sprites/Upgrades/Icons/Paz.png

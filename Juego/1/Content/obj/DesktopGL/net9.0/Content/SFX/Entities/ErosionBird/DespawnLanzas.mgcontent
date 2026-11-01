@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/ErosionBird/DespawnLanzas.ogg</SourceFile>
-  <SourceTime>2026-10-25T13:14:19.7770697-03:00</SourceTime>
-  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Entities/ErosionBird/DespawnLanzas.xnb</DestFile>
-  <DestTime>2026-10-31T22:02:06.6765096-03:00</DestTime>
+  <SourceFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Entities/ErosionBird/DespawnLanzas.ogg</SourceFile>
+  <SourceTime>2026-11-01T20:21:51.209488-03:00</SourceTime>
+  <DestFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/SFX/Entities/ErosionBird/DespawnLanzas.xnb</DestFile>
+  <DestTime>2026-11-01T20:28:22.8179351-03:00</DestTime>
   <Importer>OggImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>
@@ -11,6 +11,10 @@
   <Parameters>
     <Key>Quality</Key>
     <Value>Best</Value>
+  </Parameters>
+  <Parameters>
+    <Key>Version</Key>
+    <Value>3.8.5.1</Value>
   </Parameters>
   <Dependencies />
   <BuildAsset />

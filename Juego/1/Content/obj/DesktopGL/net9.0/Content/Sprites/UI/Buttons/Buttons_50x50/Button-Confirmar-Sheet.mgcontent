@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Confirmar-Sheet.png</SourceFile>
-  <SourceTime>2026-10-16T18:01:01.3606424-03:00</SourceTime>
-  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Confirmar-Sheet.xnb</DestFile>
-  <DestTime>2026-10-31T22:02:16.1111514-03:00</DestTime>
+  <SourceFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Confirmar-Sheet.png</SourceFile>
+  <SourceTime>2026-11-01T20:21:51.297274-03:00</SourceTime>
+  <DestFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Confirmar-Sheet.xnb</DestFile>
+  <DestTime>2026-11-01T20:28:27.4601844-03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

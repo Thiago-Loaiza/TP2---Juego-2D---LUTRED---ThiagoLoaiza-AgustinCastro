@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/PantallaEleccion/Atlas/Continuar.png</SourceFile>
-  <SourceTime>2026-10-13T11:49:31.7614476-03:00</SourceTime>
-  <DestFile>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Sinner/PantallaEleccion/Atlas/Continuar.xnb</DestFile>
-  <DestTime>2026-10-31T22:02:14.7822692-03:00</DestTime>
+  <SourceFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Sinner/PantallaEleccion/Atlas/Continuar.png</SourceFile>
+  <SourceTime>2026-11-01T20:21:51.2917616-03:00</SourceTime>
+  <DestFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Sinner/PantallaEleccion/Atlas/Continuar.xnb</DestFile>
+  <DestTime>2026-11-01T20:28:26.8334739-03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

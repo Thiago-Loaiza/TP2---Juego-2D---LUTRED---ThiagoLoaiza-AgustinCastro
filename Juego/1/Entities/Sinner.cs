@@ -133,9 +133,9 @@ public class Sinner
 
         _efectoParry = new AnimatedSprite(CrearAnimacion(
             content,
-            "Effects/EstrellaParry-Sheet",
-            4,
-            (SegundosPorFrameParry * 5 + Mejoras.ExtraParry) / 4,
+            "Effects/EfectoParry-Sheet",
+            5,
+            (SegundosPorFrameParry * 5 + Mejoras.ExtraParry) / 5,
             50,
             50
         ));
@@ -151,7 +151,7 @@ public class Sinner
         _efectoParry.Position = Position;
         _efectoParry.IsLooping = false;
         _efectoParry.Origin = new Vector2(25, 25);
-        _efectoParry.Scale = new Vector2(0.7f, 0.7f);
+        _efectoParry.Scale = new Vector2(0.93f, 0.93f);
         _tecladoAnterior = Keyboard.GetState();
     }
 
