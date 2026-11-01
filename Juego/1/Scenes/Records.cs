@@ -8,7 +8,6 @@ using Gum.Wireframe;
 using LutredLibrary;
 using LutredLibrary.Scenes;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
@@ -25,7 +24,6 @@ public sealed class Records : Escena
     private SpriteFont _fuente;
     private Texture2D _pixel;
     private BotonAnimado _volver;
-    private SoundEffectInstance _musica;
     private KeyboardState _tecladoAnterior = Keyboard.GetState();
     private int _ruedaAnterior = Mouse.GetState().ScrollWheelValue;
     private int _primeraFila;
@@ -39,15 +37,10 @@ public sealed class Records : Escena
     protected override void LoadContent()
     {
         _historial.Cargar();
-        _registros = _historial.Registros.OrderByDescending(r => r.Puntaje).ToArray();
+        _registros = _historial.Registros.OrderByDescending(r => r.Puntaje).ThenByDescending(r => r.Fecha).ToArray();
         _fuente = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
         _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
-        Core.Audio.StopSong();
-        Core.Audio.SongVolume = 0.45f;
-        _musica = Core.Audio.CreateSoundEffectInstance(Content.Load<SoundEffect>("Music/Inicio"),
-            isLooped: true, isMusic: true);
-        Core.Audio.PlaySoundEffect(_musica);
     }
 
     public override void Initialize()
@@ -103,8 +96,8 @@ public sealed class Records : Escena
         bool Pulsada(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         if (!_saliendo && _volver.IsEnabled && Core.Instance.IsActive)
         {
-            if (Pulsada(Keys.Down) || Pulsada(Keys.S)) _primeraFila++;
-            if (Pulsada(Keys.Up) || Pulsada(Keys.W)) _primeraFila--;
+            if (Pulsada(Keys.Down) || Pulsada(Keys.S) || Pulsada(Keys.Right) || Pulsada(Keys.D)) _primeraFila++;
+            if (Pulsada(Keys.Up) || Pulsada(Keys.W) || Pulsada(Keys.Left) || Pulsada(Keys.A)) _primeraFila--;
             if (Pulsada(Keys.PageDown)) _primeraFila += FilasVisibles;
             if (Pulsada(Keys.PageUp)) _primeraFila -= FilasVisibles;
             if (Pulsada(Keys.Home)) _primeraFila = 0;
@@ -137,6 +130,7 @@ public sealed class Records : Escena
         batch.Draw(_pixel, Area(-470, -250, 940, 470), new Color(15, 8, 8) * _opacidad);
         Texto("RECORDS", -_fuente.MeasureString("RECORDS").X * 0.9f, -215, 1.8f);
         Texto("FECHA", -385, -145, 1f);
+        Texto("NOMBRE", -95, -145, 1f);
         Texto("PUNTAJE", 380, -145, 1f, derecha: true);
         batch.Draw(_pixel, Area(-400, -115, 800, 2), new Color(130, 130, 130) * _opacidad);
         if (_historial.Error != null || _registros.Length == 0)
@@ -148,7 +142,9 @@ public sealed class Records : Escena
         {
             RegistroRecord registro = _registros[_primeraFila + i];
             float y = -95f + i * 36f;
-            Texto(registro.Fecha.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture), -385, y, 1f);
+            Texto(registro.Fecha.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture), -385, y, 0.85f);
+            float tamanoNombre = Math.Min(0.95f, 290f / Math.Max(1f, _fuente.MeasureString(registro.Nombre).X));
+            Texto(registro.Nombre, -95, y, tamanoNombre);
             Texto(registro.Puntaje.ToString("D8", CultureInfo.InvariantCulture), 380, y, 1.05f, derecha: true);
         }
         if (_registros.Length > FilasVisibles)
@@ -164,7 +160,6 @@ public sealed class Records : Escena
     protected override void UnloadContent()
     {
         if (_volver != null) { _volver.Click -= Volver; _volver.Dispose(); }
-        Core.Audio.ReleaseSoundEffect(_musica);
         _pixel?.Dispose();
     }
 }

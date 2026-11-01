@@ -127,15 +127,18 @@ public sealed class MarcadorPuntaje : IDisposable
         float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
         Vector2 origen = new(24f * escala, vista.Height - 340f * escala);
         float pulso = MathF.Sin(_pulso / 0.35f * MathHelper.Pi);
-        Rectangle recorte = _imagenes[_estado.Rango].Bounds;
-        float escalaImagen = Math.Min(280f / recorte.Width, 92f / recorte.Height)
-            * escala * (1f + pulso * 0.05f);
-        Core.SpriteBatch.Draw(_imagenes[_estado.Rango], origen + new Vector2(140, 48) * escala,
-            recorte, Color.White, 0f, new Vector2(recorte.Width, recorte.Height) * 0.5f,
-            escalaImagen, SpriteEffects.None, 0f);
+        if (_estado.Rango >= 0)
+        {
+            Rectangle recorte = _imagenes[_estado.Rango].Bounds;
+            float escalaImagen = Math.Min(280f / recorte.Width, 92f / recorte.Height)
+                * escala * (1f + pulso * 0.05f);
+            Core.SpriteBatch.Draw(_imagenes[_estado.Rango], origen + new Vector2(140, 48) * escala,
+                recorte, Color.White, 0f, new Vector2(recorte.Width, recorte.Height) * 0.5f,
+                escalaImagen, SpriteEffects.None, 0f);
+        }
         string multiplicador = "X" + _estado.Multiplicador.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
         DibujarTexto(_fuente, multiplicador, origen + new Vector2(300, 33) * escala,
-            0.85f * escala, color: ColoresMultiplicador[_estado.Rango]);
+            0.85f * escala, color: _estado.Rango < 0 ? Color.White : ColoresMultiplicador[_estado.Rango]);
         var barra = new Rectangle((int)origen.X, (int)(origen.Y + 102 * escala), (int)(360 * escala), Math.Max(3, (int)(12 * escala)));
         Core.SpriteBatch.Draw(_pixel, barra, Color.Black);
         int borde = Math.Max(1, (int)(2 * escala));

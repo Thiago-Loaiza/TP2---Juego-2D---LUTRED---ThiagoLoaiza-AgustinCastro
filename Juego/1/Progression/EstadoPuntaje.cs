@@ -46,8 +46,8 @@ public sealed class EstadoPuntaje
     public int Total { get; private set; }
     public int PuntosDelPiso { get; private set; }
     public double Estilo { get; private set; }
-    public int Rango { get; private set; }
-    public double Multiplicador => Rangos[Rango].Multiplicador;
+    public int Rango { get; private set; } = -1;
+    public double Multiplicador => Rango < 0 ? 1 : Rangos[Rango].Multiplicador;
     public string TextoTotal => Total.ToString("D8", CultureInfo.InvariantCulture);
     public string TextoPiso => PuntosDelPiso.ToString("D8", CultureInfo.InvariantCulture);
     public IReadOnlyList<PremioPuntaje> Acciones => _acciones;
@@ -56,6 +56,7 @@ public sealed class EstadoPuntaje
     {
         get
         {
+            if (Rango < 0) return 0;
             double minimo = Rangos[Rango].Umbral;
             double maximo = Rango + 1 < Rangos.Count ? Rangos[Rango + 1].Umbral : MaximoEstilo;
             return (float)Math.Clamp((Estilo - minimo) / (maximo - minimo), 0, 1);
@@ -65,6 +66,9 @@ public sealed class EstadoPuntaje
     public void ComenzarNivel()
     {
         PuntosDelPiso = 0;
+        Estilo = 0;
+        Rango = -1;
+        _acciones.Clear();
         _parrys.Clear();
         _ducks.Clear();
         _jarJars.Clear();
@@ -179,7 +183,7 @@ public sealed class EstadoPuntaje
     private void ActualizarRango()
     {
         int anterior = Rango;
-        Rango = Rangos.Count - 1;
+        Rango = Estilo <= 0 ? -1 : Rangos.Count - 1;
         while (Rango > 0 && Estilo < Rangos[Rango].Umbral) Rango--;
         if (Rango > anterior) RangoSubido?.Invoke(Rango);
     }
@@ -188,7 +192,7 @@ public sealed class EstadoPuntaje
     {
         Total = 0;
         Estilo = 0;
-        Rango = 0;
+        Rango = -1;
         _acciones.Clear();
         ComenzarNivel();
     }

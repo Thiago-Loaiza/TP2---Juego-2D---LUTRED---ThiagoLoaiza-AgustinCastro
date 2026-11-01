@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
 using _1.Scenes;
+using System.Linq;
 
 namespace _1;
 
@@ -24,6 +25,7 @@ public class Game1 : Core
     private Escena _escenaPendiente;
     private bool _salirPresionadoAnterior;
     private _1.UI.ConfiguracionPausa _configuracionPausa;
+    private readonly _1.UI.MusicaMenu _musicaMenu = new();
 
     public Game1() : base("LUTRED", 1280, 720, false)
     {
@@ -32,15 +34,21 @@ public class Game1 : Core
     protected override void Initialize()
     {
         base.Initialize();
+        OpcionesJuego.Cargar();
 
         GumService.Default.Initialize(this, DefaultVisualsVersion.V3);
         GumService.Default.ContentLoader.XnaContentManager = Content;
         GumService.Default.CanvasWidth = GraphicsDevice.Viewport.Width;
         GumService.Default.CanvasHeight = GraphicsDevice.Viewport.Height;
         FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
-        FrameworkElement.TabKeyCombos.Add(new KeyCombo { PushedKey = Keys.S });
-        FrameworkElement.TabReverseKeyCombos.Add(new KeyCombo { PushedKey = Keys.W });
-        FrameworkElement.ClickCombos.Add(new KeyCombo { PushedKey = Keys.F });
+        foreach (Keys tecla in new[] { Keys.S, Keys.D, Keys.Down, Keys.Right })
+            if (!FrameworkElement.TabKeyCombos.Any(combo => combo.PushedKey == tecla))
+                FrameworkElement.TabKeyCombos.Add(new KeyCombo { PushedKey = tecla });
+        foreach (Keys tecla in new[] { Keys.W, Keys.A, Keys.Up, Keys.Left })
+            if (!FrameworkElement.TabReverseKeyCombos.Any(combo => combo.PushedKey == tecla))
+                FrameworkElement.TabReverseKeyCombos.Add(new KeyCombo { PushedKey = tecla });
+        if (!FrameworkElement.ClickCombos.Any(combo => combo.PushedKey == Keys.Space))
+            FrameworkElement.ClickCombos.Add(new KeyCombo { PushedKey = Keys.Space });
         FrameworkElement.GamePadsForUiControl.AddRange(GumService.Default.Gamepads);
 
         CambiarEscena(new Inicio(CambiarEscena));
@@ -62,6 +70,8 @@ public class Game1 : Core
         _configuracionPausa?.Dispose();
         _configuracionPausa = null;
         _escenaActual?.Dispose();
+        _musicaMenu.CambiarEscena(_escenaPendiente is Inicio or Records or Creditos,
+            _escenaPendiente is Creditos);
         GumService.Default.Root.Children.Clear();
         _escenaActual = _escenaPendiente;
         _escenaPendiente = null;
@@ -74,12 +84,14 @@ public class Game1 : Core
 
     protected override void Update(GameTime gameTime)
     {
+        OpcionesJuego.ActualizarGuardado((float)gameTime.ElapsedGameTime.TotalSeconds);
+        _musicaMenu.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
         bool salirPresionado = GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
             || Keyboard.GetState().IsKeyDown(Keys.Escape);
         bool salirPulsado = salirPresionado && !_salirPresionadoAnterior;
         _salirPresionadoAnterior = salirPresionado;
         bool bloquearEscena = _configuracionPausa?.Update(gameTime, salirPulsado) == true;
-        if (salirPulsado && !bloquearEscena && _escenaActual is not Salvacion)
+        if (salirPulsado && !bloquearEscena && _escenaActual is not Salvacion && _escenaActual is not RegistrarPuntaje)
         {
             if (_escenaActual is Inicio inicio && (inicio.OpcionesAbiertas || inicio.EnTransicion))
                 inicio.CerrarOpciones();
@@ -124,10 +136,12 @@ public class Game1 : Core
 
     protected override void UnloadContent()
     {
+        OpcionesJuego.GuardarAhora();
         _configuracionPausa?.Dispose();
         _configuracionPausa = null;
         _escenaActual?.Dispose();
         _escenaPendiente?.Dispose();
+        _musicaMenu.Dispose();
         GumService.Default.Root.Children.Clear();
         base.UnloadContent();
     }

@@ -77,8 +77,8 @@ public sealed class ConfiguracionPausa : IDisposable
             }
             else if (escapePulsado || (clic && AreaReanudar.Contains(raton.Position))
                 || (_listaOpciones.ReanudarSeleccionado && ((teclado.IsKeyDown(Keys.Enter)
-                    && _tecladoAnterior.IsKeyUp(Keys.Enter)) || (teclado.IsKeyDown(Keys.F)
-                    && _tecladoAnterior.IsKeyUp(Keys.F)))))
+                && _tecladoAnterior.IsKeyUp(Keys.Enter)) || (teclado.IsKeyDown(Keys.Space)
+                && _tecladoAnterior.IsKeyUp(Keys.Space)))))
             {
                 Cerrar();
             }

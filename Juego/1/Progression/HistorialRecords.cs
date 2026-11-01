@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text;
 
 namespace _1.Progression;
 
-public sealed record RegistroRecord(DateTimeOffset Fecha, int Puntaje);
-public enum ResultadoRegistro { NoSupera, Guardado, Error }
+public sealed record RegistroRecord(DateTimeOffset Fecha, int Puntaje, string Nombre = "ANÓNIMO");
+public enum ResultadoRegistro { Guardado, Error }
 
 public sealed class HistorialRecords
 {
+    public const int MaximoCaracteresNombre = 20;
     public string RutaArchivo { get; }
     public string Error { get; private set; }
     public bool ArchivoDanado { get; private set; }
@@ -35,13 +37,13 @@ public sealed class HistorialRecords
             catch (DirectoryNotFoundException) { return; }
             var registros = JsonSerializer.Deserialize<List<RegistroRecord>>(contenido)
                 ?? throw new JsonException("Historial vacio o invalido.");
-            int mejor = -1;
-            foreach (RegistroRecord registro in registros)
+            for (int i = 0; i < registros.Count; i++)
             {
+                RegistroRecord registro = registros[i];
                 if (registro == null || registro.Fecha == default || registro.Puntaje < 0
-                    || registro.Puntaje > EstadoPuntaje.PuntajeMaximo || registro.Puntaje <= mejor)
-                    throw new JsonException("El historial no contiene records consecutivos validos.");
-                mejor = registro.Puntaje;
+                    || registro.Puntaje > EstadoPuntaje.PuntajeMaximo)
+                    throw new JsonException("El historial contiene un registro invalido.");
+                registros[i] = registro with { Nombre = NormalizarNombre(registro.Nombre) };
             }
             _registros = registros;
         }
@@ -54,17 +56,28 @@ public sealed class HistorialRecords
         catch (UnauthorizedAccessException) { Error = "No se pudo acceder al historial de records."; }
     }
 
-    public ResultadoRegistro GuardarSiSupera(int puntaje, DateTimeOffset? fecha = null)
+    public static string NormalizarNombre(string nombre)
+    {
+        var resultado = new StringBuilder();
+        foreach (char caracter in (nombre ?? "").Trim())
+        {
+            if (!char.IsControl(caracter) && caracter >= ' ' && caracter <= '\u00ff') resultado.Append(caracter);
+            if (resultado.Length >= MaximoCaracteresNombre) break;
+        }
+        string limpio = resultado.ToString().Trim();
+        return limpio.Length > 0 ? limpio : "ANÓNIMO";
+    }
+
+    public ResultadoRegistro Guardar(int puntaje, string nombre, DateTimeOffset? fecha = null)
     {
         if (puntaje < 0 || puntaje > EstadoPuntaje.PuntajeMaximo)
         {
             Error = "El puntaje no es valido.";
             return ResultadoRegistro.Error;
         }
-        // Leer de nuevo antes de comparar conserva los records de las partidas anteriores.
+        // Leer de nuevo conserva todas las partidas anteriores, incluidos empates y puntajes menores.
         Cargar();
         if (Error != null && !ArchivoDanado) return ResultadoRegistro.Error;
-        if (_registros.Count > 0 && puntaje <= _registros[^1].Puntaje) return ResultadoRegistro.NoSupera;
         string temporal = RutaArchivo + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
         {
@@ -74,7 +87,10 @@ public sealed class HistorialRecords
                 // Conservar el archivo ilegible antes de comenzar un historial nuevo.
                 File.Copy(RutaArchivo, RutaArchivo + ".danado-" + Guid.NewGuid().ToString("N") + ".bak");
             }
-            var nuevos = new List<RegistroRecord>(_registros) { new(fecha ?? DateTimeOffset.Now, puntaje) };
+            var nuevos = new List<RegistroRecord>(_registros)
+            {
+                new(fecha ?? DateTimeOffset.Now, puntaje, NormalizarNombre(nombre))
+            };
             string json = JsonSerializer.Serialize(nuevos, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(temporal, json);
             // El archivo anterior solo se sustituye despues de escribir el nuevo completo.

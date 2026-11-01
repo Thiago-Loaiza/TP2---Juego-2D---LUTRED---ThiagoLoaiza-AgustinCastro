@@ -203,8 +203,8 @@ public class Sinner
         KeyboardState teclado = Keyboard.GetState();
         ParryIniciadoEsteFrame = false;
 
-        bool parryPresionado = teclado.IsKeyDown(Keys.F)
-            && _tecladoAnterior.IsKeyUp(Keys.F);
+        bool parryPresionado = teclado.IsKeyDown(Keys.Space)
+            && _tecladoAnterior.IsKeyUp(Keys.Space);
         bool shiftPresionado = (teclado.IsKeyDown(Keys.LeftShift) && _tecladoAnterior.IsKeyUp(Keys.LeftShift))
             || (teclado.IsKeyDown(Keys.RightShift) && _tecladoAnterior.IsKeyUp(Keys.RightShift));
         if (OpcionesJuego.AlternarCorrer && shiftPresionado)

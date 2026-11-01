@@ -22,13 +22,13 @@ public sealed class Salvacion : Escena
     private readonly Action<Escena> _cambiarEscena;
     private readonly string _puntaje;
     private readonly int _puntajeFinal;
-    private bool _registroProcesado;
-    private string _mensajeRecord;
+    private readonly DateTimeOffset _fechaEscape = DateTimeOffset.Now;
     private readonly string _frase = Random.Shared.Next(2) == 0
         ? "Al final pudiste.\nSabía que lo lograrías."
         : "Tuve fe en ti,\npero tú tuviste mucha más.";
     private AnimatedSprite _manos;
     private SpriteFont _fuente;
+    private SpriteFont _fuenteFrase;
     private SoundEffectInstance _audio;
     private float _tiempo;
     private bool _terminado;
@@ -56,6 +56,7 @@ public sealed class Salvacion : Escena
             Origin = new Vector2(anchoFrame, hojaManos.Height) * 0.5f
         };
         _fuente = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        _fuenteFrase = Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
         _audio = Core.Audio.CreateSoundEffectInstance(Content.Load<SoundEffect>("SFX/LUTRED_Salvation"));
         Core.Audio.PlaySoundEffect(_audio);
     }
@@ -65,23 +66,12 @@ public sealed class Salvacion : Escena
         if (_terminado) return;
         if (_tiempo < DuracionManos) _manos.Update(gameTime);
         _tiempo += (float)gameTime.ElapsedGameTime.TotalSeconds;
-        if (!_registroProcesado && _tiempo >= InicioFrase)
-        {
-            _registroProcesado = true;
-            ResultadoRegistro resultado = new HistorialRecords().GuardarSiSupera(_puntajeFinal);
-            _mensajeRecord = resultado switch
-            {
-                ResultadoRegistro.Guardado => "NUEVO RÉCORD",
-                ResultadoRegistro.Error => "NO SE PUDO GUARDAR EL RÉCORD",
-                _ => null
-            };
-        }
         float salida = Math.Clamp((_tiempo - InicioSalida) / DuracionSalida, 0f, 1f);
         Core.Audio.SetVolume(_audio, 1f - salida);
         if (_tiempo >= InicioSalida + DuracionSalida + DuracionNegro)
         {
             _terminado = true;
-            _cambiarEscena(new Inicio(_cambiarEscena, animarEntrada: true));
+            _cambiarEscena(new RegistrarPuntaje(_cambiarEscena, _puntajeFinal, _fechaEscape));
         }
     }
 
@@ -92,7 +82,7 @@ public sealed class Salvacion : Escena
         Vector2 centro = new(vista.Width * 0.5f, vista.Height * 0.5f);
         float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
         var batch = Core.SpriteBatch;
-        batch.Begin(samplerState: SamplerState.PointClamp);
+        batch.Begin(samplerState: _tiempo >= InicioFrase ? SamplerState.LinearClamp : SamplerState.PointClamp);
         if (_tiempo < DuracionManos)
         {
             float ajuste = Math.Min(vista.Width / (float)_manos.Region.Width,
@@ -176,33 +166,26 @@ public sealed class Salvacion : Escena
         _1.UI.MarcadorPuntaje.DibujarTexto(_fuente, puntaje,
             centro + new Vector2(-_fuente.MeasureString(puntaje).X * escalaPuntaje * 0.5f, 110f * escala),
             escalaPuntaje, opacidad * entradaPuntaje);
-        if (_mensajeRecord != null)
-        {
-            float tamanoMensaje = Math.Min(0.9f * escala, ancho * 0.85f / _fuente.MeasureString(_mensajeRecord).X);
-            _1.UI.MarcadorPuntaje.DibujarTexto(_fuente, _mensajeRecord,
-                centro + new Vector2(-_fuente.MeasureString(_mensajeRecord).X * tamanoMensaje * 0.5f, 155f * escala),
-                tamanoMensaje, opacidad * entradaPuntaje);
-        }
         string[] lineas = _frase.Split('\n');
         int indiceLetra = 0;
         float retrasoLetra = 1.6f / Math.Max(1, _frase.Length - 1);
-        float escalaFuente = 1.5f * escala;
+        float escalaFuente = 1.5f * escala * _fuente.LineSpacing / _fuenteFrase.LineSpacing;
         foreach (string linea in lineas)
-            escalaFuente = Math.Min(escalaFuente, ancho * 0.85f / _fuente.MeasureString(linea).X);
+            escalaFuente = Math.Min(escalaFuente, ancho * 0.85f / _fuenteFrase.MeasureString(linea).X);
 
         for (int i = 0; i < lineas.Length; i++)
         {
             string linea = lineas[i];
-            Vector2 medida = _fuente.MeasureString(linea);
+            Vector2 medida = _fuenteFrase.MeasureString(linea);
             Vector2 posicion = centro - medida * escalaFuente * 0.5f
                 + new Vector2(0f, (i - (lineas.Length - 1) * 0.5f) * 45f * escala);
             for (int letra = 0; letra < linea.Length; letra++)
             {
                 float entrada = Math.Clamp((tiempoFrase - (indiceLetra + letra) * retrasoLetra) / 0.4f, 0f, 1f);
                 string caracter = linea[letra].ToString();
-                float x = _fuente.MeasureString(linea.Substring(0, letra + 1)).X
-                    - _fuente.MeasureString(caracter).X;
-                Core.SpriteBatch.DrawString(_fuente, caracter, posicion + new Vector2(x * escalaFuente, 0f),
+                float x = _fuenteFrase.MeasureString(linea.Substring(0, letra + 1)).X
+                    - _fuenteFrase.MeasureString(caracter).X;
+                Core.SpriteBatch.DrawString(_fuenteFrase, caracter, posicion + new Vector2(x * escalaFuente, 0f),
                     Color.White * (entrada * opacidad), 0f, Vector2.Zero, escalaFuente, SpriteEffects.None, 0f);
             }
             indiceLetra += linea.Length + 1;

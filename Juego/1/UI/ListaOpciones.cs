@@ -109,14 +109,20 @@ public sealed class ListaOpciones : IDisposable
                 EstablecerVolumen(_arrastrando, (int)MathF.Round((raton.X - pista.X) * 100f / pista.Width));
             }
             int cantidad = usarTab ? 5 : 4;
+            bool izquierda = pulsado(Keys.Left) || pulsado(Keys.A);
+            bool derecha = pulsado(Keys.Right) || pulsado(Keys.D);
             if (pulsado(Keys.Down) || pulsado(Keys.S) || (usarTab && pulsado(Keys.Tab))) Seleccionar((_seleccion + 1) % cantidad);
             if (pulsado(Keys.Up) || pulsado(Keys.W)) Seleccionar(_seleccion < 0 ? cantidad - 1 : (_seleccion + cantidad - 1) % cantidad);
+            bool ajustarVolumen = _seleccion >= 2 && _seleccion < 4;
+            if (!ajustarVolumen && (izquierda || derecha))
+                Seleccionar(_seleccion < 0 ? (derecha ? 0 : cantidad - 1)
+                    : (_seleccion + (derecha ? 1 : cantidad - 1)) % cantidad);
             if (_seleccion >= 0)
             {
-                if (_seleccion < 2 && ((usarEnter && pulsado(Keys.Enter)) || pulsado(Keys.Space) || pulsado(Keys.F))) Alternar(_seleccion);
-                if (_seleccion >= 2 && _seleccion < 4 && (pulsado(Keys.Left) || pulsado(Keys.Right)))
+                if (_seleccion < 2 && ((usarEnter && pulsado(Keys.Enter)) || pulsado(Keys.Space))) Alternar(_seleccion);
+                if (ajustarVolumen && (izquierda || derecha))
                     EstablecerVolumen(_seleccion, (_seleccion == 2 ? OpcionesJuego.VolumenMusica : OpcionesJuego.VolumenSfx)
-                        + (pulsado(Keys.Right) ? 5 : -5));
+                        + (derecha ? 5 : -5));
             }
         }
         _ratonAnterior = raton;
@@ -240,6 +246,7 @@ public sealed class ListaOpciones : IDisposable
     {
         get
         {
+            if (OpcionesJuego.ErrorGuardado != null) return OpcionesJuego.ErrorGuardado;
             var raton = Mouse.GetState();
             int fila = _area.Contains(raton.Position)
                 ? (int)((raton.Y - _area.Top) / Escala + _scroll) / 120 : _seleccion;

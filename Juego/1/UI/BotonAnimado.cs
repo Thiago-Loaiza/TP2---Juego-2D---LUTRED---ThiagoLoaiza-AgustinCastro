@@ -107,6 +107,7 @@ public sealed class BotonAnimado : Button, IDisposable
         var mando = GamePad.GetState(PlayerIndex.One);
         if (teclado.IsKeyDown(Keys.Tab) || teclado.IsKeyDown(Keys.Up)
             || teclado.IsKeyDown(Keys.W) || teclado.IsKeyDown(Keys.S)
+            || teclado.IsKeyDown(Keys.A) || teclado.IsKeyDown(Keys.D)
             || teclado.IsKeyDown(Keys.Down) || teclado.IsKeyDown(Keys.Left)
             || teclado.IsKeyDown(Keys.Right)
             || mando.DPad.Up == ButtonState.Pressed || mando.DPad.Down == ButtonState.Pressed

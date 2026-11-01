@@ -7,7 +7,6 @@ using LutredLibrary.Scenes;
 using LutredLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
 using _1.UI;
@@ -40,7 +39,6 @@ public class Inicio : Escena
     public bool OpcionesAbiertas => _panelOpciones?.IsVisible == true;
     public bool EnTransicion => _enTransicion;
     private AnimatedSprite _titulo;
-    private SoundEffectInstance _musicaInicio;
     private Texture2D _hojaBoton;
     private Texture2D _hojaCreditos;
     private Texture2D _hojaMusica;
@@ -64,11 +62,6 @@ public class Inicio : Escena
     protected override void LoadContent()
     {
         _fuenteOpciones = Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
-        Core.Audio.SongVolume = 0.45f;
-        Core.Audio.StopSong();
-        _musicaInicio = Core.Audio.CreateSoundEffectInstance(
-            Content.Load<SoundEffect>("Music/Inicio"), isLooped: true, isMusic: true);
-        Core.Audio.PlaySoundEffect(_musicaInicio);
         _hojaBoton = Content.Load<Texture2D>("Sprites/UI/Buttons/Button-Sheet");
         _hojaCreditos = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet");
         _hojaMusica = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Music-Sheet");
@@ -279,7 +272,7 @@ public class Inicio : Escena
             _volver.IsFocused = _listaOpciones.ReanudarSeleccionado;
             if (_listaOpciones.ReanudarSeleccionado && Core.Instance.IsActive
                 && ((teclado.IsKeyDown(Keys.Enter) && _tecladoAnterior.IsKeyUp(Keys.Enter))
-                    || (teclado.IsKeyDown(Keys.F) && _tecladoAnterior.IsKeyUp(Keys.F))))
+                || (teclado.IsKeyDown(Keys.Space) && _tecladoAnterior.IsKeyUp(Keys.Space))))
                 CerrarOpciones();
         }
         _tecladoAnterior = teclado;
@@ -350,7 +343,6 @@ public class Inicio : Escena
 
     protected override void UnloadContent()
     {
-        Core.Audio.ReleaseSoundEffect(_musicaInicio);
         if (_jugar != null)
             _jugar.Click -= Jugar;
         if (_opciones != null) _opciones.Click -= AbrirOpciones;

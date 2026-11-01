@@ -4,7 +4,6 @@ using Gum.Wireframe;
 using LutredLibrary;
 using LutredLibrary.Scenes;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameGum;
 using _1.UI;
@@ -28,7 +27,6 @@ public sealed class Creditos : Escena
     private Texture2D _pixel;
     private SpriteFont _fuente;
     private BotonAnimado _volver;
-    private SoundEffectInstance _musica;
     private double _tiempo;
     private bool _saliendo;
     private float _tiempoTransicion;
@@ -45,11 +43,6 @@ public sealed class Creditos : Escena
         _fuente = Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
         _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
-        Core.Audio.SongVolume = 0.45f;
-        Core.Audio.StopSong();
-        _musica = Core.Audio.CreateSoundEffectInstance(Content.Load<SoundEffect>("Music/Misc/Creditos"),
-            isLooped: true, isMusic: true);
-        Core.Audio.PlaySoundEffect(_musica);
     }
 
     public override void Initialize()
@@ -162,7 +155,6 @@ public sealed class Creditos : Escena
             _volver.Click -= Volver;
             _volver.Dispose();
         }
-        Core.Audio.ReleaseSoundEffect(_musica);
         _pixel?.Dispose();
     }
 }

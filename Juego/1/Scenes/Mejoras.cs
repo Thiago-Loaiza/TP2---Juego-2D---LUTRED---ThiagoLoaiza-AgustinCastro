@@ -174,15 +174,15 @@ public sealed class Mejoras : Escena
         bool Pulsado(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         if (_tiempo >= FinAparicion && Core.Instance.IsActive)
         {
-            if (Pulsado(Keys.Left) || Pulsado(Keys.A))
+            if (Pulsado(Keys.Left) || Pulsado(Keys.A) || Pulsado(Keys.Up) || Pulsado(Keys.W))
             {
                 _seleccion = (_seleccion + 2) % 3;
             }
-            if (Pulsado(Keys.Right) || Pulsado(Keys.D))
+            if (Pulsado(Keys.Right) || Pulsado(Keys.D) || Pulsado(Keys.Down) || Pulsado(Keys.S))
             {
                 _seleccion = (_seleccion + 1) % 3;
             }
-            bool confirmar = Pulsado(Keys.Enter) || Pulsado(Keys.F);
+        bool confirmar = Pulsado(Keys.Enter) || Pulsado(Keys.Space);
             for (int i = 0; i < _opciones.Length; i++)
             {
                 if (AreaOpcion(i).Contains(raton.Position))
@@ -273,7 +273,7 @@ public sealed class Mejoras : Escena
         }
         // Flechas pixeladas para mantener la fuente actual sin glifos faltantes.
         DibujarIndicacionSeleccion(escala, alfaInterfaz * 0.5f);
-        DibujarTexto(_sinMejorasAplicables ? "Sin mejoras aplicables: Enter / F para continuar" : "Enter / F para aceptar la mejora", new Vector2(viewport.Width / 2f, viewport.Height / 2f + 333 * escala), 0.75f * escala, alfaInterfaz * 0.5f);
+        DibujarTexto(_sinMejorasAplicables ? "Sin mejoras aplicables: Enter / Espacio para continuar" : "Enter / Espacio para aceptar la mejora", new Vector2(viewport.Width / 2f, viewport.Height / 2f + 333 * escala), 0.75f * escala, alfaInterfaz * 0.5f);
         // Velo blanco sobre la escena completa que se disuelve al comenzar la revelacion.
         float velo = 1f - Aparicion(0f);
         Core.SpriteBatch.Draw(_pixel, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White * velo);
