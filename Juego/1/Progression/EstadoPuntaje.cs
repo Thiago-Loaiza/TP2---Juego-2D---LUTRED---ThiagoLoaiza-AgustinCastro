@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace _1.Progression;
 
-public enum TipoParry { Duck, Zorak, JarJar, Lanza, Shame }
+public enum TipoParry { Duck, Zorak, JarJar, Lanza, Shame, Delusion }
 
 public sealed record DefinicionRango(string Nombre, string Audio, double Multiplicador, double Umbral);
 
@@ -133,6 +133,9 @@ public sealed class EstadoPuntaje
             case TipoParry.Shame:
                 Sumar("PARRY SHAME", 700);
                 if (ultimoInstante) Sumar("VEN POR EL", 1000);
+                break;
+            case TipoParry.Delusion:
+                Sumar("PARRY DELUSION", 250);
                 break;
         }
         if (automatico) Sumar("AUTO-PARRY", 25);

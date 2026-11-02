@@ -34,6 +34,7 @@ public class Partida : Escena
     private readonly int _cantidadJarJar;
     private readonly bool _sorakElegido;
     private readonly bool _erosionBirdElegido;
+    private readonly bool _delusionElegido;
     private readonly double _duracionNivel;
     private readonly List<Orbe> _orbes = new();
     private Animation _animacionOrbe;
@@ -49,7 +50,8 @@ public class Partida : Escena
 
     public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
-        double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null)
+        double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null,
+        bool delusionElegido = false)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
         if (numeroNivel < 1)
@@ -71,6 +73,7 @@ public class Partida : Escena
         _cantidadJarJar = cantidadJarJar;
         _sorakElegido = sorakElegido;
         _erosionBirdElegido = erosionBirdElegido;
+        _delusionElegido = delusionElegido;
         if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(duracionNivel));
@@ -89,6 +92,7 @@ public class Partida : Escena
     private readonly List<JarJar> _jarJars = new();
     private Zorak _zorak;
     private ErosionBird _erosionBird;
+    private Delusion _delusion;
     private int _tandaLanzas;
     private readonly Camara2D _camara = new();
     private readonly GeneradorMapa _generador = new();
@@ -170,6 +174,7 @@ public class Partida : Escena
         // JarJar solo se teletransporta a lugares sin paredes y conectados con el inicio.
         _posicionesLibres = GeneradorOrbes.PosicionesAccesibles(mapa.Limites,
             _sinner.Colision.Centro, _obstaculos);
+        _delusion?.Ubicar(_sinner.Colision.Centro, _posicionesLibres);
         _tintaAntigua.Parameters["TamanoTexel"].SetValue(
             new Vector2(1f / ladrillos.Width, 1f / ladrillos.Height));
         Core.Audio.SongVolume = 0.3f;
@@ -245,6 +250,11 @@ public class Partida : Escena
             _erosionBird = new ErosionBird();
             _erosionBird.LoadContent(Content);
         }
+        if (_delusionElegido)
+        {
+            _delusion = new Delusion();
+            _delusion.LoadContent(Content);
+        }
         _pantallaDerrota = new PantallaDerrota();
         _pantallaDerrota.LoadContent(Content);
 
@@ -293,7 +303,8 @@ public class Partida : Escena
                 void AbrirPregunta() => _cambiarEscena(new Seleccion(_cambiarEscena, _numeroNivel + 1,
                     transicionReproducida: true,
                     cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido,
-                    duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras));
+                    duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras,
+                    delusionElegido: _delusionElegido));
                 if (_numeroNivel % 4 == 0)
                 {
                     _cambiarEscena(new Mejoras(AbrirPregunta, _mejoras, _numeroNivel));
@@ -421,6 +432,20 @@ public class Partida : Escena
                     Perder();
                     return;
                 }
+            }
+
+            ResultadoDelusion resultadoDelusion = _delusion?.Update(gameTime, _sinner,
+                centroAnteriorSinner, _obstaculos, _posicionesLibres) ?? ResultadoDelusion.Nada;
+            if (resultadoDelusion == ResultadoDelusion.Parreado)
+            {
+                bool automatico = !_sinner.HaciendoParry;
+                for (int i = 0; i < _delusion.ParrysEsteFrame; i++)
+                    RegistrarParry(TipoParry.Delusion, _delusion, automatico);
+            }
+            else if (resultadoDelusion == ResultadoDelusion.Golpe)
+            {
+                Perder();
+                return;
             }
 
             if (!_derrotado && _faseEntrada == FaseEntrada.Jugando)
@@ -639,9 +664,11 @@ public class Partida : Escena
             {
                 _jarJars[i].Draw(Core.SpriteBatch);
             }
+            _delusion?.Draw(Core.SpriteBatch);
             _erosionBird?.DrawLanzas(Core.SpriteBatch);
             _shame.Draw(Core.SpriteBatch);
             _sinner.Draw(Core.SpriteBatch);
+            _delusion?.DrawBolas(Core.SpriteBatch);
             for (int i = 0; i < _dukes.Count; i++)
             {
                 _dukes[i].Draw(Core.SpriteBatch);

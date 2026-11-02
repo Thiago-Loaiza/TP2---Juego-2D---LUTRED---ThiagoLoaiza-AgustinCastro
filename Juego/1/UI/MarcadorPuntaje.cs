@@ -61,6 +61,7 @@ public sealed class MarcadorPuntaje : IDisposable
         "PARRY LANZA" => new(Color.White, Color.Black, 1.2f),
         "BAD BIRD" => new(new Color(255, 35, 50), new Color(155, 155, 155), 1.6f, new Color(255, 35, 50), 0.22f),
         "PARRY SHAME" => new(new Color(255, 25, 40), Color.Black, 1.4f, new Color(255, 25, 40), 0.3f),
+        "PARRY DELUSION" => new(new Color(255, 150, 35), Color.Black, 1.2f),
         "VEN POR EL" => new(new Color(255, 65, 75), Color.Black, 1.6f, new Color(255, 30, 45), 0.5f),
         _ => new(Color.White, Color.Black, 1.2f)
     };

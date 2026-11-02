@@ -1614,3 +1614,8 @@ c:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Jue
 c:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\Precipitacion.xnb
 c:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\TETUTRED.xnb
 c:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Upgrades\Icons\TipoDuro.xnb
+C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Enemies\Delusion\Sprite-Delusion-FuegoCaidoTP-sheet.xnb
+C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Enemies\Delusion\Sprite-Delusion-FuegoMovimientoTP-sheet.xnb
+C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Enemies\Delusion\Sprite-Delusion-FuegoQuietoTP-sheet.xnb
+C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Enemies\Delusion\Sprite-Delusion-ProyectilAtaque-Sheet.xnb
+C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Enemies\Delusion\Sprite-Delusion-Sheet.xnb

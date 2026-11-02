@@ -153,10 +153,14 @@
 #begin Effects/EstrellaParry-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
 /build:Effects/EstrellaParry-Sheet.png
 
 #begin Effects/RangoMejor-Sheet.png
@@ -844,6 +848,71 @@
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:SFX/Ranks/SuperSantoSuperior.mp3
+
+#begin Sprites/Enemies/Delusion/Sprite-Delusion-FuegoCaidoTP-sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/Delusion/Sprite-Delusion-FuegoCaidoTP-sheet.png
+
+#begin Sprites/Enemies/Delusion/Sprite-Delusion-FuegoMovimientoTP-sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/Delusion/Sprite-Delusion-FuegoMovimientoTP-sheet.png
+
+#begin Sprites/Enemies/Delusion/Sprite-Delusion-FuegoQuietoTP-sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/Delusion/Sprite-Delusion-FuegoQuietoTP-sheet.png
+
+#begin Sprites/Enemies/Delusion/Sprite-Delusion-ProyectilAtaque-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/Delusion/Sprite-Delusion-ProyectilAtaque-Sheet.png
+
+#begin Sprites/Enemies/Delusion/Sprite-Delusion-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/Delusion/Sprite-Delusion-Sheet.png
 
 #begin Sprites/Enemies/Duck/DuckSpriteSheet.png
 /importer:TextureImporter

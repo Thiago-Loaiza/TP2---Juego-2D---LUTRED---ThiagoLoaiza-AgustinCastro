@@ -101,6 +101,11 @@
     <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Ranks/SantoSuperior.mp3</File>
     <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Ranks/Superior.mp3</File>
     <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/SFX/Ranks/SuperSantoSuperior.mp3</File>
+    <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Delusion/Sprite-Delusion-FuegoCaidoTP-sheet.png</File>
+    <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Delusion/Sprite-Delusion-FuegoMovimientoTP-sheet.png</File>
+    <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Delusion/Sprite-Delusion-FuegoQuietoTP-sheet.png</File>
+    <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Delusion/Sprite-Delusion-ProyectilAtaque-Sheet.png</File>
+    <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Delusion/Sprite-Delusion-Sheet.png</File>
     <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Duck/DuckSpriteSheet.png</File>
     <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/ErosionBird/EB_Attack-Sheet.png</File>
     <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/ErosionBird/Erosion Bird-Sheet.png</File>
@@ -182,6 +187,11 @@
     <File>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Textures/Vidrio.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
