@@ -33,8 +33,9 @@ public sealed class Seleccion : Escena
     private readonly bool _sorakElegido;
     private readonly bool _erosionBirdElegido;
     private readonly bool _delusionElegido;
+    private readonly bool _tooManyParriesElegido;
     private readonly double _duracionNivel;
-    private enum Enemigo { Sorak, JarJar, Duke, ErosionBird, Delusion }
+    private enum Enemigo { Sorak, JarJar, Duke, ErosionBird, Delusion, TooManyParries }
     private Enemigo? _enemigoSeleccionado;
     private bool _entrando;
     private int _opcionBajoCursor = -1;
@@ -67,7 +68,7 @@ public sealed class Seleccion : Escena
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
         double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null,
-        bool delusionElegido = false)
+        bool delusionElegido = false, bool tooManyParriesElegido = false)
     {
         _cambiarEscena = cambiarEscena;
         _numeroNivel = numeroNivel;
@@ -86,6 +87,7 @@ public sealed class Seleccion : Escena
         _sorakElegido = sorakElegido;
         _erosionBirdElegido = erosionBirdElegido;
         _delusionElegido = delusionElegido;
+        _tooManyParriesElegido = tooManyParriesElegido;
         if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(duracionNivel));
@@ -104,8 +106,10 @@ public sealed class Seleccion : Escena
         {
             pool.Add(Enemigo.Delusion);
         }
-        // TEMPORAL para testear Delusion: ambas opciones son Delusion. Borrar estas lineas para volver al sorteo.
-        pool = new List<Enemigo> { Enemigo.Delusion, Enemigo.Delusion };
+        if (!tooManyParriesElegido)
+        {
+            pool.Add(Enemigo.TooManyParries);
+        }
         // Dos rivales distintos por pantalla. Zorak sale de la pool una vez elegido.
         for (int i = 0; i < 2; i++)
         {
@@ -310,7 +314,8 @@ public sealed class Seleccion : Escena
             || !_opcionesRivales.Contains(enemigo)
             || (enemigo == Enemigo.Sorak && _sorakElegido)
             || (enemigo == Enemigo.ErosionBird && _erosionBirdElegido)
-            || (enemigo == Enemigo.Delusion && _delusionElegido))
+            || (enemigo == Enemigo.Delusion && _delusionElegido)
+            || (enemigo == Enemigo.TooManyParries && _tooManyParriesElegido))
         {
             return;
         }
@@ -333,7 +338,8 @@ public sealed class Seleccion : Escena
             _sorakElegido || _enemigoSeleccionado == Enemigo.Sorak,
             duracionNivel: menosTiempo ? Math.Max(double.Epsilon, _duracionNivel * 0.67) : _duracionNivel,
             erosionBirdElegido: _erosionBirdElegido || _enemigoSeleccionado == Enemigo.ErosionBird, mejoras: _mejoras,
-            delusionElegido: _delusionElegido || _enemigoSeleccionado == Enemigo.Delusion));
+            delusionElegido: _delusionElegido || _enemigoSeleccionado == Enemigo.Delusion,
+            tooManyParriesElegido: _tooManyParriesElegido || _enemigoSeleccionado == Enemigo.TooManyParries));
     }
 
     public override void Update(GameTime gameTime)
@@ -439,6 +445,7 @@ public sealed class Seleccion : Escena
         Enemigo.JarJar => _cantidadJarJar > 0 ? "Otro Jarjar" : "Jarjar",
         Enemigo.ErosionBird => "Erosion Bird",
         Enemigo.Delusion => "Delusion",
+        Enemigo.TooManyParries => "Too Many Parries",
         _ => _cantidadDuke > 0 ? "Otro Duck" : "Duck"
     };
 

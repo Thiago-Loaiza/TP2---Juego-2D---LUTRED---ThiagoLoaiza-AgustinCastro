@@ -1619,3 +1619,4 @@ C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Jue
 C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Enemies\Delusion\Sprite-Delusion-FuegoQuietoTP-sheet.xnb
 C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Enemies\Delusion\Sprite-Delusion-ProyectilAtaque-Sheet.xnb
 C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\Enemies\Delusion\Sprite-Delusion-Sheet.xnb
+C:\Users\AgusCS\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Debug\net9.0\Content\Sprites\TooManyParries\modelo-TooManyParrys-Sheet.xnb

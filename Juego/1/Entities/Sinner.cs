@@ -45,9 +45,14 @@ public class Sinner
 
     public bool UsarInercia { get; set; } = true;
     public bool HaciendoParry => _haciendoParry;
-    public bool AutoparryActivo => Mejoras.Dominio.Activo;
-    public bool PuedeParrear => HaciendoParry || AutoparryActivo;
+    // TooManyParries anula el parry manual y el autoparry mientras esta en pantalla.
+    public bool ParryBloqueado { get; set; }
+    public float MultiplicadorVelocidadExterno { get; set; } = 1f;
+    public bool AutoparryActivo => Mejoras.Dominio.Activo && !ParryBloqueado;
+    public bool PuedeParrear => !ParryBloqueado && (HaciendoParry || AutoparryActivo);
     public bool ParryIniciadoEsteFrame { get; private set; }
+    // Cada pulsacion de la tecla, aunque no llegue a iniciar un parry.
+    public bool ParryPresionadoEsteFrame { get; private set; }
     public Vector2 VelocidadActual => _velocidadActual;
     public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
     public CirculoColision ColisionParry => new(Colision.Centro, 35f * Mejoras.MultiplicadorRadioParry);
@@ -205,6 +210,7 @@ public class Sinner
 
         bool parryPresionado = teclado.IsKeyDown(Keys.Space)
             && _tecladoAnterior.IsKeyUp(Keys.Space);
+        ParryPresionadoEsteFrame = parryPresionado;
         bool shiftPresionado = (teclado.IsKeyDown(Keys.LeftShift) && _tecladoAnterior.IsKeyUp(Keys.LeftShift))
             || (teclado.IsKeyDown(Keys.RightShift) && _tecladoAnterior.IsKeyUp(Keys.RightShift));
         if (OpcionesJuego.AlternarCorrer && shiftPresionado)
@@ -221,7 +227,7 @@ public class Sinner
             CambiarAnimacion(SinnerAnimation.Reposo);
         }
 
-        if (parryPresionado && !_haciendoParry)
+        if (parryPresionado && !_haciendoParry && !ParryBloqueado)
         {
             Mejoras.Dominio.ComenzarParryManual();
             ParryIniciadoEsteFrame = true;
@@ -259,7 +265,7 @@ public class Sinner
         float velocidadCaminata = Velocidad * Mejoras.MultiplicadorVelocidad;
         float bonusCaliz = Mejoras.Cantidad("Caliz") > 0 ? Math.Min(0.5f, MathF.Floor(_tiempoCaliz / 3f) * 0.1f) : 0f;
         Vector2 velocidadObjetivo = direccion * Velocidad * (Mejoras.MultiplicadorVelocidad + bonusCaliz)
-            * (corriendo ? MultiplicadorSprint : 1f);
+            * (corriendo ? MultiplicadorSprint : 1f) * MultiplicadorVelocidadExterno;
 
         if (UsarInercia && Mejoras.Cantidad("TETUTRED") == 0)
         {

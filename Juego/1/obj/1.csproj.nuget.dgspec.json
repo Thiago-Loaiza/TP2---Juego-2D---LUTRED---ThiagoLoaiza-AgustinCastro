@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {}
+    "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {}
   },
   "projects": {
-    "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {
+    "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+        "projectUniqueName": "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
         "projectName": "1",
-        "projectPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+        "projectPath": "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
         "packagesPath": "C:\\Users\\AgusCS\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\obj\\",
+        "outputPath": "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\AgusCS\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
-                "projectPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj"
+              "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
+                "projectPath": "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj"
               }
             }
           }
@@ -101,14 +101,14 @@
         }
       }
     },
-    "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
+    "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
+        "projectUniqueName": "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
         "projectName": "LutredLibrary",
-        "projectPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
+        "projectPath": "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
         "packagesPath": "C:\\Users\\AgusCS\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\obj\\",
+        "outputPath": "C:\\Users\\AgusCS\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\AgusCS\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Upgrades/Icons/TETUTRED.png</SourceFile>
+  <SourceFile>C:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Upgrades/Icons/TETUTRED.png</SourceFile>
   <SourceTime>2026-11-01T20:21:51.3122968-03:00</SourceTime>
-  <DestFile>c:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Upgrades/Icons/TETUTRED.xnb</DestFile>
-  <DestTime>2026-11-01T21:05:20.2150576-03:00</DestTime>
+  <DestFile>C:/Users/AgusCS/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/bin/DesktopGL/Content/Sprites/Upgrades/Icons/TETUTRED.xnb</DestFile>
+  <DestTime>2026-11-02T01:51:52.4720456-03:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2026-08-14T18:50:10-03:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

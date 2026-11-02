@@ -35,6 +35,7 @@ public class Partida : Escena
     private readonly bool _sorakElegido;
     private readonly bool _erosionBirdElegido;
     private readonly bool _delusionElegido;
+    private readonly bool _tooManyParriesElegido;
     private readonly double _duracionNivel;
     private readonly List<Orbe> _orbes = new();
     private Animation _animacionOrbe;
@@ -51,7 +52,7 @@ public class Partida : Escena
     public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
         double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null,
-        bool delusionElegido = false)
+        bool delusionElegido = false, bool tooManyParriesElegido = false)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
         if (numeroNivel < 1)
@@ -74,6 +75,7 @@ public class Partida : Escena
         _sorakElegido = sorakElegido;
         _erosionBirdElegido = erosionBirdElegido;
         _delusionElegido = delusionElegido;
+        _tooManyParriesElegido = tooManyParriesElegido;
         if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(duracionNivel));
@@ -93,6 +95,7 @@ public class Partida : Escena
     private Zorak _zorak;
     private ErosionBird _erosionBird;
     private Delusion _delusion;
+    private TooManyParries _tooManyParries;
     private int _tandaLanzas;
     private readonly Camara2D _camara = new();
     private readonly GeneradorMapa _generador = new();
@@ -255,6 +258,11 @@ public class Partida : Escena
             _delusion = new Delusion();
             _delusion.LoadContent(Content);
         }
+        if (_tooManyParriesElegido)
+        {
+            _tooManyParries = new TooManyParries();
+            _tooManyParries.LoadContent(Content);
+        }
         _pantallaDerrota = new PantallaDerrota();
         _pantallaDerrota.LoadContent(Content);
 
@@ -304,7 +312,7 @@ public class Partida : Escena
                     transicionReproducida: true,
                     cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido,
                     duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras,
-                    delusionElegido: _delusionElegido));
+                    delusionElegido: _delusionElegido, tooManyParriesElegido: _tooManyParriesElegido));
                 if (_numeroNivel % 4 == 0)
                 {
                     _cambiarEscena(new Mejoras(AbrirPregunta, _mejoras, _numeroNivel));
@@ -356,7 +364,15 @@ public class Partida : Escena
             }
             Vector2 centroAnteriorSinner = _sinner.Colision.Centro;
 
+            _tooManyParries?.Update(gameTime);
+            AplicarTooManyParries();
             _sinner.Update(gameTime, _obstaculos);
+            if (_sinner.ParryPresionadoEsteFrame)
+            {
+                _tooManyParries?.RegistrarPulsacion(_mejoras.Cantidad("Paz") > 0);
+                // Aplicarlo antes de los enemigos: la pulsacion que lo invoca ya no parrea.
+                AplicarTooManyParries();
+            }
             _camara.Seguir(_sinner.Position);
             ResultadoZorak resultadoZorak = _zorak?.Update(gameTime,
                 Vector2.DistanceSquared(centroAnteriorSinner, _sinner.Colision.Centro) > 0.000001f,
@@ -509,6 +525,13 @@ public class Partida : Escena
     {
         _sinner.ConfirmarParry(automatico);
         Puntaje.RegistrarParry(tipo, enemigo, automatico, ultimoInstante);
+    }
+
+    private void AplicarTooManyParries()
+    {
+        bool activo = _tooManyParries?.Activo == true;
+        _sinner.ParryBloqueado = activo;
+        _sinner.MultiplicadorVelocidadExterno = activo ? TooManyParries.MultiplicadorVelocidad : 1f;
     }
 
     private bool EsParryShameUltimoInstante(Vector2 inicioSinner, Vector2 inicioShame)
@@ -701,6 +724,7 @@ public class Partida : Escena
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                 blendState: BlendState.AlphaBlend);
             _erosionBird?.Draw(Core.SpriteBatch);
+            _tooManyParries?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
             _zorak?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
             Core.SpriteBatch.End();
         }
