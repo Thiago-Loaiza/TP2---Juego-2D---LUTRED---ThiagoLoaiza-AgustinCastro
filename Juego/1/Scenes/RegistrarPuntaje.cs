@@ -21,6 +21,7 @@ public sealed class RegistrarPuntaje : Escena
     private static readonly Tecla[] Teclas = CrearTeclas();
     private readonly Action<Escena> _cambiarEscena;
     private readonly int _puntaje;
+    private readonly int? _nivelLlegado;
     private readonly DateTimeOffset _fecha;
     private readonly StringBuilder _nombre = new();
     private readonly HistorialRecords _historial = new();
@@ -41,10 +42,11 @@ public sealed class RegistrarPuntaje : Escena
     private float Escala => Math.Min(Core.GraphicsDevice.Viewport.Width / 1280f, Core.GraphicsDevice.Viewport.Height / 720f);
     private Vector2 Centro => new(Core.GraphicsDevice.Viewport.Width * 0.5f, Core.GraphicsDevice.Viewport.Height * 0.5f);
 
-    public RegistrarPuntaje(Action<Escena> cambiarEscena, int puntaje, DateTimeOffset fecha)
+    public RegistrarPuntaje(Action<Escena> cambiarEscena, int puntaje, DateTimeOffset fecha, int? nivelLlegado = null)
     {
         _cambiarEscena = cambiarEscena;
         _puntaje = puntaje;
+        _nivelLlegado = nivelLlegado;
         _fecha = fecha;
     }
 
@@ -147,7 +149,7 @@ public sealed class RegistrarPuntaje : Escena
 
     private void Guardar()
     {
-        if (_historial.Guardar(_puntaje, _nombre.ToString(), _fecha) == ResultadoRegistro.Error)
+        if (_historial.Guardar(_puntaje, _nombre.ToString(), _fecha, _nivelLlegado) == ResultadoRegistro.Error)
         {
             _error = "NO SE PUDO GUARDAR. INTENTÁ OTRA VEZ.";
             return;

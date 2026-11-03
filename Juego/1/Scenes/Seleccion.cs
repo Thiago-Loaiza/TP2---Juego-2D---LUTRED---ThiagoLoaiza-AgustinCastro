@@ -211,7 +211,9 @@ public sealed class Seleccion : Escena
         if (_entrando || _estado != Estado.Escapar) return;
         _entrando = true;
         ActualizarOpciones();
-        _cambiarEscena(new Salvacion(_cambiarEscena, _mejoras.Puntaje.Total));
+        // La seleccion ofrece el piso siguiente; el ultimo completado es el anterior.
+        _cambiarEscena(new Salvacion(_cambiarEscena, _mejoras.Puntaje.Total,
+            nivelLlegado: Math.Max(0, _numeroNivel - 1)));
     }
 
     private void AgregarBoton(Panel panel, string texto, float x, float y, Action accion)

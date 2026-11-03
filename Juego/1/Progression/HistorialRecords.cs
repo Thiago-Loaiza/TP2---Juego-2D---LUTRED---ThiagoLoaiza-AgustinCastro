@@ -6,7 +6,8 @@ using System.Text;
 
 namespace _1.Progression;
 
-public sealed record RegistroRecord(DateTimeOffset Fecha, int Puntaje, string Nombre = "ANÓNIMO");
+public sealed record RegistroRecord(DateTimeOffset Fecha, int Puntaje, string Nombre = "ANÓNIMO",
+    int? NivelLlegado = null);
 public enum ResultadoRegistro { Guardado, Error }
 
 public sealed class HistorialRecords
@@ -41,7 +42,7 @@ public sealed class HistorialRecords
             {
                 RegistroRecord registro = registros[i];
                 if (registro == null || registro.Fecha == default || registro.Puntaje < 0
-                    || registro.Puntaje > EstadoPuntaje.PuntajeMaximo)
+                    || registro.Puntaje > EstadoPuntaje.PuntajeMaximo || registro.NivelLlegado < 0)
                     throw new JsonException("El historial contiene un registro invalido.");
                 registros[i] = registro with { Nombre = NormalizarNombre(registro.Nombre) };
             }
@@ -68,11 +69,16 @@ public sealed class HistorialRecords
         return limpio.Length > 0 ? limpio : "ANÓNIMO";
     }
 
-    public ResultadoRegistro Guardar(int puntaje, string nombre, DateTimeOffset? fecha = null)
+    public ResultadoRegistro Guardar(int puntaje, string nombre, DateTimeOffset? fecha = null, int? nivelLlegado = null)
     {
         if (puntaje < 0 || puntaje > EstadoPuntaje.PuntajeMaximo)
         {
             Error = "El puntaje no es valido.";
+            return ResultadoRegistro.Error;
+        }
+        if (nivelLlegado < 0)
+        {
+            Error = "El nivel no es valido.";
             return ResultadoRegistro.Error;
         }
         // Leer de nuevo conserva todas las partidas anteriores, incluidos empates y puntajes menores.
@@ -89,7 +95,7 @@ public sealed class HistorialRecords
             }
             var nuevos = new List<RegistroRecord>(_registros)
             {
-                new(fecha ?? DateTimeOffset.Now, puntaje, NormalizarNombre(nombre))
+                new(fecha ?? DateTimeOffset.Now, puntaje, NormalizarNombre(nombre), nivelLlegado)
             };
             string json = JsonSerializer.Serialize(nuevos, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(temporal, json);

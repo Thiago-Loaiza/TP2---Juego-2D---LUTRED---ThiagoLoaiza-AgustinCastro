@@ -22,6 +22,7 @@ public sealed class Salvacion : Escena
     private readonly Action<Escena> _cambiarEscena;
     private readonly string _puntaje;
     private readonly int _puntajeFinal;
+    private readonly int? _nivelLlegado;
     private readonly DateTimeOffset _fechaEscape = DateTimeOffset.Now;
     private readonly string _frase = Random.Shared.Next(2) == 0
         ? "Al final pudiste.\nSabía que lo lograrías."
@@ -33,9 +34,10 @@ public sealed class Salvacion : Escena
     private float _tiempo;
     private bool _terminado;
 
-    public Salvacion(Action<Escena> cambiarEscena, int puntaje = 0)
+    public Salvacion(Action<Escena> cambiarEscena, int puntaje = 0, int? nivelLlegado = null)
     {
         _cambiarEscena = cambiarEscena;
+        _nivelLlegado = nivelLlegado;
         _puntajeFinal = Math.Clamp(puntaje, 0, EstadoPuntaje.PuntajeMaximo);
         _puntaje = _puntajeFinal.ToString("D8");
     }
@@ -71,7 +73,7 @@ public sealed class Salvacion : Escena
         if (_tiempo >= InicioSalida + DuracionSalida + DuracionNegro)
         {
             _terminado = true;
-            _cambiarEscena(new RegistrarPuntaje(_cambiarEscena, _puntajeFinal, _fechaEscape));
+            _cambiarEscena(new RegistrarPuntaje(_cambiarEscena, _puntajeFinal, _fechaEscape, _nivelLlegado));
         }
     }
 

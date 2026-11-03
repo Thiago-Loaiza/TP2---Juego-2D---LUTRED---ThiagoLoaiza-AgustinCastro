@@ -21,7 +21,7 @@ public sealed class EstadoMejoras
         new("FellDoor", "FellDoor", "Abre una dimension de bolsillo con demonios rojos.\nSobrevivir 10 s recoge el 40% de los orbes objetivo.\nEl reloj sigue corriendo y SHAME puede entrar.", 8, 1, false),
         new("AureolaDivina", "Aureola divina", "+15% de velocidad y un dash en la direccion de mirada.\nEl dash atraviesa enemigos. Recarga: 2 segundos.", 12, 1, false),
         new("TETUTRED", "TETUTRED", "+20% de velocidad, aceleracion instantanea y sin inercia.", 12, 1, true),
-        new("Escudo", "Escudo", "Permite recibir un golpe mortal por piso.\nSe repone al ascender al siguiente piso.", 16, 1, false),
+        new("Escudo", "Escudo", "Permite recibir un golpe mortal por piso.\nAl romperse otorga 2 s de invulnerabilidad.\nSe repone al ascender al siguiente piso.", 16, 1, true),
         new("Caliz", "Caliz", "+20% de velocidad. Al correr en una misma direccion,\ngana +10% cada 3 s, hasta +50% adicional.\nEl aumento se reinicia al cambiar de direccion.", 16, 1, true)
     };
     private readonly Dictionary<string, int> _acumulaciones = new();

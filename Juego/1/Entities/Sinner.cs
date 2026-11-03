@@ -18,7 +18,9 @@ public enum SinnerAnimation
     CaminataArriba,
     Parry,
     Correr,
-    CorrerArriba
+    CorrerArriba,
+    CaminataAbajo,
+    CorrerAbajo
 }
 
 public class Sinner
@@ -28,9 +30,13 @@ public class Sinner
     private SoundEffectInstance _sonidoParryExitoso;
     private AnimatedSprite _efectoParry;
     private AnimatedSprite _auraDominio;
+    private AnimatedSprite _escudo;
+    private AnimatedSprite _rupturaEscudo;
+    private _1.Progression.EstadoEscudo _estadoEscudo;
     private KeyboardState _tecladoAnterior;
     private bool _correrAlternado;
     private bool _haciendoParry;
+    private double _parryRestante;
     private const double SegundosPorFrameParry = 0.05;
     private const float Velocidad = 220f;
     private const float MultiplicadorSprint = 2.5f;
@@ -59,6 +65,7 @@ public class Sinner
 
     private readonly Dictionary<SinnerAnimation, Animation>
         _animaciones = new();
+    private readonly Dictionary<SinnerAnimation, Animation> _parryMovimiento = new();
 
     private SinnerAnimation _animacionActual;
 
@@ -70,6 +77,20 @@ public class Sinner
 
     public void LoadContent(ContentManager content)
     {
+        _estadoEscudo = new _1.Progression.EstadoEscudo(Mejoras.Cantidad("Escudo") > 0);
+        if (_estadoEscudo.Disponible)
+        {
+            _escudo = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/Shield/Shield-Sheet", 14, 0.08, 50, 50))
+            {
+                Origin = new Vector2(25f), Scale = new Vector2(1.5f)
+            };
+            _rupturaEscudo = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet", 9, 0.06, 50, 50))
+            {
+                Origin = new Vector2(25f), Scale = new Vector2(1.5f), IsLooping = false
+            };
+        }
         _animaciones[SinnerAnimation.Reposo] = CrearAnimacion(
             content,
             "Sprites/Sinner/Sinner-Sheet",
@@ -100,17 +121,31 @@ public class Sinner
 
         _animaciones[SinnerAnimation.Correr] = CrearAnimacion(
             content,
-            "Sprites/Sinner/SinnerRun-Sheet",
+            "Sprites/Sinner/SinnerRUN-Sheet",
             8,
-            0.12
+            0.08
         );
 
         _animaciones[SinnerAnimation.CorrerArriba] = CrearAnimacion(
             content,
-            "Sprites/Sinner/SinnerRunUP-Sheet",
-            10,
-            0.12
+            "Sprites/Sinner/SinnerRUN_UP-Sheet",
+            7,
+            0.08
         );
+
+        _animaciones[SinnerAnimation.CaminataAbajo] = _animaciones[SinnerAnimation.CaminataArriba];
+        _animaciones[SinnerAnimation.CorrerAbajo] = CrearAnimacion(
+            content, "Sprites/Sinner/SinnerRUN_DOWN-Sheet", 9, 0.08);
+
+        _parryMovimiento[SinnerAnimation.Caminata] = _animaciones[SinnerAnimation.Parry];
+        _parryMovimiento[SinnerAnimation.CaminataArriba] = _animaciones[SinnerAnimation.Parry];
+        _parryMovimiento[SinnerAnimation.CaminataAbajo] = _animaciones[SinnerAnimation.Parry];
+        _parryMovimiento[SinnerAnimation.Correr] = CrearAnimacion(
+            content, "Sprites/Sinner/SinnerRUN-PARRY-Sheet", 8, 0.08);
+        _parryMovimiento[SinnerAnimation.CorrerArriba] = CrearAnimacion(
+            content, "Sprites/Sinner/SinnerRUN_UP-PARRY-Sheet", 7, 0.08);
+        _parryMovimiento[SinnerAnimation.CorrerAbajo] = CrearAnimacion(
+            content, "Sprites/Sinner/SinnerRUN_DOWN-PARRY-Sheet", 9, 0.08);
 
         _animacionActual = SinnerAnimation.Reposo;
 
@@ -219,12 +254,15 @@ public class Sinner
             _correrAlternado = false;
         _tecladoAnterior = teclado;
 
-        if (_haciendoParry && _sprite.IsFinished)
+        // El parry conserva su duracion aunque cambie la animacion o la direccion.
+        if (_haciendoParry)
         {
-            Mejoras.Dominio.FinalizarParryManual();
-            _haciendoParry = false;
-            _sprite.IsLooping = true;
-            CambiarAnimacion(SinnerAnimation.Reposo);
+            _parryRestante -= gameTime.ElapsedGameTime.TotalSeconds;
+            if (_parryRestante <= 0)
+            {
+                Mejoras.Dominio.FinalizarParryManual();
+                _haciendoParry = false;
+            }
         }
 
         if (parryPresionado && !_haciendoParry && !ParryBloqueado)
@@ -232,8 +270,7 @@ public class Sinner
             Mejoras.Dominio.ComenzarParryManual();
             ParryIniciadoEsteFrame = true;
             _haciendoParry = true;
-            _sprite.IsLooping = false;
-            CambiarAnimacion(SinnerAnimation.Parry);
+            _parryRestante = SegundosPorFrameParry * 5 + Mejoras.ExtraParry;
             _efectoParry.Animation = _efectoParry.Animation;
             Core.Audio.StopSoundEffect(_sonidoParry);
             Core.Audio.PlaySoundEffect(_sonidoParry);
@@ -303,32 +340,22 @@ public class Sinner
             if (_sonidoCaminata.State != SoundState.Playing)
                 Core.Audio.PlaySoundEffect(_sonidoCaminata);
 
-            if (!_haciendoParry)
-            {
-                if (_velocidadActual.LengthSquared() > velocidadCaminata * velocidadCaminata)
-                {
-                    CambiarAnimacion(_velocidadActual.Y != 0
-                        ? SinnerAnimation.CorrerArriba
-                        : SinnerAnimation.Correr);
-                }
-                else
-                {
-                    CambiarAnimacion(_velocidadActual.Y != 0
-                        ? SinnerAnimation.CaminataArriba
-                        : SinnerAnimation.Caminata);
-                }
-            }
-
-            if (_velocidadActual.X < 0)
-                _sprite.Effects = SpriteEffects.FlipHorizontally;
-            else if (_velocidadActual.X > 0)
-                _sprite.Effects = SpriteEffects.None;
+            _sprite.IsLooping = true;
+            bool vertical = Math.Abs(_velocidadActual.Y) > Math.Abs(_velocidadActual.X);
+            bool sprint = _velocidadActual.LengthSquared() > velocidadCaminata * velocidadCaminata;
+            CambiarAnimacion(vertical
+                ? (_velocidadActual.Y < 0
+                    ? (sprint ? SinnerAnimation.CorrerArriba : SinnerAnimation.CaminataArriba)
+                    : (sprint ? SinnerAnimation.CorrerAbajo : SinnerAnimation.CaminataAbajo))
+                : (sprint ? SinnerAnimation.Correr : SinnerAnimation.Caminata));
+            _sprite.Effects = !vertical && _velocidadActual.X < 0
+                ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         }
         else
         {
             Core.Audio.StopSoundEffect(_sonidoCaminata);
-            if (!_haciendoParry)
-                CambiarAnimacion(SinnerAnimation.Reposo);
+            _sprite.IsLooping = !_haciendoParry;
+            CambiarAnimacion(_haciendoParry ? SinnerAnimation.Parry : SinnerAnimation.Reposo);
         }
 
         _sprite.Update(gameTime);
@@ -351,20 +378,52 @@ public class Sinner
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        _sprite.Color = _estadoEscudo.Invulnerable
+            ? Color.White * (0.4f + 0.6f * (float)(0.5 + 0.5 * Math.Cos(
+                _estadoEscudo.InvulnerabilidadRestante * Math.PI * 12)))
+            : Color.White;
         if (AutoparryActivo && _auraDominio != null)
         {
             _auraDominio.Position = Colision.Centro;
             _auraDominio.Color = Color.White * Mejoras.Dominio.OpacidadAura;
             _auraDominio.Draw(spriteBatch);
         }
-        _sprite.Draw(spriteBatch);
+        if (_haciendoParry && _parryMovimiento.TryGetValue(_animacionActual, out Animation parry))
+        {
+            // Mostrar el gesto completo sin alargar la ventana de defensa.
+            double duracion = SegundosPorFrameParry * 5 + Mejoras.ExtraParry;
+            double progreso = Math.Clamp(1 - _parryRestante / duracion, 0, 1);
+            int indice = Math.Min(parry.Frames.Count - 1, (int)(progreso * parry.Frames.Count));
+            TextureRegion cuadro = parry.Frames[indice];
+            spriteBatch.Draw(cuadro.Texture, _sprite.Position, cuadro.Bounds, _sprite.Color,
+                _sprite.Rotation, _sprite.Origin, _sprite.Scale, _sprite.Effects, _sprite.LayerDepth);
+        }
+        else
+            _sprite.Draw(spriteBatch);
         if (_haciendoParry && !_efectoParry.IsFinished)
         {
             _efectoParry.Position = Position;
             _efectoParry.Draw(spriteBatch);
         }
 
+        AnimatedSprite proteccion = _estadoEscudo.Disponible ? _escudo
+            : _estadoEscudo.Invulnerable && _rupturaEscudo?.IsFinished == false ? _rupturaEscudo : null;
+        if (proteccion != null)
+        {
+            proteccion.Position = Position;
+            proteccion.Draw(spriteBatch);
+        }
+
     }
+
+    public void ActualizarEscudo(GameTime gameTime)
+    {
+        _estadoEscudo.Actualizar(gameTime.ElapsedGameTime.TotalSeconds);
+        if (_estadoEscudo.Disponible) _escudo?.Update(gameTime);
+        else if (_estadoEscudo.Invulnerable) _rupturaEscudo?.Update(gameTime);
+    }
+
+    public bool AbsorberGolpe() => _estadoEscudo.AbsorberGolpe();
 
     public void UnloadContent()
     {

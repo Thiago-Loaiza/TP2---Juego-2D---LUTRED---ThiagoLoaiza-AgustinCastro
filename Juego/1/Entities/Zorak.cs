@@ -137,7 +137,12 @@ public class Zorak
                 return resultado;
             case Estado.Atacando:
                 _sprite.Update(gameTime);
-                if (_sprite.IsFinished) return ResultadoZorak.Golpe;
+                if (_sprite.IsFinished)
+                {
+                    // El ataque se entrega una sola vez, incluso si lo absorbe un escudo.
+                    _estado = Estado.Oculto;
+                    return ResultadoZorak.Golpe;
+                }
                 break;
             case Estado.Parreado:
                 _sprite.Update(gameTime);

@@ -119,20 +119,22 @@ public sealed class Records : Escena
         Rectangle Area(float x, float y, float ancho, float alto) => new(
             (int)(centro.X + x * escala), (int)(centro.Y + y * escala),
             (int)(ancho * escala), (int)(alto * escala));
-        void Texto(string texto, float x, float y, float tamano, bool derecha = false)
+        void Texto(string texto, float x, float y, float tamano, bool derecha = false, bool centrado = false)
         {
             Vector2 posicion = centro + new Vector2(x, y) * escala;
             if (derecha) posicion.X -= _fuente.MeasureString(texto).X * tamano * escala;
+            else if (centrado) posicion.X -= _fuente.MeasureString(texto).X * tamano * escala * 0.5f;
             MarcadorPuntaje.DibujarTexto(_fuente, texto, posicion, tamano * escala, _opacidad);
         }
         var batch = Core.SpriteBatch;
         batch.Begin(samplerState: SamplerState.PointClamp);
-        batch.Draw(_pixel, Area(-470, -250, 940, 470), new Color(15, 8, 8) * _opacidad);
+        batch.Draw(_pixel, Area(-530, -250, 1060, 470), new Color(15, 8, 8) * _opacidad);
         Texto("RECORDS", -_fuente.MeasureString("RECORDS").X * 0.9f, -215, 1.8f);
-        Texto("FECHA", -385, -145, 1f);
-        Texto("NOMBRE", -95, -145, 1f);
-        Texto("PUNTAJE", 380, -145, 1f, derecha: true);
-        batch.Draw(_pixel, Area(-400, -115, 800, 2), new Color(130, 130, 130) * _opacidad);
+        Texto("FECHA", -480, -145, 1f);
+        Texto("NOMBRE", -210, -145, 1f);
+        Texto("NIVEL LLEGADO", 210, -145, 0.85f, centrado: true);
+        Texto("PUNTAJE", 480, -145, 1f, derecha: true);
+        batch.Draw(_pixel, Area(-490, -115, 980, 2), new Color(130, 130, 130) * _opacidad);
         if (_historial.Error != null || _registros.Length == 0)
         {
             string mensaje = _historial.Error != null ? "NO SE PUDO CARGAR EL HISTORIAL" : "TODAVÍA NO HAY RÉCORDS";
@@ -142,17 +144,20 @@ public sealed class Records : Escena
         {
             RegistroRecord registro = _registros[_primeraFila + i];
             float y = -95f + i * 36f;
-            Texto(registro.Fecha.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture), -385, y, 0.85f);
+            Texto(registro.Fecha.ToString("dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture), -480, y, 0.75f);
             float tamanoNombre = Math.Min(0.95f, 290f / Math.Max(1f, _fuente.MeasureString(registro.Nombre).X));
-            Texto(registro.Nombre, -95, y, tamanoNombre);
-            Texto(registro.Puntaje.ToString("D8", CultureInfo.InvariantCulture), 380, y, 1.05f, derecha: true);
+            Texto(registro.Nombre, -210, y, tamanoNombre);
+            string nivel = registro.NivelLlegado?.ToString(CultureInfo.InvariantCulture) ?? "-";
+            float tamanoNivel = Math.Min(0.95f, 190f / Math.Max(1f, _fuente.MeasureString(nivel).X));
+            Texto(nivel, 210, y, tamanoNivel, centrado: true);
+            Texto(registro.Puntaje.ToString("D8", CultureInfo.InvariantCulture), 480, y, 1.05f, derecha: true);
         }
         if (_registros.Length > FilasVisibles)
         {
-            batch.Draw(_pixel, Area(425, -100, 4, 288), new Color(65, 65, 65) * _opacidad);
+            batch.Draw(_pixel, Area(505, -100, 4, 288), new Color(65, 65, 65) * _opacidad);
             float alto = Math.Max(24, 288f * FilasVisibles / _registros.Length);
             float y = -100f + (288f - alto) * _primeraFila / (_registros.Length - FilasVisibles);
-            batch.Draw(_pixel, Area(425, y, 4, alto), Color.White * _opacidad);
+            batch.Draw(_pixel, Area(505, y, 4, alto), Color.White * _opacidad);
         }
         batch.End();
     }

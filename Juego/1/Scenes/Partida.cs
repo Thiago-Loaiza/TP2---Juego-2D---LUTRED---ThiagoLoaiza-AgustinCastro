@@ -356,6 +356,7 @@ public class Partida : Escena
         }
         else
         {
+            _sinner.ActualizarEscudo(gameTime);
             if (_zorak?.BloqueandoJugador == true)
             {
                 if (_zorak.Update(gameTime, false, false) == ResultadoZorak.Golpe)
@@ -408,8 +409,7 @@ public class Partida : Escena
                 else if (_sinner.Colision.SeCruzan(centroAnteriorSinner,
                     duke.Colision, posicionAnterior))
                 {
-                    Perder();
-                    return;
+                    if (Perder()) return;
                 }
             }
 
@@ -430,8 +430,7 @@ public class Partida : Escena
             }
             else if (resultadoBird == ResultadoErosionBird.Golpe)
             {
-                Perder();
-                return;
+                if (Perder()) return;
             }
             Rectangle areaVisible = AreaVisible();
             for (int i = 0; i < _jarJars.Count; i++)
@@ -445,8 +444,7 @@ public class Partida : Escena
                 }
                 else if (resultadoJarJar == ResultadoJarJar.Golpe)
                 {
-                    Perder();
-                    return;
+                    if (Perder()) return;
                 }
             }
 
@@ -460,8 +458,7 @@ public class Partida : Escena
             }
             else if (resultadoDelusion == ResultadoDelusion.Golpe)
             {
-                Perder();
-                return;
+                if (Perder()) return;
             }
 
             if (!_derrotado && _faseEntrada == FaseEntrada.Jugando)
@@ -569,8 +566,9 @@ public class Partida : Escena
         }
     }
 
-    private void Perder()
+    private bool Perder()
     {
+        if (_sinner.AbsorberGolpe()) return false;
         Puntaje.Perder();
         _derrotado = true;
         Core.Audio.StopSong();
@@ -582,6 +580,7 @@ public class Partida : Escena
         _volverInicio.Visual.Visible = true;
         _volverInicio.IsEnabled = true;
         _volverInicio.IsFocused = true;
+        return true;
     }
 
     private void VolverAlInicio(object sender, EventArgs args)
