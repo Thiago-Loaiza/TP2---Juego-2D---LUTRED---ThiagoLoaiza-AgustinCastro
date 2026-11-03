@@ -33,6 +33,7 @@ public class Inicio : Escena
     private bool _destinoOpciones;
     private bool _abrirCreditos;
     private bool _abrirRecords;
+    private bool _abrirMisc;
     private float _tiempoTransicion;
     private float _opacidadInterfaz = 1f;
     private float _desplazamientoInterfaz;
@@ -99,7 +100,7 @@ public class Inicio : Escena
         _botonMusica = AgregarBotonInferior(panel,
             OpcionesJuego.SilenciarMusica ? _hojaMusicaSilenciada : _hojaMusica, -148);
         _botonMusica.Click += CambiarMusica;
-        AgregarBotonInferior(panel, _hojaMisc, -86);
+        AgregarBotonInferior(panel, _hojaMisc, -86).Click += AbrirMisc;
         _botonCreditos = AgregarBotonInferior(panel, _hojaCreditos, -24);
         _botonCreditos.Click += AbrirCreditos;
 
@@ -135,6 +136,16 @@ public class Inicio : Escena
     }
 
     private void Volver(object sender, EventArgs args) => CerrarOpciones();
+
+    private void AbrirMisc(object sender, EventArgs args)
+    {
+        if (_enTransicion) return;
+        _abrirMisc = true;
+        _enTransicion = true;
+        _entrando = false;
+        _tiempoTransicion = 0f;
+        foreach (BotonAnimado boton in _botones) boton.IsFocused = false;
+    }
 
     private void AbrirRecords(object sender, EventArgs args)
     {
@@ -222,6 +233,11 @@ public class Inicio : Escena
             _tiempoTransicion += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (_tiempoTransicion >= DuracionFase)
             {
+                if (_abrirMisc)
+                {
+                    _cambiarEscena(new Misc(_cambiarEscena));
+                    return;
+                }
                 if (_abrirRecords)
                 {
                     _cambiarEscena(new Records(_cambiarEscena));

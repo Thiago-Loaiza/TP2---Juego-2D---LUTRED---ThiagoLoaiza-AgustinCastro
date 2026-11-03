@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using LutredLibrary;
+using LutredLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,15 +18,27 @@ public sealed class ConfiguracionPausa : IDisposable
     private readonly SpriteFont _fuente;
     private readonly ListaOpciones _listaOpciones;
     private readonly Action _reanudar;
+    private readonly Action _salir;
+    private readonly AnimatedSprite _confirmar;
+    private readonly AnimatedSprite _negar;
+    private bool _confirmandoSalida;
+    private float _tiempoConfirmacion;
+    private int _opcionConfirmacion = 1;
     private MouseState _ratonAnterior;
     private KeyboardState _tecladoAnterior;
     private double _tiempo;
     private bool _pausoAudio;
     public bool Abierto { get; private set; }
 
-    public ConfiguracionPausa(Action reanudar)
+    public ConfiguracionPausa(Action reanudar, Action salir = null)
     {
         _reanudar = reanudar;
+        _salir = salir;
+        if (_salir != null)
+        {
+            _confirmar = CargarRespuesta("Confirmar");
+            _negar = CargarRespuesta("Negar");
+        }
         _configuracion = Core.Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Configuration-Sheet");
         _recuadro = Core.Content.Load<Texture2D>("Sprites/UI/Cuadro-Sheet");
         _recortesMarco = CalcularRecortesMarco(_recuadro);
@@ -50,14 +64,20 @@ public sealed class ConfiguracionPausa : IDisposable
     private Rectangle AreaBoton => new((int)(24 * Escala), (int)(24 * Escala),
         (int)(50 * Escala), (int)(50 * Escala));
     private Rectangle AreaLista => Area(-550, -165, 620, 340);
-    private Rectangle AreaReanudar => Area(-370, 195, 260, 55);
+    private Rectangle AreaReanudar => Area(_salir != null ? -270 : -370, 195, 260, 55);
+    private Rectangle AreaSalir => Area(-540, 195, 240, 55);
+    private Rectangle AreaRespuesta(int opcion) => Area(opcion == 0 ? -185 : 95, 65, 90, 90);
     private Rectangle AreaAyuda => Area(150, -140, 450, 240);
 
     // Tambien bloquea el fotograma de apertura/cierre para que el clic no llegue a la escena.
     public bool Update(GameTime gameTime, bool escapePulsado)
     {
         _tiempo += gameTime.ElapsedGameTime.TotalSeconds;
-        _listaOpciones.Update(gameTime, AreaLista, Abierto, usarTab: true);
+        _listaOpciones.Update(gameTime, AreaLista, Abierto && !_confirmandoSalida,
+            usarTab: true, incluirSalir: _salir != null);
+        _confirmar?.Update(gameTime);
+        _negar?.Update(gameTime);
+        if (_confirmandoSalida) _tiempoConfirmacion += (float)gameTime.ElapsedGameTime.TotalSeconds;
         MouseState raton = Mouse.GetState();
         KeyboardState teclado = Keyboard.GetState();
         bool clic = raton.LeftButton == ButtonState.Pressed && _ratonAnterior.LeftButton == ButtonState.Released;
@@ -75,6 +95,18 @@ public sealed class ConfiguracionPausa : IDisposable
                     _listaOpciones.SincronizarEntrada();
                 }
             }
+            else if (_confirmandoSalida)
+            {
+                ActualizarConfirmacion(teclado, raton, clic, escapePulsado);
+            }
+            else if (_salir != null && ((clic && AreaSalir.Contains(raton.Position))
+                || (_listaOpciones.SalirSeleccionado && Aceptar(teclado))))
+            {
+                _confirmandoSalida = true;
+                _tiempoConfirmacion = 0f;
+                _opcionConfirmacion = 1;
+                _listaOpciones.SincronizarEntrada();
+            }
             else if (escapePulsado || (clic && AreaReanudar.Contains(raton.Position))
                 || (_listaOpciones.ReanudarSeleccionado && ((teclado.IsKeyDown(Keys.Enter)
                 && _tecladoAnterior.IsKeyUp(Keys.Enter)) || (teclado.IsKeyDown(Keys.Space)
@@ -89,9 +121,47 @@ public sealed class ConfiguracionPausa : IDisposable
         return bloquear;
     }
 
+    private bool Pulsada(KeyboardState teclado, Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
+    private bool Aceptar(KeyboardState teclado) => Pulsada(teclado, Keys.Enter) || Pulsada(teclado, Keys.Space);
+
+    private void ActualizarConfirmacion(KeyboardState teclado, MouseState raton, bool clic, bool escapePulsado)
+    {
+        if (Pulsada(teclado, Keys.A) || Pulsada(teclado, Keys.Left) || Pulsada(teclado, Keys.W) || Pulsada(teclado, Keys.Up))
+            _opcionConfirmacion = 0;
+        if (Pulsada(teclado, Keys.D) || Pulsada(teclado, Keys.Right) || Pulsada(teclado, Keys.S) || Pulsada(teclado, Keys.Down))
+            _opcionConfirmacion = 1;
+        if (Pulsada(teclado, Keys.Tab)) _opcionConfirmacion = 1 - _opcionConfirmacion;
+        bool aceptar = Aceptar(teclado);
+        for (int i = 0; i < 2; i++)
+        {
+            if (!AreaRespuesta(i).Contains(raton.Position)) continue;
+            if (raton.Position != _ratonAnterior.Position || clic) _opcionConfirmacion = i;
+            if (clic) aceptar = true;
+        }
+        if (escapePulsado || (aceptar && _opcionConfirmacion == 1))
+        {
+            _confirmandoSalida = false;
+            _listaOpciones.SincronizarEntrada();
+        }
+        else if (aceptar)
+        {
+            Cerrar();
+            _salir?.Invoke();
+        }
+    }
+
+    private static AnimatedSprite CargarRespuesta(string nombre)
+    {
+        Texture2D hoja = Core.Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-" + nombre + "-Sheet");
+        var cuadros = new List<TextureRegion>();
+        for (int i = 0; i < hoja.Width / 50; i++) cuadros.Add(new TextureRegion(hoja, i * 50, 0, 50, 50));
+        return new AnimatedSprite(new Animation(cuadros, TimeSpan.FromSeconds(0.12))) { Origin = new Vector2(25) };
+    }
+
     private void Cerrar()
     {
         Abierto = false;
+        _confirmandoSalida = false;
         if (_pausoAudio) Core.Audio.ResumeAudio();
         _pausoAudio = false;
         _reanudar?.Invoke();
@@ -119,12 +189,48 @@ public sealed class ConfiguracionPausa : IDisposable
 
         batch.Begin(samplerState: SamplerState.LinearClamp);
         Texto("CONFIGURACION", Area(-540, -235, 600, 50), 0.45f, Color.White);
+        if (_salir != null)
+            Texto("Salir", AreaSalir, 0.34f,
+                AreaSalir.Contains(raton.Position) || _listaOpciones.SalirSeleccionado
+                    ? new Color(255, 95, 95) : new Color(180, 100, 100));
         Texto("Reanudar", AreaReanudar, 0.34f,
             AreaReanudar.Contains(raton.Position) || _listaOpciones.ReanudarSeleccionado
                 ? Color.White : new Color(180, 180, 180));
         batch.End();
         _listaOpciones.Draw(AreaLista);
         _listaOpciones.DibujarAyuda(AreaAyuda);
+        if (_confirmandoSalida) DibujarConfirmacion();
+    }
+
+    private void DibujarConfirmacion()
+    {
+        float t = Math.Clamp(_tiempoConfirmacion / 0.25f, 0f, 1f);
+        float opacidad = t * t * (3f - 2f * t);
+        var batch = Core.SpriteBatch;
+        batch.Begin(samplerState: SamplerState.PointClamp);
+        batch.Draw(_pixel, Core.GraphicsDevice.Viewport.Bounds, Color.Black * (0.9f * opacidad));
+        Rectangle modal = Area(-500, -190, 1000, 420);
+        int borde = Math.Max(1, (int)(2 * Escala));
+        batch.Draw(_pixel, modal, new Color(180, 180, 180) * opacidad);
+        batch.Draw(_pixel, new Rectangle(modal.X + borde, modal.Y + borde,
+            modal.Width - borde * 2, modal.Height - borde * 2), Color.Black * opacidad);
+        for (int i = 0; i < 2; i++)
+        {
+            AnimatedSprite sprite = i == 0 ? _confirmar : _negar;
+            Rectangle area = AreaRespuesta(i);
+            sprite.Position = area.Center.ToVector2();
+            sprite.Scale = new Vector2(area.Width / 50f);
+            sprite.Color = (_opcionConfirmacion == i ? Color.White : new Color(140, 140, 140)) * opacidad;
+            sprite.Draw(batch);
+        }
+        batch.End();
+        batch.Begin(samplerState: SamplerState.LinearClamp);
+        Texto("SALIR DE LA RUN", Area(-450, -145, 900, 55), 0.45f, Color.White * opacidad);
+        Texto("Si sales de esta run,\ncontara como perdida.", Area(-450, -75, 900, 110), 0.34f,
+            new Color(255, 95, 95) * opacidad);
+        Texto("SI", Area(-215, 160, 150, 40), 0.3f, Color.White * opacidad);
+        Texto("NO", Area(65, 160, 150, 40), 0.3f, Color.White * opacidad);
+        batch.End();
     }
 
     private void Texto(string texto, Rectangle area, float escala, Color color)

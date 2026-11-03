@@ -70,14 +70,14 @@ public class Game1 : Core
         _configuracionPausa?.Dispose();
         _configuracionPausa = null;
         _escenaActual?.Dispose();
-        _musicaMenu.CambiarEscena(_escenaPendiente is Inicio or Records or Creditos,
+        _musicaMenu.CambiarEscena(_escenaPendiente is Inicio or Records or Creditos or Misc,
             _escenaPendiente is Creditos);
         GumService.Default.Root.Children.Clear();
         _escenaActual = _escenaPendiente;
         _escenaPendiente = null;
         _escenaActual.Initialize();
         if (_escenaActual is Partida partida)
-            _configuracionPausa = new _1.UI.ConfiguracionPausa(partida.SincronizarEntrada);
+            _configuracionPausa = new _1.UI.ConfiguracionPausa(partida.SincronizarEntrada, partida.AbandonarRun);
         else if (_escenaActual is Mejoras mejoras)
             _configuracionPausa = new _1.UI.ConfiguracionPausa(mejoras.SincronizarEntrada);
     }
@@ -99,6 +99,8 @@ public class Game1 : Core
                 creditos.VolverAlInicio();
             else if (_escenaActual is Records records)
                 records.VolverAlInicio();
+            else if (_escenaActual is Misc misc)
+                misc.VolverAlInicio();
             else
             {
                 Exit();

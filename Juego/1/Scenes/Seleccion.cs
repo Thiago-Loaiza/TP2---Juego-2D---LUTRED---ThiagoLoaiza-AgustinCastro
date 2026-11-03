@@ -1,6 +1,7 @@
 using _1.Progression;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using _1.UI;
 using Gum.DataTypes.Variables;
 using Gum.Forms.Controls;
@@ -24,6 +25,7 @@ public sealed class Seleccion : Escena
     private const float SeparacionOpciones = 65f;
     private const float OpcionTiempoY = -95f;
     private const float EscalaOpciones = 1.7f;
+    private const decimal BonoMenosTiempo = 0.3m;
     private readonly Action<Escena> _cambiarEscena;
     private readonly EstadoMejoras _mejoras;
     private readonly int _numeroNivel;
@@ -184,17 +186,17 @@ public sealed class Seleccion : Escena
         for (int i = 0; i < _opcionesRivales.Count; i++)
         {
             Enemigo rival = _opcionesRivales[i];
-            AgregarBoton(panel, NombreRival(rival), 0, PrimeraOpcionY + i * SeparacionOpciones,
+            AgregarBoton(panel, TextoRival(rival), 0, PrimeraOpcionY + i * SeparacionOpciones,
                 () => ElegirEnemigo(rival));
             var boton = _botones[i + 4].boton;
-            boton.Width = 400;
+            boton.Width = Math.Min(1232f, _fuenteRivales.MeasureString(TextoRival(rival)).X * EscalaOpciones * 1.025f + 24f);
             boton.Height = 62;
             _botones[i + 4].texto.Visible = false;
 
         }
-        AgregarBoton(panel, "Menos tiempo", 0, OpcionTiempoY, () => EntrarAPrueba(menosTiempo: true));
+        AgregarBoton(panel, TextoMenosTiempo, 0, OpcionTiempoY, () => EntrarAPrueba(menosTiempo: true));
         var opcionTiempo = _botones[_botones.Count - 1];
-        opcionTiempo.boton.Width = 450;
+        opcionTiempo.boton.Width = Math.Min(1232f, _fuenteRivales.MeasureString(TextoMenosTiempo).X * EscalaOpciones * 1.025f + 24f);
         opcionTiempo.boton.Height = 62;
         opcionTiempo.texto.Visible = false;
         _destello = new ColoredRectangleRuntime();
@@ -332,6 +334,8 @@ public sealed class Seleccion : Escena
         }
         _entrando = true;
         ActualizarOpciones();
+        _mejoras.Puntaje.AgregarBonoDificultad(menosTiempo
+            ? BonoMenosTiempo : BonoRival(_enemigoSeleccionado.Value));
         _cambiarEscena(new Partida(_cambiarEscena, _numeroNivel, _transicionReproducida,
             _cantidadDuke + (_enemigoSeleccionado == Enemigo.Duke ? 1 : 0),
             _cantidadJarJar + (_enemigoSeleccionado == Enemigo.JarJar ? 1 : 0),
@@ -439,6 +443,21 @@ public sealed class Seleccion : Escena
         Core.SpriteBatch.End();
     }
 
+    private static decimal BonoRival(Enemigo rival) => rival switch
+    {
+        Enemigo.Duke => 0.15m,
+        Enemigo.JarJar => 0.2m,
+        Enemigo.Sorak => 0.25m,
+        Enemigo.Delusion => 0.25m,
+        Enemigo.ErosionBird => 0.4m,
+        Enemigo.TooManyParries => 0.5m,
+        _ => throw new ArgumentOutOfRangeException(nameof(rival))
+    };
+
+    private static string FormatoMultiplicador(decimal valor) => valor.ToString("0.##", CultureInfo.InvariantCulture) + "x";
+    private static string TextoMenosTiempo => "Menos tiempo. +" + FormatoMultiplicador(BonoMenosTiempo);
+    private string TextoRival(Enemigo rival) => NombreRival(rival) + ". +" + FormatoMultiplicador(BonoRival(rival));
+
     private string NombreRival(Enemigo rival) => rival switch
     {
         Enemigo.Sorak => "Zorak",
@@ -496,19 +515,30 @@ public sealed class Seleccion : Escena
             0f, origenTitulo, escalaTitulo, SpriteEffects.None, 0f);
         for (int i = 0; i < _opcionesRivales.Count; i++)
         {
-            string nombre = NombreRival(_opcionesRivales[i]);
+            string nombre = TextoRival(_opcionesRivales[i]);
             Vector2 posicion = centro + new Vector2(0, PrimeraOpcionY + i * SeparacionOpciones);
             DibujarOpcion(nombre, posicion, _brilloOpciones[i]);
         }
-        const string opcionTiempo = "Menos tiempo";
+        string opcionTiempo = TextoMenosTiempo;
         Vector2 posicionTiempo = centro + new Vector2(0, OpcionTiempoY);
         DibujarOpcion(opcionTiempo, posicionTiempo, _brilloOpciones[2]);
+        DibujarMultiplicador(viewport);
+    }
+
+    private void DibujarMultiplicador(Viewport viewport)
+    {
+        float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
+        string texto = "MULTIPLICADOR: " + FormatoMultiplicador(_mejoras.Puntaje.MultiplicadorDificultad);
+        Core.SpriteBatch.DrawString(_fuenteRivales, texto,
+            new Vector2(viewport.Width * 0.5f, viewport.Height - 30f * escala), Color.White * 0.5f,
+            0f, _fuenteRivales.MeasureString(texto) * 0.5f, 1.05f * escala, SpriteEffects.None, 0f);
     }
 
     private void DibujarOpcion(string texto, Vector2 posicion, float brillo)
     {
         Vector2 origen = _fuenteRivales.MeasureString(texto) * 0.5f;
         float escala = EscalaOpciones * (1f + brillo * 0.025f);
+        escala = Math.Min(escala, (Core.GraphicsDevice.Viewport.Width - 48f) / Math.Max(1f, origen.X * 2f));
         if (brillo > 0.01f)
         {
             for (int i = 0; i < 12; i++)

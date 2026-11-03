@@ -590,6 +590,12 @@ public class Partida : Escena
         _cambiarEscena(new Inicio(_cambiarEscena));
     }
 
+    public void AbandonarRun()
+    {
+        Puntaje.Perder();
+        _cambiarEscena(new Inicio(_cambiarEscena, animarEntrada: true));
+    }
+
     private void DetenerSonidosEnemigos()
     {
         _shame?.DetenerSonidos();

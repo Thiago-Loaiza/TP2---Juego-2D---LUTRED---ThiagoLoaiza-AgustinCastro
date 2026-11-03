@@ -47,7 +47,10 @@ public sealed class EstadoPuntaje
     public int PuntosDelPiso { get; private set; }
     public double Estilo { get; private set; }
     public int Rango { get; private set; } = -1;
-    public double Multiplicador => Rango < 0 ? 1 : Rangos[Rango].Multiplicador;
+    public decimal BonoDificultad { get; private set; }
+    public decimal MultiplicadorDificultad => 1m + BonoDificultad;
+    public double MultiplicadorRango => Rango < 0 ? 1 : Rangos[Rango].Multiplicador;
+    public double Multiplicador => MultiplicadorRango * (double)MultiplicadorDificultad;
     public string TextoTotal => Total.ToString("D8", CultureInfo.InvariantCulture);
     public string TextoPiso => PuntosDelPiso.ToString("D8", CultureInfo.InvariantCulture);
     public IReadOnlyList<PremioPuntaje> Acciones => _acciones;
@@ -61,6 +64,12 @@ public sealed class EstadoPuntaje
             double maximo = Rango + 1 < Rangos.Count ? Rangos[Rango + 1].Umbral : MaximoEstilo;
             return (float)Math.Clamp((Estilo - minimo) / (maximo - minimo), 0, 1);
         }
+    }
+
+    public void AgregarBonoDificultad(decimal bono)
+    {
+        if (bono <= 0) throw new ArgumentOutOfRangeException(nameof(bono));
+        BonoDificultad += bono;
     }
 
     public void ComenzarNivel()
@@ -193,6 +202,7 @@ public sealed class EstadoPuntaje
 
     public void Perder()
     {
+        BonoDificultad = 0;
         Total = 0;
         Estilo = 0;
         Rango = -1;

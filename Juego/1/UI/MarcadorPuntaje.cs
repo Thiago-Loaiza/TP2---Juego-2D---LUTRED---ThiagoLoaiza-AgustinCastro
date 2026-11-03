@@ -18,7 +18,7 @@ public sealed class MarcadorPuntaje : IDisposable
     private readonly SoundEffectInstance[] _voces = new SoundEffectInstance[EstadoPuntaje.Rangos.Count];
     private readonly Texture2D[] _imagenes = new Texture2D[EstadoPuntaje.Rangos.Count];
     // Tonos del relleno de los sprites, en el mismo orden que los rangos.
-    private static readonly Color[] ColoresMultiplicador =
+    private static readonly Color[] ColoresRango =
     {
         new(235, 190, 65), new(185, 235, 90), new(15, 210, 165),
         new(65, 145, 255), new(255, 35, 110), new(255, 35, 110),
@@ -137,16 +137,17 @@ public sealed class MarcadorPuntaje : IDisposable
                 recorte, Color.White, 0f, new Vector2(recorte.Width, recorte.Height) * 0.5f,
                 escalaImagen, SpriteEffects.None, 0f);
         }
-        string multiplicador = "X" + _estado.Multiplicador.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+        string multiplicador = "X" + _estado.MultiplicadorRango.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+        Color colorRango = _estado.Rango < 0 ? Color.White : ColoresRango[_estado.Rango];
         DibujarTexto(_fuente, multiplicador, origen + new Vector2(300, 33) * escala,
-            0.85f * escala, color: _estado.Rango < 0 ? Color.White : ColoresMultiplicador[_estado.Rango]);
+            0.85f * escala, color: colorRango);
         var barra = new Rectangle((int)origen.X, (int)(origen.Y + 102 * escala), (int)(360 * escala), Math.Max(3, (int)(12 * escala)));
         Core.SpriteBatch.Draw(_pixel, barra, Color.Black);
         int borde = Math.Max(1, (int)(2 * escala));
         var interior = new Rectangle(barra.X + borde, barra.Y + borde, barra.Width - borde * 2, barra.Height - borde * 2);
         Core.SpriteBatch.Draw(_pixel, interior, new Color(60, 60, 60));
         interior.Width = (int)(interior.Width * _barra);
-        if (interior.Width > 0) Core.SpriteBatch.Draw(_pixel, interior, Color.White);
+        if (interior.Width > 0) Core.SpriteBatch.Draw(_pixel, interior, colorRango);
         DibujarTexto(_fuente, _estado.TextoPiso, origen + new Vector2(0, 122) * escala, escala);
         DibujarHumo(origen, escala);
         for (int i = 0; i < _estado.Acciones.Count; i++)

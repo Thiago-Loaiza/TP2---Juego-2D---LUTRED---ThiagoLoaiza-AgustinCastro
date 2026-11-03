@@ -24,6 +24,7 @@ public sealed class ListaOpciones : IDisposable
     private float _agarreBarra;
     private Rectangle _area;
     public bool ReanudarSeleccionado => _seleccion == 4;
+    public bool SalirSeleccionado => _seleccion == 5;
     public bool AyudaVisible => _area.Contains(Mouse.GetState().Position) || (_seleccion >= 0 && _seleccion < 4);
     private float Escala => Math.Min(Core.GraphicsDevice.Viewport.Width / 1280f,
         Core.GraphicsDevice.Viewport.Height / 720f);
@@ -65,7 +66,8 @@ public sealed class ListaOpciones : IDisposable
         _arrastrando = -1;
     }
 
-    public void Update(GameTime tiempo, Rectangle area, bool permitirEntrada, bool usarTab = false, bool usarEnter = true)
+    public void Update(GameTime tiempo, Rectangle area, bool permitirEntrada, bool usarTab = false, bool usarEnter = true,
+        bool incluirSalir = false)
     {
         _area = area;
         _scroll = Math.Clamp(_scroll, 0, MaxScroll);
@@ -108,13 +110,15 @@ public sealed class ListaOpciones : IDisposable
                 var pista = Pista(_arrastrando);
                 EstablecerVolumen(_arrastrando, (int)MathF.Round((raton.X - pista.X) * 100f / pista.Width));
             }
-            int cantidad = usarTab ? 5 : 4;
+            int cantidad = incluirSalir ? 6 : usarTab ? 5 : 4;
             bool izquierda = pulsado(Keys.Left) || pulsado(Keys.A);
             bool derecha = pulsado(Keys.Right) || pulsado(Keys.D);
             if (pulsado(Keys.Down) || pulsado(Keys.S) || (usarTab && pulsado(Keys.Tab))) Seleccionar((_seleccion + 1) % cantidad);
             if (pulsado(Keys.Up) || pulsado(Keys.W)) Seleccionar(_seleccion < 0 ? cantidad - 1 : (_seleccion + cantidad - 1) % cantidad);
             bool ajustarVolumen = _seleccion >= 2 && _seleccion < 4;
-            if (!ajustarVolumen && (izquierda || derecha))
+            if (incluirSalir && _seleccion >= 4 && (izquierda || derecha))
+                Seleccionar(izquierda ? 5 : 4);
+            else if (!ajustarVolumen && (izquierda || derecha))
                 Seleccionar(_seleccion < 0 ? (derecha ? 0 : cantidad - 1)
                     : (_seleccion + (derecha ? 1 : cantidad - 1)) % cantidad);
             if (_seleccion >= 0)
@@ -132,7 +136,7 @@ public sealed class ListaOpciones : IDisposable
     private void Seleccionar(int fila)
     {
         _seleccion = fila;
-        if (fila == 4) return;
+        if (fila >= 4) return;
         float altoVisible = _area.Height / Escala;
         if (fila * 120 < _scroll) _scroll = fila * 120;
         if (fila * 120 + 120 > _scroll + altoVisible) _scroll = fila * 120 + 120 - altoVisible;
@@ -237,8 +241,16 @@ public sealed class ListaOpciones : IDisposable
             else linea = propuesta;
         }
         lineas.Add(linea);
-        batch.DrawString(_fuente, string.Join("\n", lineas), new Vector2(area.X + 24 * Escala, area.Y + 24 * Escala),
-            Color.White * opacidad, 0, Vector2.Zero, escalaFuente, SpriteEffects.None, 0);
+        float altoLinea = _fuente.LineSpacing * escalaFuente;
+        float altoTexto = _fuente.MeasureString(string.Join("\n", lineas)).Y * escalaFuente;
+        float y = area.Center.Y - altoTexto * 0.5f;
+        foreach (string texto in lineas)
+        {
+            float anchoTexto = _fuente.MeasureString(texto).X * escalaFuente;
+            batch.DrawString(_fuente, texto, new Vector2(area.Center.X - anchoTexto * 0.5f, y),
+                Color.White * opacidad, 0, Vector2.Zero, escalaFuente, SpriteEffects.None, 0);
+            y += altoLinea;
+        }
         batch.End();
     }
 
