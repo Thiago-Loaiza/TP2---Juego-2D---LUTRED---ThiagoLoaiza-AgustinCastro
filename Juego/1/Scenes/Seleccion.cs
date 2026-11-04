@@ -32,12 +32,13 @@ public sealed class Seleccion : Escena
     private readonly bool _transicionReproducida;
     private readonly int _cantidadDuke;
     private readonly int _cantidadJarJar;
+    private readonly int _cantidadDupe;
     private readonly bool _sorakElegido;
     private readonly bool _erosionBirdElegido;
     private readonly bool _delusionElegido;
     private readonly bool _tooManyParriesElegido;
     private readonly double _duracionNivel;
-    private enum Enemigo { Sorak, JarJar, Duke, ErosionBird, Delusion, TooManyParries }
+    private enum Enemigo { Sorak, JarJar, Duke, ErosionBird, Delusion, TooManyParries, Dupe }
     private Enemigo? _enemigoSeleccionado;
     private bool _entrando;
     private int _opcionBajoCursor = -1;
@@ -70,7 +71,7 @@ public sealed class Seleccion : Escena
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
         double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null,
-        bool delusionElegido = false, bool tooManyParriesElegido = false)
+        bool delusionElegido = false, bool tooManyParriesElegido = false, int cantidadDupe = 0)
     {
         _cambiarEscena = cambiarEscena;
         _numeroNivel = numeroNivel;
@@ -86,6 +87,8 @@ public sealed class Seleccion : Escena
         }
         _cantidadDuke = cantidadDuke;
         _cantidadJarJar = cantidadJarJar;
+        if (cantidadDupe < 0) throw new ArgumentOutOfRangeException(nameof(cantidadDupe));
+        _cantidadDupe = cantidadDupe;
         _sorakElegido = sorakElegido;
         _erosionBirdElegido = erosionBirdElegido;
         _delusionElegido = delusionElegido;
@@ -95,7 +98,7 @@ public sealed class Seleccion : Escena
             throw new ArgumentOutOfRangeException(nameof(duracionNivel));
         }
         _duracionNivel = duracionNivel;
-        var pool = new List<Enemigo> { Enemigo.JarJar, Enemigo.Duke };
+        var pool = new List<Enemigo> { Enemigo.JarJar, Enemigo.Duke, Enemigo.Dupe };
         if (!sorakElegido)
         {
             pool.Add(Enemigo.Sorak);
@@ -345,7 +348,8 @@ public sealed class Seleccion : Escena
             duracionNivel: menosTiempo ? Math.Max(double.Epsilon, _duracionNivel * 0.67) : _duracionNivel,
             erosionBirdElegido: _erosionBirdElegido || _enemigoSeleccionado == Enemigo.ErosionBird, mejoras: _mejoras,
             delusionElegido: _delusionElegido || _enemigoSeleccionado == Enemigo.Delusion,
-            tooManyParriesElegido: _tooManyParriesElegido || _enemigoSeleccionado == Enemigo.TooManyParries));
+            tooManyParriesElegido: _tooManyParriesElegido || _enemigoSeleccionado == Enemigo.TooManyParries,
+            cantidadDupe: _cantidadDupe + (_enemigoSeleccionado == Enemigo.Dupe ? 1 : 0)));
     }
 
     public override void Update(GameTime gameTime)
@@ -448,6 +452,7 @@ public sealed class Seleccion : Escena
     private static decimal BonoRival(Enemigo rival) => rival switch
     {
         Enemigo.Duke => 0.15m,
+        Enemigo.Dupe => 0.15m,
         Enemigo.JarJar => 0.2m,
         Enemigo.Sorak => 0.25m,
         Enemigo.Delusion => 0.25m,
@@ -467,6 +472,7 @@ public sealed class Seleccion : Escena
         Enemigo.ErosionBird => "Erosion Bird",
         Enemigo.Delusion => "Delusion",
         Enemigo.TooManyParries => "Too Many Parries",
+        Enemigo.Dupe => _cantidadDupe > 0 ? "Otro Dupe" : "Dupe",
         _ => _cantidadDuke > 0 ? "Otro Duck" : "Duck"
     };
 

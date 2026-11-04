@@ -41,7 +41,8 @@ public sealed class Mejoras : Escena
     }
     private readonly ParticulaHumo[] _particulasHumo = new ParticulaHumo[100];
     private readonly Action _continuar;
-    private readonly int[] _opciones = new int[3];
+    private readonly int[] _opciones;
+    private readonly int _cantidadOpciones;
     private readonly Texture2D[] _iconos = new Texture2D[3];
     private Texture2D _pixel;
     private SpriteFont _fuente;
@@ -59,29 +60,9 @@ public sealed class Mejoras : Escena
         _continuar = continuar ?? throw new ArgumentNullException(nameof(continuar));
         _mejoras = mejoras ?? new EstadoMejoras();
         _piso = piso;
-        var activas = new List<int>();
-        var pendientes = new List<int>();
-        for (int i = 0; i < Catalogo.Length; i++)
-        {
-            if (_mejoras.Disponible(Catalogo[i], piso))
-            {
-                (Catalogo[i].Implementada ? activas : pendientes).Add(i);
-            }
-        }
-        _sinMejorasAplicables = activas.Count == 0;
-        for (int i = 0; i < _opciones.Length; i++)
-        {
-            // Las mejoras funcionales tienen prioridad; las otras son vistas previas.
-            var disponibles = activas.Count > 0 ? activas : pendientes;
-            if (disponibles.Count == 0)
-            {
-                _opciones[i] = -1;
-                continue;
-            }
-            int indice = Random.Shared.Next(disponibles.Count);
-            _opciones[i] = disponibles[indice];
-            disponibles.RemoveAt(indice);
-        }
+        _opciones = _mejoras.ElegirOpciones(piso);
+        _cantidadOpciones = Array.FindAll(_opciones, indice => indice >= 0).Length;
+        _sinMejorasAplicables = _cantidadOpciones == 0;
     }
     protected override void LoadContent()
     {
@@ -128,14 +109,22 @@ public sealed class Mejoras : Escena
         _ratonAnterior = Mouse.GetState();
     }
 
-    private static Rectangle AreaOpcion(int indice)
+    private Rectangle AreaOpcion(int indice)
     {
         var viewport = Core.GraphicsDevice.Viewport;
         float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
         int ancho = (int)(280 * escala);
         int alto = (int)(260 * escala);
-        int x = viewport.Width / 2 + (int)((indice - 1) * 340 * escala);
+        int x = viewport.Width / 2 + (int)((indice - (Math.Max(1, _cantidadOpciones) - 1) / 2f) * 340 * escala);
         return new Rectangle(x - ancho / 2, viewport.Height / 2 - alto / 2 - (int)(85 * escala), ancho, alto);
+    }
+
+    private static Rectangle AreaContinuar()
+    {
+        var vista = Core.GraphicsDevice.Viewport;
+        float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
+        return new Rectangle((int)(vista.Width / 2f - 160 * escala),
+            (int)(vista.Height / 2f + 20 * escala), (int)(320 * escala), (int)(65 * escala));
     }
 
     public override void Update(GameTime gameTime)
@@ -174,18 +163,21 @@ public sealed class Mejoras : Escena
         bool Pulsado(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         if (_tiempo >= FinAparicion && Core.Instance.IsActive)
         {
-            if (Pulsado(Keys.Left) || Pulsado(Keys.A) || Pulsado(Keys.Up) || Pulsado(Keys.W))
+            if (_cantidadOpciones > 0 && (Pulsado(Keys.Left) || Pulsado(Keys.A) || Pulsado(Keys.Up) || Pulsado(Keys.W)))
             {
-                _seleccion = (_seleccion + 2) % 3;
+                _seleccion = (_seleccion + _cantidadOpciones - 1) % _cantidadOpciones;
             }
-            if (Pulsado(Keys.Right) || Pulsado(Keys.D) || Pulsado(Keys.Down) || Pulsado(Keys.S))
+            if (_cantidadOpciones > 0 && (Pulsado(Keys.Right) || Pulsado(Keys.D) || Pulsado(Keys.Down) || Pulsado(Keys.S)))
             {
-                _seleccion = (_seleccion + 1) % 3;
+                _seleccion = (_seleccion + 1) % _cantidadOpciones;
             }
-        bool confirmar = Pulsado(Keys.Enter) || Pulsado(Keys.Space);
+            bool confirmar = Pulsado(Keys.Enter) || Pulsado(Keys.Space);
+            if (_sinMejorasAplicables && AreaContinuar().Contains(raton.Position)
+                && raton.LeftButton == ButtonState.Pressed && _ratonAnterior.LeftButton == ButtonState.Released)
+                confirmar = true;
             for (int i = 0; i < _opciones.Length; i++)
             {
-                if (AreaOpcion(i).Contains(raton.Position))
+                if (_opciones[i] >= 0 && AreaOpcion(i).Contains(raton.Position))
                 {
                     if (raton.Position != _ratonAnterior.Position)
                     {
@@ -272,7 +264,16 @@ public sealed class Mejoras : Escena
             DibujarDescripcion(escala, alfaInterfaz);
         }
         // Flechas pixeladas para mantener la fuente actual sin glifos faltantes.
-        DibujarIndicacionSeleccion(escala, alfaInterfaz * 0.5f);
+        if (_cantidadOpciones > 1) DibujarIndicacionSeleccion(escala, alfaInterfaz * 0.5f);
+        if (_sinMejorasAplicables)
+        {
+            DibujarTexto("No hay mejoras disponibles", new Vector2(viewport.Width / 2f,
+                viewport.Height / 2f - 45 * escala), escala, alfaInterfaz);
+            Rectangle continuar = AreaContinuar();
+            bool hover = continuar.Contains(Mouse.GetState().Position);
+            Core.SpriteBatch.Draw(_pixel, continuar, Color.Black * ((hover ? 0.16f : 0.08f) * alfaInterfaz));
+            DibujarTexto("Continuar", new Vector2(continuar.Center.X, continuar.Center.Y), escala, alfaInterfaz);
+        }
         DibujarTexto(_sinMejorasAplicables ? "Sin mejoras aplicables: Enter / Espacio para continuar" : "Enter / Espacio para aceptar la mejora", new Vector2(viewport.Width / 2f, viewport.Height / 2f + 333 * escala), 0.75f * escala, alfaInterfaz * 0.5f);
         // Velo blanco sobre la escena completa que se disuelve al comenzar la revelacion.
         float velo = 1f - Aparicion(0f);

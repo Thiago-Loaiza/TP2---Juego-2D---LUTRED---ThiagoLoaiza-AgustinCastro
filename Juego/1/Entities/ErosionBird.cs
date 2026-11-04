@@ -16,6 +16,10 @@ public sealed class ErosionBird
     private const float EscalaLanza = 1.5f;
     private const float RadioPortales = 240f;
     private const float EscalaAve = 1.8f;
+    private const float DuracionMirada = 3.5f;
+    private const float EsperaEntreAtaques = 4f;
+    private readonly bool _pazActiva;
+    private readonly float _esperaEntreAtaques;
     // Las dos poses sumaban 4 s: ahora suman 1.5 s (2.5 s menos).
     private const float DuracionPreparacion = 0.75f;
     // Mantiene la pose final medio segundo y deja margen para salir por el lado libre.
@@ -58,6 +62,17 @@ public sealed class ErosionBird
     public int ParrysEsteFrame { get; private set; }
     public bool TandaParreadaEsteFrame { get; private set; }
     public int TandaActual { get; private set; }
+
+    public ErosionBird(bool pazActiva = false)
+    {
+        _pazActiva = pazActiva;
+        // Reducir la frecuencia un 20% alarga el ciclo completo un 25%.
+        // Se agrega descanso sin alterar las animaciones ni el seguimiento de las lanzas.
+        float ciclo = EsperaEntreAtaques + DuracionMirada + 2 * DuracionPreparacion
+            + DuracionAtaque + DuracionReversa + DuracionRestos + DuracionDesvanecimiento;
+        _esperaEntreAtaques = EsperaEntreAtaques + (pazActiva ? ciclo * 0.25f : 0f);
+        if (pazActiva) _espera /= 0.8f;
+    }
 
     // El ave vive en coordenadas de pantalla; las lanzas viven en el mapa.
     public Rectangle AreaOcupada => _estado == Estado.Oculto ? Rectangle.Empty
@@ -116,24 +131,9 @@ public sealed class ErosionBird
                 }
                 break;
             case Estado.Mirando:
-                if (_tiempo >= 3.5f)
+                if (_tiempo >= DuracionMirada)
                 {
-                    _centroPortales = sinner.Colision.Centro;
-                    _seguimientoRestante = float.PositiveInfinity;
-                    // Tres de cuatro lados: el cuarto queda libre durante toda la invocacion.
-                    int ladoLibre = Random.Shared.Next(4);
-                    float orientacion = Random.Shared.Next(2) * MathHelper.PiOver4;
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (i == ladoLibre) { continue; }
-                        float angulo = orientacion + i * MathHelper.PiOver2;
-                        Vector2 radial = new(MathF.Cos(angulo), MathF.Sin(angulo));
-                        _lanzas.Add(new Lanza { Posicion = _centroPortales + radial * RadioPortales,
-                            PosicionAnterior = _centroPortales + radial * RadioPortales,
-                            Direccion = -radial });
-                    }
-                    _lanzasParreadasTanda = 0;
-                    _totalLanzasTanda = _lanzas.Count;
+                    CrearLanzas(sinner.Colision.Centro);
                     TandaActual++;
                     Sonar("SpawnerLanzas");
                     CambiarEstado(Estado.Preparando);
@@ -173,7 +173,7 @@ public sealed class ErosionBird
                 if (_tiempo >= DuracionDesvanecimiento)
                 {
                     CambiarEstado(Estado.Oculto);
-                    _espera = 4f;
+                    _espera = _esperaEntreAtaques;
                 }
                 break;
         }
@@ -240,6 +240,26 @@ public sealed class ErosionBird
         // El parry solo rompe las lanzas que alcanza.
         return golpe ? ResultadoErosionBird.Golpe
             : parreado ? ResultadoErosionBird.Parreado : ResultadoErosionBird.Nada;
+    }
+
+    private void CrearLanzas(Vector2 centro)
+    {
+        _centroPortales = centro;
+        _seguimientoRestante = float.PositiveInfinity;
+        // Normalmente tres lados; con Paz solo uno, elegido al azar.
+        int ladoLibre = Random.Shared.Next(4);
+        int ladoPaz = Random.Shared.Next(4);
+        float orientacion = Random.Shared.Next(2) * MathHelper.PiOver4;
+        for (int i = 0; i < 4; i++)
+        {
+            if (_pazActiva ? i != ladoPaz : i == ladoLibre) continue;
+            float angulo = orientacion + i * MathHelper.PiOver2;
+            Vector2 radial = new(MathF.Cos(angulo), MathF.Sin(angulo));
+            _lanzas.Add(new Lanza { Posicion = centro + radial * RadioPortales,
+                PosicionAnterior = centro + radial * RadioPortales, Direccion = -radial });
+        }
+        _lanzasParreadasTanda = 0;
+        _totalLanzasTanda = _lanzas.Count;
     }
 
     private void MoverLanza(Lanza lanza)

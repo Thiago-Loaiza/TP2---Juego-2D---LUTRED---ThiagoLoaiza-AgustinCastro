@@ -58,7 +58,13 @@ public sealed class Shame
             content.Load<SoundEffect>("SFX/Entities/SHAME/Shameparry"), volume: 0.7f);
     }
 
-    public void Aparecer(Vector2 posicion)
+    public void Trasladar(Vector2 desplazamiento)
+    {
+        Position += desplazamiento;
+        _particulas.Clear();
+    }
+
+    public void Aparecer(Vector2 posicion, double piedad = 1.0)
     {
         Position = posicion;
         Activo = true;
@@ -69,7 +75,7 @@ public sealed class Shame
         {
             EmitirParticula(Position, 0);
         }
-        _espera = 1.0;
+        _espera = piedad;
         Velocidad = VelocidadBase;
         _tiempoAceleracion = 0;
         if (_risa != null)

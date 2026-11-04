@@ -95,7 +95,8 @@ public class JarJar
     }
 
     public ResultadoJarJar Update(GameTime gameTime, Vector2 centroSinner, Vector2 velocidadSinner,
-        bool sinnerHaciendoParry, Rectangle areaVisible, IReadOnlyList<Vector2> posicionesLibres)
+        bool sinnerHaciendoParry, Rectangle areaVisible, IReadOnlyList<Vector2> posicionesLibres,
+        bool sinnerInvulnerable = false)
     {
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
         bool sinnerEnRango = Vector2.DistanceSquared(centroSinner, Position)
@@ -155,7 +156,17 @@ public class JarJar
                 }
                 _temporizador -= segundos;
                 if (_temporizador <= 0f)
+                {
+                    if (sinnerInvulnerable)
+                    {
+                        _sprite.IsLooping = true;
+                        _sprite.Animation = _recarga;
+                        _temporizador = DuracionRecarga;
+                        _estado = Estado.Recargando;
+                        break;
+                    }
                     return ResultadoJarJar.Golpe;
+                }
                 break;
 
             case Estado.Recargando:

@@ -18,7 +18,7 @@ using MonoGameGum;
 
 namespace _1.Scenes;
 
-public class Partida : Escena
+public partial class Partida : Escena
 {
     public void SincronizarEntrada() => _sinner?.SincronizarEntrada();
     private const int TotalOrbes = 10;
@@ -32,6 +32,11 @@ public class Partida : Escena
     private readonly bool _transicionReproducida;
     private readonly int _cantidadDuke;
     private readonly int _cantidadJarJar;
+    private readonly int _cantidadDupe;
+    private readonly List<Dupe> _dupes = new();
+    private readonly EstadoEfectoDupe _efectoDupe = new();
+    private Effect _coloresInvertidos;
+    public Effect FiltroDupe => !_derrotado && !_nivelCompletado && _efectoDupe.Activo ? _coloresInvertidos : null;
     private readonly bool _sorakElegido;
     private readonly bool _erosionBirdElegido;
     private readonly bool _delusionElegido;
@@ -52,7 +57,7 @@ public class Partida : Escena
     public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
         double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null,
-        bool delusionElegido = false, bool tooManyParriesElegido = false)
+        bool delusionElegido = false, bool tooManyParriesElegido = false, int cantidadDupe = 0)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
         if (numeroNivel < 1)
@@ -72,6 +77,8 @@ public class Partida : Escena
         }
         _cantidadDuke = cantidadDuke;
         _cantidadJarJar = cantidadJarJar;
+        if (cantidadDupe < 0) throw new ArgumentOutOfRangeException(nameof(cantidadDupe));
+        _cantidadDupe = cantidadDupe;
         _sorakElegido = sorakElegido;
         _erosionBirdElegido = erosionBirdElegido;
         _delusionElegido = delusionElegido;
@@ -178,6 +185,7 @@ public class Partida : Escena
         _posicionesLibres = GeneradorOrbes.PosicionesAccesibles(mapa.Limites,
             _sinner.Colision.Centro, _obstaculos);
         _delusion?.Ubicar(_sinner.Colision.Centro, _posicionesLibres);
+        PrepararFellDoor(mapa.Limites);
         _tintaAntigua.Parameters["TamanoTexel"].SetValue(
             new Vector2(1f / ladrillos.Width, 1f / ladrillos.Height));
         Core.Audio.SongVolume = 0.3f;
@@ -203,6 +211,7 @@ public class Partida : Escena
         _animacionOrbe = Orbe.CrearAnimacion(
             Content.Load<Texture2D>("Sprites/Misc/Orbs/Punto-Sheet"));
         _tintaAntigua = Content.Load<Effect>("Effects/TintaAntigua");
+        _coloresInvertidos = Content.Load<Effect>("Effects/ColoresInvertidos");
         // aumentar el umbral produce mas negro, aumentar el contraste reduce los grises.
         _tintaAntigua.Parameters["Umbral"].SetValue(0.80f);
         _tintaAntigua.Parameters["Contraste"].SetValue(60f);
@@ -226,6 +235,12 @@ public class Partida : Escena
 
         _sinner = new Sinner { Mejoras = _mejoras };
         _sinner.LoadContent(Content);
+        for (int i = 0; i < _cantidadDupe; i++)
+        {
+            var dupe = new Dupe(i);
+            dupe.LoadContent(Content);
+            _dupes.Add(dupe);
+        }
         _shame = new Shame();
         _shame.LoadContent(Content);
         _avisoShame = Core.Audio.CreateSoundEffectInstance(
@@ -245,12 +260,12 @@ public class Partida : Escena
         }
         if (_sorakElegido)
         {
-            _zorak = new Zorak();
+            _zorak = new Zorak(_mejoras.Cantidad("Paz") > 0);
             _zorak.LoadContent(Content);
         }
         if (_erosionBirdElegido)
         {
-            _erosionBird = new ErosionBird();
+            _erosionBird = new ErosionBird(_mejoras.Cantidad("Paz") > 0);
             _erosionBird.LoadContent(Content);
         }
         if (_delusionElegido)
@@ -273,6 +288,8 @@ public class Partida : Escena
     {
         _marcador?.Dispose();
         _sinner?.UnloadContent();
+        foreach (Dupe dupe in _dupes) dupe.UnloadContent();
+        _dupes.Clear();
         _shame?.UnloadContent();
         Core.Audio.ReleaseSoundEffect(_avisoShame);
         for (int i = 0; i < _dukes.Count; i++)
@@ -312,7 +329,8 @@ public class Partida : Escena
                     transicionReproducida: true,
                     cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido,
                     duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras,
-                    delusionElegido: _delusionElegido, tooManyParriesElegido: _tooManyParriesElegido));
+                    delusionElegido: _delusionElegido, tooManyParriesElegido: _tooManyParriesElegido,
+                    cantidadDupe: _cantidadDupe));
                 if (_numeroNivel % 4 == 0)
                 {
                     _cambiarEscena(new Mejoras(AbrirPregunta, _mejoras, _numeroNivel));
@@ -357,6 +375,13 @@ public class Partida : Escena
         else
         {
             _sinner.ActualizarEscudo(gameTime);
+            _efectoDupe.Actualizar(segundos);
+            _sinner.ControlesInvertidos = _efectoDupe.Activo;
+            if (_enFellDoor)
+            {
+                ActualizarDimensionFellDoor(gameTime);
+                return;
+            }
             if (_zorak?.BloqueandoJugador == true)
             {
                 if (_zorak.Update(gameTime, false, false) == ResultadoZorak.Golpe)
@@ -375,9 +400,11 @@ public class Partida : Escena
                 AplicarTooManyParries();
             }
             _camara.Seguir(_sinner.Position);
+            if (ActualizarPuertaFellDoor(gameTime, centroAnteriorSinner)) return;
             ResultadoZorak resultadoZorak = _zorak?.Update(gameTime,
                 Vector2.DistanceSquared(centroAnteriorSinner, _sinner.Colision.Centro) > 0.000001f,
-                (_sinner.ParryIniciadoEsteFrame || _sinner.AutoparryActivo), _erosionBird?.AreaOcupada ?? Rectangle.Empty) ?? ResultadoZorak.Nada;
+                !_sinner.DashActivo && (_sinner.ParryIniciadoEsteFrame || _sinner.AutoparryActivo),
+                _erosionBird?.AreaOcupada ?? Rectangle.Empty, _sinner.DashActivo) ?? ResultadoZorak.Nada;
             if (resultadoZorak == ResultadoZorak.Parreado)
                 RegistrarParry(TipoParry.Zorak, _zorak, !_sinner.ParryIniciadoEsteFrame,
                     _zorak.ParryUltimoInstante);
@@ -437,7 +464,7 @@ public class Partida : Escena
             {
                 ResultadoJarJar resultadoJarJar = _jarJars[i].Update(gameTime,
                     _sinner.Colision.Centro, _sinner.VelocidadActual, _sinner.PuedeParrear,
-                    areaVisible, _posicionesLibres);
+                    areaVisible, _posicionesLibres, _sinner.DashActivo);
                 if (resultadoJarJar == ResultadoJarJar.Parreado)
                 {
                     RegistrarParry(TipoParry.JarJar, _jarJars[i], !_sinner.HaciendoParry);
@@ -463,6 +490,16 @@ public class Partida : Escena
 
             if (!_derrotado && _faseEntrada == FaseEntrada.Jugando)
             {
+                foreach (Dupe dupe in _dupes)
+                {
+                    ResultadoDupe resultado = dupe.Update(gameTime, _sinner, centroAnteriorSinner,
+                        _efectoDupe.PuedeRecibirEfecto);
+                    if (resultado == ResultadoDupe.Contacto)
+                        _efectoDupe.IntentarAplicar();
+                    else if (resultado == ResultadoDupe.Parreado)
+                        RegistrarParry(TipoParry.Dupe, dupe, !_sinner.HaciendoParry);
+                }
+                _sinner.ControlesInvertidos = _efectoDupe.Activo;
                 RecogerOrbes(centroAnteriorSinner);
                 if (!_nivelCompletado)
                 {
@@ -484,7 +521,8 @@ public class Partida : Escena
             if (_relojNivel.Terminado)
             {
                 Core.Audio.StopSoundEffect(_avisoShame);
-                _shame.Aparecer(_relojNivel.PosicionHaceDosSegundos);
+                _shame.Aparecer(_enFellDoor ? _centroFellDoor : _relojNivel.PosicionHaceDosSegundos,
+                    _enFellDoor ? 3.0 : 1.0);
             }
             return;
         }
@@ -527,8 +565,9 @@ public class Partida : Escena
     private void AplicarTooManyParries()
     {
         bool activo = _tooManyParries?.Activo == true;
-        _sinner.ParryBloqueado = activo;
-        _sinner.MultiplicadorVelocidadExterno = activo ? TooManyParries.MultiplicadorVelocidad : 1f;
+        _sinner.ParryBloqueado = _tooManyParries?.BloqueandoParrys == true;
+        _sinner.MultiplicadorVelocidadExterno = (activo ? TooManyParries.MultiplicadorVelocidad : 1f)
+            * (_recompensaFellDoor ? 1.2f : 1f);
     }
 
     private bool EsParryShameUltimoInstante(Vector2 inicioSinner, Vector2 inicioShame)
@@ -568,6 +607,7 @@ public class Partida : Escena
 
     private bool Perder()
     {
+        if (_sinner.DashActivo) return false;
         if (_sinner.AbsorberGolpe()) return false;
         Puntaje.Perder();
         _derrotado = true;
@@ -597,6 +637,7 @@ public class Partida : Escena
 
     private void DetenerSonidosEnemigos()
     {
+        foreach (Dupe dupe in _dupes) dupe.DetenerSonidos();
         _shame?.DetenerSonidos();
         _erosionBird?.DetenerSonidos();
         Core.Audio.StopSoundEffect(_avisoShame);
@@ -653,18 +694,20 @@ public class Partida : Escena
             return;
         }
 
-        Core.GraphicsDevice.Clear(_derrotado ? Color.Black : Color.White);
+        Core.GraphicsDevice.Clear(_derrotado ? Color.Black : _enFellDoor ? new Color(48, 3, 8) : Color.White);
         Matrix transformacion = _camara.ObtenerTransformacion(Core.GraphicsDevice.Viewport);
 
         if (!_derrotado)
         {
             Core.SpriteBatch.Begin(
                 samplerState: SamplerState.PointWrap,
-                effect: _tintaAntigua,
+                effect: _enFellDoor ? null : _tintaAntigua,
                 transformMatrix: transformacion);
             Rectangle visible = AreaVisible();
             foreach (EstructuraSolida estructura in _estructuras)
                 if (estructura.Limites.Intersects(visible)) estructura.Draw(Core.SpriteBatch);
+            if (_enFellDoor)
+                Core.SpriteBatch.Draw(_pixelTransicion, visible, new Color(100, 0, 12) * 0.65f);
             Core.SpriteBatch.End();
         }
 
@@ -680,26 +723,37 @@ public class Partida : Escena
         else
         {
             DibujarExterior();
-            for (int i = 0; i < _jarJars.Count; i++)
+            if (_enFellDoor)
             {
-                _jarJars[i].DrawAura(Core.SpriteBatch);
+                foreach (DemonioFellDoor demonio in _demoniosFellDoor) demonio.Draw(Core.SpriteBatch);
+                _shame.Draw(Core.SpriteBatch);
+                _sinner.Draw(Core.SpriteBatch);
             }
-            for (int i = 0; i < _orbes.Count; i++)
+            else
             {
-                _orbes[i].Draw(Core.SpriteBatch);
-            }
-            for (int i = 0; i < _jarJars.Count; i++)
-            {
-                _jarJars[i].Draw(Core.SpriteBatch);
-            }
-            _delusion?.Draw(Core.SpriteBatch);
-            _erosionBird?.DrawLanzas(Core.SpriteBatch);
-            _shame.Draw(Core.SpriteBatch);
-            _sinner.Draw(Core.SpriteBatch);
-            _delusion?.DrawBolas(Core.SpriteBatch);
-            for (int i = 0; i < _dukes.Count; i++)
-            {
-                _dukes[i].Draw(Core.SpriteBatch);
+                DibujarPuertaFellDoor();
+                for (int i = 0; i < _jarJars.Count; i++)
+                {
+                    _jarJars[i].DrawAura(Core.SpriteBatch);
+                }
+                for (int i = 0; i < _orbes.Count; i++)
+                {
+                    _orbes[i].Draw(Core.SpriteBatch);
+                }
+                for (int i = 0; i < _jarJars.Count; i++)
+                {
+                    _jarJars[i].Draw(Core.SpriteBatch);
+                }
+                _delusion?.Draw(Core.SpriteBatch);
+                _erosionBird?.DrawLanzas(Core.SpriteBatch);
+                _shame.Draw(Core.SpriteBatch);
+                foreach (Dupe dupe in _dupes) dupe.Draw(Core.SpriteBatch);
+                _sinner.Draw(Core.SpriteBatch);
+                _delusion?.DrawBolas(Core.SpriteBatch);
+                for (int i = 0; i < _dukes.Count; i++)
+                {
+                    _dukes[i].Draw(Core.SpriteBatch);
+                }
             }
         }
 
@@ -728,9 +782,12 @@ public class Partida : Escena
             // La capa negra cubre tambien el borde y Zorak queda encima de todo.
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                 blendState: BlendState.AlphaBlend);
-            _erosionBird?.Draw(Core.SpriteBatch);
-            _tooManyParries?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
-            _zorak?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+            if (!_enFellDoor)
+            {
+                _erosionBird?.Draw(Core.SpriteBatch);
+                _tooManyParries?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+                _zorak?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+            }
             Core.SpriteBatch.End();
         }
     }
@@ -767,7 +824,7 @@ public class Partida : Escena
 
     private void DibujarContadorOrbes()
     {
-        string texto = $"{_orbesRecogidos}/{TotalOrbes}";
+        string texto = _enFellDoor ? RelojNivel.Formatear(_supervivenciaFellDoor) : $"{_orbesRecogidos}/{TotalOrbes}";
         Vector2 tamano = _fuenteContador.MeasureString(texto);
         Vector2 origen = tamano * 0.5f;
         Vector2 posicion = new(Core.GraphicsDevice.Viewport.Width * 0.5f, 24f + _fuenteContador.LineSpacing + 8f + origen.Y);
@@ -819,7 +876,7 @@ public class Partida : Escena
 
     private void DibujarIndicadorOrbes(Matrix transformacion)
     {
-        if (_orbes.Count == 0)
+        if (_enFellDoor || _orbes.Count == 0)
         {
             return;
         }

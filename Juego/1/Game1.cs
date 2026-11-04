@@ -3,6 +3,7 @@ using Gum.Forms.Controls;
 using LutredLibrary;
 using LutredLibrary.Scenes;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
 using _1.Scenes;
@@ -19,9 +20,10 @@ public class Game1 : Core
     public static bool EmpezarConMejoras = true;
 
     // Permite ofrecer mejoras sin exigir su piso minimo; conserva requisitos y limites.
-    public static bool IgnorarNivelMinimoMejoras = false;
+    public static bool IgnorarNivelMinimoMejoras = true;
 
     private Escena _escenaActual;
+    private RenderTarget2D _pantallaDupe;
     private Escena _escenaPendiente;
     private bool _salirPresionadoAnterior;
     private _1.UI.ConfiguracionPausa _configuracionPausa;
@@ -129,16 +131,43 @@ public class Game1 : Core
 
     protected override void Draw(GameTime gameTime)
     {
+        Effect filtroDupe = (_escenaActual as Partida)?.FiltroDupe;
+        RenderTargetBinding[] destinoAnterior = null;
+        Viewport viewportAnterior = GraphicsDevice.Viewport;
+        if (filtroDupe != null)
+        {
+            if (_pantallaDupe == null || _pantallaDupe.Width != viewportAnterior.Width ||
+                _pantallaDupe.Height != viewportAnterior.Height)
+            {
+                _pantallaDupe?.Dispose();
+                _pantallaDupe = new RenderTarget2D(GraphicsDevice, viewportAnterior.Width, viewportAnterior.Height);
+            }
+            destinoAnterior = GraphicsDevice.GetRenderTargets();
+            GraphicsDevice.SetRenderTarget(_pantallaDupe);
+        }
+
         _escenaActual.Draw(gameTime);
         GumService.Default.Draw();
         _1.UI.BotonAnimado.DibujarTextosSuaves();
         _configuracionPausa?.Draw();
         base.Draw(gameTime);
+
+        if (filtroDupe != null)
+        {
+            GraphicsDevice.SetRenderTargets(destinoAnterior);
+            GraphicsDevice.Viewport = viewportAnterior;
+            SpriteBatch.Begin(blendState: BlendState.Opaque, samplerState: SamplerState.PointClamp,
+                effect: filtroDupe);
+            SpriteBatch.Draw(_pantallaDupe, new Rectangle(0, 0, viewportAnterior.Width, viewportAnterior.Height), Color.White);
+            SpriteBatch.End();
+        }
     }
 
     protected override void UnloadContent()
     {
         OpcionesJuego.GuardarAhora();
+        _pantallaDupe?.Dispose();
+        _pantallaDupe = null;
         _configuracionPausa?.Dispose();
         _configuracionPausa = null;
         _escenaActual?.Dispose();

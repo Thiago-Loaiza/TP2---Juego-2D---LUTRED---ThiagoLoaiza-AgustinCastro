@@ -17,7 +17,7 @@ public class Zorak
     public const float VentanaParry = 1f;
     private const int TamanoFrame = 400;
     private const float DuracionAviso = 2f;
-    private const float DuracionMirada = VentanaParry;
+    private readonly float _ventanaParry;
     private const float DuracionParticulas = 4f;
     private const float DuracionDispersion = 1f;
     private const float FrenadoParticulas = 5f;
@@ -54,6 +54,11 @@ public class Zorak
     private Vector2 _posicion;
     public bool ParryUltimoInstante { get; private set; }
 
+    public Zorak(bool pazActiva = false)
+    {
+        _ventanaParry = VentanaParry + (pazActiva ? 0.5f : 0f);
+    }
+
     // La derrota se entrega al terminar la animacion para que el ataque sea visible.
     public bool BloqueandoJugador => _estado == Estado.Atacando;
 
@@ -68,7 +73,7 @@ public class Zorak
         // Dos cuadros rapidos en bucle; la fase dura dos segundos independientemente del bucle.
         _aviso = new Animation(Cortar(textura, 1, 2), TimeSpan.FromSeconds(0.1));
         // El 10 es el primer cuadro despues de los ojos cerrados: se sostiene durante la piedad.
-        _mirada = new Animation(Cortar(textura, 10, 10), TimeSpan.FromSeconds(VentanaParry));
+        _mirada = new Animation(Cortar(textura, 10, 10), TimeSpan.FromSeconds(_ventanaParry));
         // El 14 vuelve a la cara redonda: terminar en el 13 conserva el penultimo gesto.
         _ataque = new Animation(Cortar(textura, 10, 13), TimeSpan.FromSeconds(0.09));
         // El recurso actual termina en 18; admite 19-20 cuando se amplie la hoja.
@@ -101,7 +106,8 @@ public class Zorak
         return frames;
     }
 
-    public ResultadoZorak Update(GameTime gameTime, bool jugadorMoviendose, bool parryIniciado, Rectangle ocupado = default)
+    public ResultadoZorak Update(GameTime gameTime, bool jugadorMoviendose, bool parryIniciado,
+        Rectangle ocupado = default, bool jugadorInvulnerable = false)
     {
         ParryUltimoInstante = false;
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -126,13 +132,14 @@ public class Zorak
                 _movimientoDetectado = false;
                 CambiarEstado(Estado.Mirando, _mirada);
                 // Resolver tambien el cuadro exacto en que termina de abrir los ojos.
-                return ResolverMirada(jugadorMoviendose, parryIniciado);
+                return jugadorInvulnerable ? ResultadoZorak.Nada : ResolverMirada(jugadorMoviendose, parryIniciado);
             case Estado.Mirando:
                 _sprite.Update(gameTime);
                 _tiempoMirada += segundos;
                 // Resolver antes de ocultar evita perder el ataque al cumplirse el segundo.
-                ResultadoZorak resultado = ResolverMirada(jugadorMoviendose, parryIniciado);
-                if (_estado == Estado.Mirando && _tiempoMirada >= DuracionMirada)
+                ResultadoZorak resultado = jugadorInvulnerable ? ResultadoZorak.Nada
+                    : ResolverMirada(jugadorMoviendose, parryIniciado);
+                if (_estado == Estado.Mirando && _tiempoMirada >= _ventanaParry)
                     _estado = Estado.Oculto;
                 return resultado;
             case Estado.Atacando:
@@ -162,16 +169,16 @@ public class Zorak
 
     private ResultadoZorak ResolverMirada(bool movimiento, bool parryIniciado)
     {
-        if (parryIniciado && _tiempoMirada <= VentanaParry)
+        if (parryIniciado && _tiempoMirada <= _ventanaParry)
         {
             ParryUltimoInstante = (_movimientoDetectado || movimiento)
-                && _tiempoMirada >= VentanaParry - 0.2f;
+                && _tiempoMirada >= _ventanaParry - 0.2f;
             CambiarEstado(Estado.Parreado, _parry);
             return ResultadoZorak.Parreado;
         }
         // Se detecta desde la apertura, pero el parry tiene prioridad durante su ventana.
         _movimientoDetectado |= movimiento;
-        if (_movimientoDetectado && _tiempoMirada >= VentanaParry)
+        if (_movimientoDetectado && _tiempoMirada >= _ventanaParry)
             CambiarEstado(Estado.Atacando, _ataque);
         return ResultadoZorak.Nada;
     }

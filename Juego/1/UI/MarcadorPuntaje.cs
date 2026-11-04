@@ -53,6 +53,7 @@ public sealed class MarcadorPuntaje : IDisposable
         "TRIPLE PARRY" => new(Color.Black, new Color(210, 210, 210), 1.4f, new Color(215, 215, 215), 0.18f),
         "MASTER PARRY" => new(Color.Black, new Color(235, 235, 235), 1.6f, new Color(240, 240, 240), 0.45f, true),
         "PARRY DUCK" => new(new Color(165, 165, 165), Color.Black, 1.2f),
+        "PARRY DUPE" => new(new Color(145, 145, 145), new Color(225, 225, 225), 1.2f),
         "PATITO FEO" => new(new Color(255, 225, 45), new Color(135, 135, 135), 1.3f),
         "PARRY ZORAK" => new(new Color(155, 155, 155), new Color(225, 225, 225), 1.3f),
         "PROVOCACION" => new(new Color(155, 155, 155), new Color(155, 155, 155), 0f),

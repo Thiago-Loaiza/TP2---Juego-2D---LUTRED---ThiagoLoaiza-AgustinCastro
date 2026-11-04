@@ -30,6 +30,15 @@ public class Sinner
     private SoundEffectInstance _sonidoParryExitoso;
     private AnimatedSprite _efectoParry;
     private AnimatedSprite _auraDominio;
+    private AnimatedSprite _aureolaDivina;
+    private AnimatedSprite _efectoPaz;
+    private AnimatedSprite _spriteDash;
+    private Vector2 _ultimaDireccion = Vector2.UnitY;
+    private Vector2 _direccionDash;
+    private float _dashRestante;
+    private float _recargaDash;
+    private float _velocidadDash;
+    public bool DashActivo { get; private set; }
     private AnimatedSprite _escudo;
     private AnimatedSprite _rupturaEscudo;
     private _1.Progression.EstadoEscudo _estadoEscudo;
@@ -39,6 +48,7 @@ public class Sinner
     private double _parryRestante;
     private const double SegundosPorFrameParry = 0.05;
     private const float Velocidad = 220f;
+    public const float VelocidadCaminata = Velocidad;
     private const float MultiplicadorSprint = 2.5f;
     private const float Aceleracion = 1800f;
     private const float Frenado = 2200f;
@@ -50,12 +60,16 @@ public class Sinner
     private float _tiempoCaliz;
 
     public bool UsarInercia { get; set; } = true;
+    public bool ControlesInvertidos { get; set; }
+    public SinnerAnimation AnimacionMovimiento => _animacionActual == SinnerAnimation.Parry
+        ? SinnerAnimation.Reposo : _animacionActual;
+    public SpriteEffects Orientacion => _sprite.Effects;
     public bool HaciendoParry => _haciendoParry;
     // TooManyParries anula el parry manual y el autoparry mientras esta en pantalla.
     public bool ParryBloqueado { get; set; }
     public float MultiplicadorVelocidadExterno { get; set; } = 1f;
     public bool AutoparryActivo => Mejoras.Dominio.Activo && !ParryBloqueado;
-    public bool PuedeParrear => !ParryBloqueado && (HaciendoParry || AutoparryActivo);
+    public bool PuedeParrear => !DashActivo && !ParryBloqueado && (HaciendoParry || AutoparryActivo);
     public bool ParryIniciadoEsteFrame { get; private set; }
     // Cada pulsacion de la tecla, aunque no llegue a iniciar un parry.
     public bool ParryPresionadoEsteFrame { get; private set; }
@@ -77,18 +91,39 @@ public class Sinner
 
     public void LoadContent(ContentManager content)
     {
+        if (Mejoras.Cantidad("Paz") > 0)
+        {
+            _efectoPaz = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/Paz-Sheet", 19, 0.08))
+            {
+                Origin = new Vector2(150f), Scale = new Vector2(0.5f)
+            };
+        }
+        if (Mejoras.Cantidad("AureolaDivina") > 0)
+        {
+            _aureolaDivina = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/AureolaDivina-Sheet", 6, 0.1))
+            {
+                Origin = new Vector2(150f), Scale = new Vector2(0.5f)
+            };
+            _spriteDash = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Sinner/SinnerDASH-Sheet", 9, 0.2 / 9))
+            {
+                Origin = new Vector2(150f), Scale = new Vector2(0.5f), IsLooping = false
+            };
+        }
         _estadoEscudo = new _1.Progression.EstadoEscudo(Mejoras.Cantidad("Escudo") > 0);
         if (_estadoEscudo.Disponible)
         {
             _escudo = new AnimatedSprite(CrearAnimacion(content,
                 "Sprites/Upgrades/Efectos/Shield/Shield-Sheet", 14, 0.08, 50, 50))
             {
-                Origin = new Vector2(25f), Scale = new Vector2(1.5f)
+                Origin = new Vector2(25f), Scale = new Vector2(0.75f)
             };
             _rupturaEscudo = new AnimatedSprite(CrearAnimacion(content,
                 "Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet", 9, 0.06, 50, 50))
             {
-                Origin = new Vector2(25f), Scale = new Vector2(1.5f), IsLooping = false
+                Origin = new Vector2(25f), Scale = new Vector2(0.75f), IsLooping = false
             };
         }
         _animaciones[SinnerAnimation.Reposo] = CrearAnimacion(
@@ -235,12 +270,18 @@ public class Sinner
 
     public void Update(GameTime gameTime, IReadOnlyList<ColisionSolida> obstaculos = null)
     {
+        float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _recargaDash = Math.Max(0f, _recargaDash - segundos);
+        DashActivo = _dashRestante > 0f;
+        _aureolaDivina?.Update(gameTime);
+        _efectoPaz?.Update(gameTime);
         Mejoras.Dominio.Actualizar(gameTime.ElapsedGameTime.TotalSeconds);
         if (AutoparryActivo)
         {
             _auraDominio?.Update(gameTime);
         }
         KeyboardState teclado = Keyboard.GetState();
+        bool dashPresionado = teclado.IsKeyDown(Keys.Q) && _tecladoAnterior.IsKeyUp(Keys.Q);
         ParryIniciadoEsteFrame = false;
 
         bool parryPresionado = teclado.IsKeyDown(Keys.Space)
@@ -283,10 +324,14 @@ public class Sinner
         if (teclado.IsKeyDown(Keys.W)) direccion.Y -= 1;
         if (teclado.IsKeyDown(Keys.S)) direccion.Y += 1;
 
-        if (direccion != Vector2.Zero)
-            direccion.Normalize();
+        if (ControlesInvertidos) direccion = -direccion;
 
-        float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (direccion != Vector2.Zero)
+        {
+            direccion.Normalize();
+            _ultimaDireccion = direccion;
+        }
+
         bool corriendo = OpcionesJuego.AlternarCorrer
             ? _correrAlternado
             : teclado.IsKeyDown(Keys.LeftShift) || teclado.IsKeyDown(Keys.RightShift);
@@ -304,7 +349,22 @@ public class Sinner
         Vector2 velocidadObjetivo = direccion * Velocidad * (Mejoras.MultiplicadorVelocidad + bonusCaliz)
             * (corriendo ? MultiplicadorSprint : 1f) * MultiplicadorVelocidadExterno;
 
-        if (UsarInercia && Mejoras.Cantidad("TETUTRED") == 0)
+        if (dashPresionado && _aureolaDivina != null && _recargaDash <= 0f && !DashActivo)
+        {
+            _direccionDash = _ultimaDireccion;
+            _dashRestante = 0.2f;
+            _recargaDash = 2f;
+            _velocidadDash = Velocidad * (Mejoras.MultiplicadorVelocidad + bonusCaliz)
+                * MultiplicadorSprint * MultiplicadorVelocidadExterno * 3f;
+            DashActivo = true;
+            _spriteDash.Animation = _spriteDash.Animation;
+        }
+
+        if (DashActivo)
+        {
+            _velocidadActual = _direccionDash * _velocidadDash;
+        }
+        else if (UsarInercia && Mejoras.Cantidad("TETUTRED") == 0)
         {
             bool reduciendoVelocidad = velocidadObjetivo.LengthSquared()
                 < _velocidadActual.LengthSquared();
@@ -317,7 +377,11 @@ public class Sinner
             _velocidadActual = velocidadObjetivo;
         }
 
-        Vector2 movimiento = _velocidadActual * segundos;
+        // Limitar el tramo rapido a 0,2 s, incluso si un cuadro tarda mas que el dash.
+        float segundosDash = DashActivo ? Math.Min(segundos, _dashRestante) : 0f;
+        Vector2 movimiento = DashActivo
+            ? _velocidadActual * segundosDash + velocidadObjetivo * (segundos - segundosDash)
+            : _velocidadActual * segundos;
         if (obstaculos != null)
         {
             Vector2 permitido = ResolutorMovimiento.Limitar(Colision, movimiento, obstaculos);
@@ -359,6 +423,12 @@ public class Sinner
         }
 
         _sprite.Update(gameTime);
+        if (DashActivo)
+        {
+            _spriteDash.Update(gameTime);
+            _dashRestante = Math.Max(0f, _dashRestante - segundos);
+            if (_dashRestante <= 0f) _velocidadActual = velocidadObjetivo;
+        }
         if (_haciendoParry)
             _efectoParry.Update(gameTime);
     }
@@ -378,6 +448,11 @@ public class Sinner
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        if (_efectoPaz != null)
+        {
+            _efectoPaz.Position = Position;
+            _efectoPaz.Draw(spriteBatch);
+        }
         _sprite.Color = _estadoEscudo.Invulnerable
             ? Color.White * (0.4f + 0.6f * (float)(0.5 + 0.5 * Math.Cos(
                 _estadoEscudo.InvulnerabilidadRestante * Math.PI * 12)))
@@ -388,7 +463,13 @@ public class Sinner
             _auraDominio.Color = Color.White * Mejoras.Dominio.OpacidadAura;
             _auraDominio.Draw(spriteBatch);
         }
-        if (_haciendoParry && _parryMovimiento.TryGetValue(_animacionActual, out Animation parry))
+        if (DashActivo && _spriteDash != null)
+        {
+            _spriteDash.Position = Position;
+            _spriteDash.Effects = _sprite.Effects;
+            _spriteDash.Draw(spriteBatch);
+        }
+        else if (_haciendoParry && _parryMovimiento.TryGetValue(_animacionActual, out Animation parry))
         {
             // Mostrar el gesto completo sin alargar la ventana de defensa.
             double duracion = SegundosPorFrameParry * 5 + Mejoras.ExtraParry;
@@ -400,7 +481,7 @@ public class Sinner
         }
         else
             _sprite.Draw(spriteBatch);
-        if (_haciendoParry && !_efectoParry.IsFinished)
+        if (!DashActivo && _haciendoParry && !_efectoParry.IsFinished)
         {
             _efectoParry.Position = Position;
             _efectoParry.Draw(spriteBatch);
@@ -412,6 +493,12 @@ public class Sinner
         {
             proteccion.Position = Position;
             proteccion.Draw(spriteBatch);
+        }
+
+        if (_aureolaDivina != null)
+        {
+            _aureolaDivina.Position = Position - new Vector2(0f, 30f);
+            _aureolaDivina.Draw(spriteBatch);
         }
 
     }
@@ -453,6 +540,17 @@ public class Sinner
         Core.Audio.StopSoundEffect(_sonidoCaminata);
         Core.Audio.StopSoundEffect(_sonidoParry);
         Core.Audio.StopSoundEffect(_sonidoParryExitoso);
+    }
+
+    public void Teletransportar(Vector2 posicion)
+    {
+        Position = posicion;
+        _velocidadActual = Vector2.Zero;
+        DashActivo = false;
+        _dashRestante = 0f;
+        _tiempoCaliz = 0f;
+        DetenerSonidos();
+        SincronizarEntrada();
     }
 
     public void SincronizarEntrada() => _tecladoAnterior = Keyboard.GetState();

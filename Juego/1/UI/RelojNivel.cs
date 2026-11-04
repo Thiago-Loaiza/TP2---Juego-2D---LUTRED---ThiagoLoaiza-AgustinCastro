@@ -29,6 +29,13 @@ public sealed class RelojNivel
         PosicionHaceDosSegundos = posicionInicial;
     }
 
+    public void ReiniciarHistorial(Vector2 posicion)
+    {
+        _historial.Clear();
+        _anterior = (_transcurrido, posicion);
+        PosicionHaceDosSegundos = posicion;
+    }
+
     public void Update(double segundos, Vector2 posicion)
     {
         double restanteAnterior = Restante;
