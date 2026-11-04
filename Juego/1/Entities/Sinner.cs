@@ -54,6 +54,10 @@ public class Sinner
     private const float Frenado = 2200f;
     private Vector2 _velocidadActual;
     private AnimatedSprite _sprite;
+    public bool AuraFellDoorActiva { get; set; }
+    private readonly Vector2[] _sombrasFellDoor = new Vector2[3];
+    private readonly Dictionary<Texture2D, Texture2D> _siluetasFellDoor = new();
+    private bool _sombrasPreparadas;
 
     public _1.Progression.EstadoMejoras Mejoras { get; set; } = new();
     private Vector2 _direccionCaliz;
@@ -228,6 +232,30 @@ public class Sinner
         _efectoParry.Origin = new Vector2(25, 25);
         _efectoParry.Scale = new Vector2(0.93f, 0.93f);
         _tecladoAnterior = Keyboard.GetState();
+        if (Mejoras.Cantidad("FellDoor") > 0)
+        {
+            foreach (Animation animacion in _animaciones.Values) PrepararSiluetas(animacion);
+            foreach (Animation animacion in _parryMovimiento.Values) PrepararSiluetas(animacion);
+            if (_spriteDash != null) PrepararSiluetas(_spriteDash.Animation);
+        }
+    }
+
+    private void PrepararSiluetas(Animation animacion)
+    {
+        foreach (TextureRegion cuadro in animacion.Frames)
+        {
+            if (_siluetasFellDoor.ContainsKey(cuadro.Texture)) continue;
+            var pixeles = new Color[cuadro.Texture.Width * cuadro.Texture.Height];
+            cuadro.Texture.GetData(pixeles);
+            for (int i = 0; i < pixeles.Length; i++)
+            {
+                byte alfa = pixeles[i].A;
+                pixeles[i] = new Color(alfa, alfa, alfa, alfa);
+            }
+            var silueta = new Texture2D(Core.GraphicsDevice, cuadro.Texture.Width, cuadro.Texture.Height);
+            silueta.SetData(pixeles);
+            _siluetasFellDoor.Add(cuadro.Texture, silueta);
+        }
     }
 
     private static Animation CrearAnimacion(
@@ -431,6 +459,46 @@ public class Sinner
         }
         if (_haciendoParry)
             _efectoParry.Update(gameTime);
+        ActualizarSombrasFellDoor(segundos);
+    }
+
+    private void ActualizarSombrasFellDoor(float segundos)
+    {
+        if (!AuraFellDoorActiva) { _sombrasPreparadas = false; return; }
+        float suavidad = 1f - MathF.Exp(-18f * segundos);
+        Vector2 direccion = _ultimaDireccion == Vector2.Zero ? Vector2.UnitY : Vector2.Normalize(_ultimaDireccion);
+        Vector2 objetivo = Position;
+        for (int i = 0; i < _sombrasFellDoor.Length; i++)
+        {
+            objetivo -= direccion * 10f;
+            _sombrasFellDoor[i] = _sombrasPreparadas
+                ? Vector2.Lerp(_sombrasFellDoor[i], objetivo, suavidad) : objetivo;
+            objetivo = _sombrasFellDoor[i];
+        }
+        _sombrasPreparadas = true;
+    }
+
+    private void DibujarSombrasFellDoor(SpriteBatch spriteBatch)
+    {
+        if (!AuraFellDoorActiva) return;
+        if (!_sombrasPreparadas) ActualizarSombrasFellDoor(0f);
+        AnimatedSprite sprite = DashActivo && _spriteDash != null ? _spriteDash : _sprite;
+        TextureRegion cuadro = sprite.Region;
+        if (!DashActivo && _haciendoParry && _parryMovimiento.TryGetValue(_animacionActual, out Animation parry))
+        {
+            double duracion = SegundosPorFrameParry * 5 + Mejoras.ExtraParry;
+            double progreso = Math.Clamp(1 - _parryRestante / duracion, 0, 1);
+            cuadro = parry.Frames[Math.Min(parry.Frames.Count - 1, (int)(progreso * parry.Frames.Count))];
+        }
+        if (!_siluetasFellDoor.TryGetValue(cuadro.Texture, out Texture2D textura)) return;
+        // De atras hacia adelante: rojo oscuro, medio y claro junto a Sinner.
+        for (int i = 2; i >= 0; i--)
+        {
+            Color rojo = i == 0 ? new Color(255, 90, 90)
+                : i == 1 ? new Color(190, 20, 30) : new Color(90, 0, 12);
+            spriteBatch.Draw(textura, _sombrasFellDoor[i], cuadro.Bounds, rojo * (0.65f - i * 0.12f),
+                sprite.Rotation, sprite.Origin, sprite.Scale, _sprite.Effects, sprite.LayerDepth);
+        }
     }
 
     private static Vector2 AcercarVelocidad(
@@ -448,6 +516,7 @@ public class Sinner
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        DibujarSombrasFellDoor(spriteBatch);
         if (_efectoPaz != null)
         {
             _efectoPaz.Position = Position;
@@ -514,6 +583,8 @@ public class Sinner
 
     public void UnloadContent()
     {
+        foreach (Texture2D silueta in _siluetasFellDoor.Values) silueta.Dispose();
+        _siluetasFellDoor.Clear();
         Mejoras.Dominio.FinalizarParryManual();
         Core.Audio.ReleaseSoundEffect(_sonidoCaminata);
         Core.Audio.ReleaseSoundEffect(_sonidoParry);
@@ -544,6 +615,7 @@ public class Sinner
 
     public void Teletransportar(Vector2 posicion)
     {
+        _sombrasPreparadas = false;
         Position = posicion;
         _velocidadActual = Vector2.Zero;
         DashActivo = false;

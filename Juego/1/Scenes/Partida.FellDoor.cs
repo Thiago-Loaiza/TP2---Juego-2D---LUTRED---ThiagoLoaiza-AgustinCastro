@@ -8,12 +8,15 @@ using _1.Progression;
 using LutredLibrary;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace _1.Scenes;
 
 public partial class Partida
 {
     private Texture2D _texturaPuerta, _texturaDemonio;
+    private SoundEffectInstance _musicaFellDoor;
+    private float _mezclaMusicaFellDoor;
     private Vector2 _posicionPuerta, _regresoFellDoor, _centroFellDoor;
     private bool _puertaConsumida, _enFellDoor, _recompensaFellDoor;
     private float _quietoPuerta, _animacionPuerta = -1f;
@@ -32,6 +35,9 @@ public partial class Partida
         if (_mejoras.Cantidad("FellDoor") == 0) return;
         _texturaPuerta = Content.Load<Texture2D>("Sprites/Upgrades/Efectos/FellDoor/Felldoor-Sheet");
         _texturaDemonio = Content.Load<Texture2D>("Sprites/Upgrades/Efectos/FellDoor/Enemies/Demonio-Sheet");
+        _musicaFellDoor = Core.Audio.CreateSoundEffectInstance(
+            Content.Load<SoundEffect>("Music/Misc/Felldoor/Ambience4"),
+            volume: 0f, isLooped: true, isMusic: true);
         // La misma busqueda de espacio conectado que utilizan los puntos.
         var candidatos = GeneradorOrbes.Generar(limites, _sinner.Colision.Centro,
             _obstaculos, TotalOrbes + 1, Random.Shared);
@@ -76,11 +82,11 @@ public partial class Partida
         _estructurasOriginales.AddRange(_estructuras);
         _obstaculosOriginales.AddRange(_obstaculos);
         _limitesOriginales = _limitesExteriores;
-        // Misma grilla y catalogo, con cada dimension reducida exactamente al 50%.
-        var generador = new GeneradorMapa(tamanoChunk: _generador.TamanoChunk / 2,
+        // 48 px por celda: 25% menos que los 64 anteriores; paredes de 128 px (antes 64).
+        var generador = new GeneradorMapa(tamanoChunk: _generador.TamanoChunk * 3 / 8,
             chunksPorLado: _generador.ChunksPorLado, separacionChunks: 2);
         var mapa = generador.Generar(_centroFellDoor, Content.Load<Texture2D>("Textures/Granito"),
-            CatalogoEstructuras.Crear(), Random.Shared.Next());
+            CatalogoEstructuras.Crear(), Random.Shared.Next(), tamanoEstructuras: _generador.TamanoChunk);
         _estructuras.Clear();
         _estructuras.AddRange(mapa.Estructuras);
         _obstaculos.Clear();
@@ -95,6 +101,7 @@ public partial class Partida
         }
         DetenerSonidosEnemigos();
         _enFellDoor = true;
+        Core.Audio.PlaySoundEffect(_musicaFellDoor);
         _supervivenciaFellDoor = 10f;
         _spawnDemonio = 1.5f;
         _sinner.Teletransportar(_centroFellDoor - new Vector2(0, 15));
@@ -204,6 +211,7 @@ public partial class Partida
         _camara.Seguir(_sinner.Position);
         _enFellDoor = false;
         _recompensaFellDoor = true;
+        _sinner.AuraFellDoorActiva = true;
         AplicarTooManyParries();
         int cantidad = (_orbes.Count + 1) / 2;
         for (int i = 0; i < cantidad; i++)
@@ -224,5 +232,19 @@ public partial class Partida
         Core.SpriteBatch.Draw(_texturaPuerta, _posicionPuerta - new Vector2(0, 48),
             new Rectangle(cuadro * ancho, 0, ancho, _texturaPuerta.Height), Color.White,
             0f, new Vector2(ancho, _texturaPuerta.Height) * 0.5f, 0.6f, SpriteEffects.None, 0f);
+    }
+
+    private void ActualizarMusicaFellDoor(GameTime tiempo)
+    {
+        if (_musicaFellDoor == null) return;
+        float paso = (float)tiempo.ElapsedGameTime.TotalSeconds / 0.8f;
+        _mezclaMusicaFellDoor = _enFellDoor
+            ? Math.Min(1f, _mezclaMusicaFellDoor + paso)
+            : Math.Max(0f, _mezclaMusicaFellDoor - paso);
+        Core.Audio.SetVolume(_musicaNivel, 1f - _mezclaMusicaFellDoor);
+        Core.Audio.SetVolume(_musicaFellDoor, _mezclaMusicaFellDoor);
+        // El layer sigue avanzando silenciado para regresar al mismo momento musical.
+        if (!_enFellDoor && _mezclaMusicaFellDoor == 0f)
+            Core.Audio.StopSoundEffect(_musicaFellDoor);
     }
 }

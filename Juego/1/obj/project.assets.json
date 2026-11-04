@@ -99,14 +99,14 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
-      "MonoGame.Content.Builder.Task/3.8.6": {
+      "MonoGame.Content.Builder.Task/3.8.6.1": {
         "type": "package",
         "build": {
           "build/MonoGame.Content.Builder.Task.props": {},
           "build/MonoGame.Content.Builder.Task.targets": {}
         }
       },
-      "MonoGame.Framework.DesktopGL/3.8.6": {
+      "MonoGame.Framework.DesktopGL/3.8.6.1": {
         "type": "package",
         "dependencies": {
           "MonoGame.Library.OpenAL": "1.24.3.4",
@@ -456,24 +456,24 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "MonoGame.Content.Builder.Task/3.8.6": {
-      "sha512": "YzlwPtEGn5wlxToias3I/dW7ZyRJZLr2uMYKgrkwm/gpYyxWg4eI9f5+ih2CdLoCm5Daqvpf8w5PvwwzGsR1Og==",
+    "MonoGame.Content.Builder.Task/3.8.6.1": {
+      "sha512": "wws1EDor7JEOfQ+YgpOznZyZsl3KD6hdbUG+OfIha6tWiKLwNkz4qPS5+stI5GMfwzuv0QiE32XemLOs7fBoNw==",
       "type": "package",
-      "path": "monogame.content.builder.task/3.8.6",
+      "path": "monogame.content.builder.task/3.8.6.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
         "build/MonoGame.Content.Builder.Task.props",
         "build/MonoGame.Content.Builder.Task.targets",
-        "monogame.content.builder.task.3.8.6.nupkg.sha512",
+        "monogame.content.builder.task.3.8.6.1.nupkg.sha512",
         "monogame.content.builder.task.nuspec"
       ]
     },
-    "MonoGame.Framework.DesktopGL/3.8.6": {
-      "sha512": "pVAwFo+wNCco7881v8VAkPcls/jYVyfzxx/eSBMuT45ZqZcTFqptsZxd8KwBEE5PQc5UxbX5erGh0rwtFGsKVg==",
+    "MonoGame.Framework.DesktopGL/3.8.6.1": {
+      "sha512": "jhwekPAUveWBg+qq1hMco0Hc/HKjm65ebEFJAa4BOWVhFEhmQABH0Pmza+/FcVa1PyKo0l0/GLJYPD5Ku+V63A==",
       "type": "package",
-      "path": "monogame.framework.desktopgl/3.8.6",
+      "path": "monogame.framework.desktopgl/3.8.6.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -482,7 +482,7 @@
         "build/MonoGame.Framework.DesktopGL.targets",
         "lib/net8.0/MonoGame.Framework.dll",
         "lib/net8.0/MonoGame.Framework.xml",
-        "monogame.framework.desktopgl.3.8.6.nupkg.sha512",
+        "monogame.framework.desktopgl.3.8.6.1.nupkg.sha512",
         "monogame.framework.desktopgl.nuspec"
       ]
     },

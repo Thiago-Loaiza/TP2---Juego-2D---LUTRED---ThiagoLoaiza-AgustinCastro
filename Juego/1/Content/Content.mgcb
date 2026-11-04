@@ -399,7 +399,7 @@
 
 #begin Music/Misc/Felldoor/Ambience4.wav
 /importer:WavImporter
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Misc/Felldoor/Ambience4.wav

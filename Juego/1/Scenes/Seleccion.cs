@@ -370,10 +370,11 @@ public sealed class Seleccion : Escena
         float suavidad = 1f - MathF.Exp(-8f * (float)dt);
         bool escapar = _estado == Estado.Escapar;
         bool continuar = _estado == Estado.Continuar;
+        int opcionResaltada = ObtenerOpcionResaltada();
         for (int i = 0; i < _brilloOpciones.Length; i++)
         {
             Button opcion = _botones[i + 4].boton;
-            bool resaltada = _opcionBajoCursor >= 0 ? _opcionBajoCursor == i : opcion.IsFocused;
+            bool resaltada = opcionResaltada == i;
             float objetivo = continuar && opcion.IsEnabled && resaltada ? 1f : 0f;
             _brilloOpciones[i] = MathHelper.Lerp(_brilloOpciones[i], objetivo, suavidad);
         }
@@ -530,7 +531,50 @@ public sealed class Seleccion : Escena
         string opcionTiempo = TextoMenosTiempo;
         Vector2 posicionTiempo = centro + new Vector2(0, OpcionTiempoY);
         DibujarOpcion(opcionTiempo, posicionTiempo, _brilloOpciones[2]);
+        DibujarDescripcion(viewport);
         DibujarMultiplicador(viewport);
+    }
+
+    private int ObtenerOpcionResaltada()
+    {
+        if (_opcionBajoCursor >= 0) return _opcionBajoCursor;
+        for (int i = 0; i < _brilloOpciones.Length; i++)
+            if (_botones[i + 4].boton.IsFocused) return i;
+        return -1;
+    }
+
+    // Resumen de las descripciones del manual de juego, sin tiempos que puedan variar.
+    private static string DescripcionRival(Enemigo rival) => rival switch
+    {
+        Enemigo.Duke => "Mata al tocarte: alejate o parrea antes del contacto.",
+        Enemigo.Dupe => "Imita tus pasos e invierte tus controles: parrealo para bloquear su efecto.",
+        Enemigo.JarJar => "Carga y se teletransporta hacia vos: parrea cuando ataque.",
+        Enemigo.Sorak => "Cuando abra los ojos, quedate quieto o parrea.",
+        Enemigo.ErosionBird => "Invoca lanzas: corre al lado sin portales o parrea el ataque.",
+        Enemigo.Delusion => "Te persigue y lanza fuego: parrea sus bolas; el fuego azul no te hiere.",
+        Enemigo.TooManyParries => "Abusar del parry lo bloquea unos segundos: espacia los parries.",
+        _ => throw new ArgumentOutOfRangeException(nameof(rival))
+    };
+
+    private void DibujarDescripcion(Viewport viewport)
+    {
+        int opcion = ObtenerOpcionResaltada();
+        if (opcion < 0) return;
+        string descripcion = opcion < _opcionesRivales.Count
+            ? DescripcionRival(_opcionesRivales[opcion])
+            : "Reduce un 33% el tiempo del piso: junta los orbes antes de que llegue SHAME.";
+        string texto = "\"" + descripcion + "\"";
+        Vector2 tamano = _fuenteRivales.MeasureString(texto);
+        float escalaPantalla = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
+        float escala = Math.Min(0.85f * escalaPantalla,
+            (viewport.Width - 64f * escalaPantalla) / Math.Max(1f, tamano.X));
+        Vector2 posicion = new(viewport.Width * 0.5f, viewport.Height - 76f * escalaPantalla);
+        Vector2 origen = tamano * 0.5f;
+        Core.SpriteBatch.DrawString(_fuenteRivales, texto,
+            posicion + new Vector2(2f * escalaPantalla), Color.Black * 0.8f,
+            0f, origen, escala, SpriteEffects.None, 0f);
+        Core.SpriteBatch.DrawString(_fuenteRivales, texto, posicion, Color.White * 0.9f,
+            0f, origen, escala, SpriteEffects.None, 0f);
     }
 
     private void DibujarMultiplicador(Viewport viewport)

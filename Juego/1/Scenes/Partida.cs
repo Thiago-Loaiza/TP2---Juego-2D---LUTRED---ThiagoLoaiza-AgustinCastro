@@ -119,6 +119,8 @@ public partial class Partida : Escena
     private SoundEffectInstance _sonidoSalida;
     private SoundEffectInstance _musicaNivel;
     private Texture2D _pixelTransicion;
+    private Texture2D _degradadoFondo;
+    private float _faseLatidoFondo;
     private float _opacidadBlanca = 1f;
     private BordeAnimado _bordePantalla;
 
@@ -204,6 +206,12 @@ public partial class Partida : Escena
 
     protected override void LoadContent()
     {
+        // La transparencia crece hacia abajo; el filtrado lineal suaviza el degradado.
+        _degradadoFondo = new Texture2D(Core.GraphicsDevice, 1, 256);
+        var coloresFondo = new Color[256];
+        for (int y = 0; y < coloresFondo.Length; y++)
+            coloresFondo[y] = Color.White * (y / 255f);
+        _degradadoFondo.SetData(coloresFondo);
         _fuenteContador = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
         Puntaje.ComenzarNivel();
         _marcador = new MarcadorPuntaje(Content, Puntaje);
@@ -219,7 +227,7 @@ public partial class Partida : Escena
         _tintaAntigua.Parameters["EscalaGrano"].SetValue(512f);
         _tintaAntigua.Parameters["GrosorTinta"].SetValue(3f);
 
-        int layer = (_numeroNivel - 1) % CantidadLayers + 1;
+        int layer = _numeroNivel <= CantidadLayers ? _numeroNivel : 4 + (_numeroNivel - 9) % 5;
         int transicionEntrada = (_numeroNivel - 1) % CantidadTransiciones + 1;
         int transicionSalida = _numeroNivel % CantidadTransiciones + 1;
         _sonidoEntrada = Core.Audio.CreateSoundEffectInstance(
@@ -313,13 +321,16 @@ public partial class Partida : Escena
         Core.Audio.ReleaseSoundEffect(_sonidoEntrada);
         Core.Audio.ReleaseSoundEffect(_sonidoSalida);
         Core.Audio.ReleaseSoundEffect(_musicaNivel);
+        Core.Audio.ReleaseSoundEffect(_musicaFellDoor);
         _pixelTransicion?.Dispose();
+        _degradadoFondo?.Dispose();
         base.UnloadContent();
     }
 
     public override void Update(GameTime gameTime)
     {
         if (Core.Audio.IsPaused) { return; }
+        if (!_derrotado && !_nivelCompletado) ActualizarMusicaFellDoor(gameTime);
         _bordePantalla.Update(gameTime);
         if (_nivelCompletado)
         {
@@ -343,6 +354,8 @@ public partial class Partida : Escena
             return;
         }
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (!_derrotado)
+            _faseLatidoFondo = (_faseLatidoFondo + segundos * MathHelper.TwoPi / 2.4f) % MathHelper.TwoPi;
         if (!_derrotado && _faseEntrada == FaseEntrada.Jugando) Puntaje.Actualizar(segundos);
         _marcador.Update(segundos);
         _relojContador = (_relojContador + segundos) % 100f;
@@ -598,6 +611,7 @@ public partial class Partida : Escena
         {
             _nivelCompletado = true;
             Core.Audio.StopSoundEffect(_musicaNivel);
+            Core.Audio.StopSoundEffect(_musicaFellDoor);
             _sinner.DetenerSonidos();
             DetenerSonidosEnemigos();
             _zorak?.DetenerSonidos();
@@ -613,6 +627,7 @@ public partial class Partida : Escena
         _derrotado = true;
         Core.Audio.StopSong();
         Core.Audio.StopSoundEffect(_musicaNivel);
+        Core.Audio.StopSoundEffect(_musicaFellDoor);
         _sinner.DetenerSonidos();
         DetenerSonidosEnemigos();
         _zorak?.DetenerSonidos();
@@ -679,6 +694,23 @@ public partial class Partida : Escena
         Core.SpriteBatch.Draw(_pixelTransicion, region, Color.Black);
     }
 
+    private void DibujarDegradadoFondo()
+    {
+        float intensidad = _numeroNivel < 4 ? 0f : _numeroNivel < 8 ? 0.3f : _numeroNivel < 12 ? 0.6f : 1f;
+        if (intensidad == 0f) return;
+
+        float latido = (MathF.Sin(_faseLatidoFondo) + 1f) * 0.5f;
+        var viewport = Core.GraphicsDevice.Viewport;
+        // Incluso en el pico del latido, el fondo oscuro no supera la mitad inferior.
+        int altura = Math.Max(1, (int)(viewport.Height * MathHelper.Lerp(0.44f, 0.5f, latido)));
+        Color color = _enFellDoor ? new Color(8, 0, 2) : Color.Black;
+        Core.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp, blendState: BlendState.AlphaBlend);
+        Core.SpriteBatch.Draw(_degradadoFondo,
+            new Rectangle(0, viewport.Height - altura, viewport.Width, altura),
+            color * (intensidad * MathHelper.Lerp(0.94f, 1f, latido)));
+        Core.SpriteBatch.End();
+    }
+
     public override void Draw(GameTime gameTime)
     {
         if (_nivelCompletado)
@@ -695,6 +727,7 @@ public partial class Partida : Escena
         }
 
         Core.GraphicsDevice.Clear(_derrotado ? Color.Black : _enFellDoor ? new Color(48, 3, 8) : Color.White);
+        if (!_derrotado) DibujarDegradadoFondo();
         Matrix transformacion = _camara.ObtenerTransformacion(Core.GraphicsDevice.Viewport);
 
         if (!_derrotado)
@@ -824,7 +857,7 @@ public partial class Partida : Escena
 
     private void DibujarContadorOrbes()
     {
-        string texto = _enFellDoor ? RelojNivel.Formatear(_supervivenciaFellDoor) : $"{_orbesRecogidos}/{TotalOrbes}";
+        string texto = _enFellDoor ? $"{(int)Math.Ceiling(_supervivenciaFellDoor)}" : $"{_orbesRecogidos}/{TotalOrbes}";
         Vector2 tamano = _fuenteContador.MeasureString(texto);
         Vector2 origen = tamano * 0.5f;
         Vector2 posicion = new(Core.GraphicsDevice.Viewport.Width * 0.5f, 24f + _fuenteContador.LineSpacing + 8f + origen.Y);

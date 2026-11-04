@@ -50,16 +50,21 @@ public sealed class GeneradorMapa
     }
 
     public MapaGenerado Generar(Vector2 inicio, Texture2D textura,
-        IReadOnlyList<PlantillaEstructura> catalogo, int semilla, int intentos = 1500)
+        IReadOnlyList<PlantillaEstructura> catalogo, int semilla, int intentos = 1500,
+        int? tamanoEstructuras = null)
     {
         ArgumentNullException.ThrowIfNull(catalogo);
         if (catalogo.Count == 0) throw new ArgumentException("El catalogo esta vacio.", nameof(catalogo));
         if (intentos <= 0) throw new ArgumentOutOfRangeException(nameof(intentos));
+        int unidadEstructura = tamanoEstructuras ?? TamanoChunk;
+        if (unidadEstructura < 2 || unidadEstructura % 2 != 0)
+            throw new ArgumentOutOfRangeException(nameof(tamanoEstructuras));
         int pesoTotal = 0;
         foreach (PlantillaEstructura plantilla in catalogo)
         {
             ArgumentNullException.ThrowIfNull(plantilla);
-            if (plantilla.Ancho > ChunksPorLado || plantilla.Alto > ChunksPorLado)
+            if (plantilla.Ancho * unidadEstructura > ChunksPorLado * TamanoChunk
+                || plantilla.Alto * unidadEstructura > ChunksPorLado * TamanoChunk)
                 throw new ArgumentException("Una plantilla es mas grande que el mapa.", nameof(catalogo));
             pesoTotal = checked(pesoTotal + plantilla.Peso);
         }
@@ -85,8 +90,10 @@ public sealed class GeneradorMapa
                 eleccion -= plantilla.Peso;
                 if (eleccion < 0) { elegida = plantilla; break; }
             }
-            var huella = new Rectangle(azar.Next(ChunksPorLado - elegida.Ancho + 1),
-                azar.Next(ChunksPorLado - elegida.Alto + 1), elegida.Ancho, elegida.Alto);
+            int ancho = (elegida.Ancho * unidadEstructura + TamanoChunk - 1) / TamanoChunk;
+            int alto = (elegida.Alto * unidadEstructura + TamanoChunk - 1) / TamanoChunk;
+            var huella = new Rectangle(azar.Next(ChunksPorLado - ancho + 1),
+                azar.Next(ChunksPorLado - alto + 1), ancho, alto);
             if (!EstaLibre(ocupados, huella)) continue;
 
             // se reserva la huella completa, incluidos los espacios vacios del plano.
@@ -95,7 +102,7 @@ public sealed class GeneradorMapa
                     ocupados[x, y] = true;
 
             EstructuraSolida estructura = elegida.Crear(new Point(
-                origen.X + huella.X * TamanoChunk, origen.Y + huella.Y * TamanoChunk), TamanoChunk, textura);
+                origen.X + huella.X * TamanoChunk, origen.Y + huella.Y * TamanoChunk), unidadEstructura, textura);
             estructuras.Add(estructura);
             obstaculos.AddRange(estructura.Colisiones);
             huellas.Add(huella);
