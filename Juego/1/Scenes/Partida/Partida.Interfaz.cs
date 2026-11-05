@@ -21,6 +21,8 @@ public partial class Partida
     private RelojNivel _relojNivel;
     private PantallaDerrota _pantallaDerrota;
     private BotonAnimado _volverInicio;
+    private const double EsperaBotonDerrota = 3.0;
+    private double _tiempoDesdeDerrota;
     private BordeAnimado _bordePantalla;
 
     private void CrearInterfazDerrota()
@@ -42,6 +44,33 @@ public partial class Partida
         _volverInicio.Visual.Visible = false;
         _volverInicio.Click += VolverAlInicio;
         panel.AddChild(_volverInicio);
+    }
+
+    private void DibujarAyudaPrimerLayer()
+    {
+        if (_numeroNivel != 1 || _enFellDoor || _faseEntrada != FaseEntrada.Jugando) return;
+
+        Viewport viewport = Core.GraphicsDevice.Viewport;
+        string controles = Game1.Arcade
+            ? "PALANCA - MOVERSE | Boton 1 PARRY | Boton 2 CORRER"
+            : "AWSD - MOVERSE | Space PARRY | Shift CORRER";
+        const string aviso = "1 GOLPE MUERES";
+        float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
+        float escalaControles = Math.Min(escala * 0.75f,
+            viewport.Width * 0.9f / _fuenteContador.MeasureString(controles).X);
+        float yControles = viewport.Height - 28f * escala
+            - _fuenteContador.LineSpacing * escalaControles;
+        float yAviso = yControles - (_fuenteContador.LineSpacing + 8f) * escala;
+        DibujarLinea(aviso, yAviso, escala);
+        DibujarLinea(controles, yControles, escalaControles);
+
+        void DibujarLinea(string texto, float y, float tamano)
+        {
+            float x = (viewport.Width - _fuenteContador.MeasureString(texto).X * tamano) * 0.5f;
+            Core.SpriteBatch.DrawString(_fuenteContador, texto,
+                new Vector2(MathF.Round(x), MathF.Round(y)), Color.Black * 0.5f,
+                0f, Vector2.Zero, tamano, SpriteEffects.None, 0f);
+        }
     }
 
     private void DibujarBorde()

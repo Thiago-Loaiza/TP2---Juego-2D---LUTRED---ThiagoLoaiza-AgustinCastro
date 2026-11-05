@@ -150,6 +150,7 @@ public partial class Partida
             DibujarIndicadorOrbes(transformacion);
             DibujarContadorOrbes();
             DibujarTemporizador();
+            DibujarAyudaPrimerLayer();
             _marcador.Draw(Core.GraphicsDevice.Viewport);
             Core.SpriteBatch.End();
 

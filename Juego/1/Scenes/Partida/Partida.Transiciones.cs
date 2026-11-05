@@ -79,9 +79,10 @@ public partial class Partida
         DetenerSonidosEnemigos();
         _zorak?.DetenerSonidos();
         _pantallaDerrota.Mostrar();
-        _volverInicio.Visual.Visible = true;
-        _volverInicio.IsEnabled = true;
-        _volverInicio.IsFocused = true;
+        _tiempoDesdeDerrota = 0;
+        _volverInicio.Visual.Visible = false;
+        _volverInicio.IsEnabled = false;
+        _volverInicio.IsFocused = false;
         return true;
     }
 

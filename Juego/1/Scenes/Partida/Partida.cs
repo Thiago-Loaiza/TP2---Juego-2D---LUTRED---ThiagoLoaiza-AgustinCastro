@@ -112,7 +112,17 @@ public partial class Partida : Escena
         if (_derrotado)
         {
             _pantallaDerrota.Update(gameTime);
-            _volverInicio.Update(gameTime);
+            _tiempoDesdeDerrota += gameTime.ElapsedGameTime.TotalSeconds;
+            if (_tiempoDesdeDerrota >= EsperaBotonDerrota)
+            {
+                if (!_volverInicio.IsEnabled)
+                {
+                    _volverInicio.Visual.Visible = true;
+                    _volverInicio.IsEnabled = true;
+                    _volverInicio.IsFocused = true;
+                }
+                _volverInicio.Update(gameTime);
+            }
         }
         else
         {
