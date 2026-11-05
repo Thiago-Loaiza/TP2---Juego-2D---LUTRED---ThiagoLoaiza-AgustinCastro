@@ -1527,6 +1527,15 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/Buttons/Buttons_50x50/Button-Pausa-Sheet.png
 
+#begin Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet.png
+
 #begin Sprites/UI/Buttons/Buttons_50x50/Button-Reanudar-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor

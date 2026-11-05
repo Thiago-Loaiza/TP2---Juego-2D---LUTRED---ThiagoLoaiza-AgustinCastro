@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {}
+    "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {}
   },
   "projects": {
-    "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
+    "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
+        "projectUniqueName": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
         "projectName": "LutredLibrary",
-        "projectPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
+        "projectPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
         "packagesPath": "C:\\Users\\juanl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\obj\\",
+        "outputPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\juanl\\AppData\\Roaming\\NuGet\\NuGet.Config",

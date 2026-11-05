@@ -13,6 +13,10 @@ namespace _1;
 
 public class Game1 : Core
 {
+    // true = ON: habilita H (correr), J (dash), B (volver), N (borrar) y Enter (pausa).
+    // false = OFF: conserva solamente los controles habituales del teclado.
+    public static bool Arcade = true;
+
     // true = ON: Jugar abre la eleccion. false = OFF: entra directamente a la partida.
     public static bool EmpezarConEleccion = true;
 
@@ -89,13 +93,16 @@ public class Game1 : Core
         OpcionesJuego.ActualizarGuardado((float)gameTime.ElapsedGameTime.TotalSeconds);
         _musicaMenu.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
         bool salirPresionado = GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
-            || Keyboard.GetState().IsKeyDown(Keys.Escape);
+            || Keyboard.GetState().IsKeyDown(Keys.Escape)
+            || (Arcade && Keyboard.GetState().IsKeyDown(Keys.B));
         bool salirPulsado = salirPresionado && !_salirPresionadoAnterior;
         _salirPresionadoAnterior = salirPresionado;
         bool bloquearEscena = _configuracionPausa?.Update(gameTime, salirPulsado) == true;
         if (salirPulsado && !bloquearEscena && _escenaActual is not Salvacion && _escenaActual is not RegistrarPuntaje)
         {
-            if (_escenaActual is Inicio inicio && (inicio.OpcionesAbiertas || inicio.EnTransicion))
+            if (_escenaActual is Inicio controles && controles.ControlesAbiertos)
+                controles.CerrarControles();
+            else if (_escenaActual is Inicio inicio && (inicio.OpcionesAbiertas || inicio.EnTransicion))
                 inicio.CerrarOpciones();
             else if (_escenaActual is Creditos creditos)
                 creditos.VolverAlInicio();
@@ -105,24 +112,33 @@ public class Game1 : Core
                 misc.VolverAlInicio();
             else
             {
-                Exit();
-                return;
+                // B permite volver sin cerrar el juego desde la botonera.
+                if (!Arcade || !Keyboard.GetState().IsKeyDown(Keys.B))
+                {
+                    Exit();
+                    return;
+                }
             }
         }
 
         if (!bloquearEscena)
         {
+            bool controlesAbiertos = _escenaActual is Inicio controlesMenu && controlesMenu.ControlesAbiertos;
             _escenaActual.Update(gameTime);
-            // La lista desplazable gestiona su propio foco; Gum conserva el raton y el mando.
-            bool opcionesAbiertas = _escenaActual is Inicio menu && menu.OpcionesAbiertas;
-            if (opcionesAbiertas) FrameworkElement.KeyboardsForUiControl.Remove(GumService.Default.Keyboard);
-            try
+            // El modal gestiona su entrada y bloquea los botones del menu hasta terminar de cerrar.
+            if (!controlesAbiertos && !(_escenaActual is Inicio menuControles && menuControles.ControlesAbiertos))
             {
-                GumService.Default.Update(gameTime);
-            }
-            finally
-            {
-                if (opcionesAbiertas) FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
+                // La lista desplazable gestiona su propio foco; Gum conserva el raton y el mando.
+                bool opcionesAbiertas = _escenaActual is Inicio menu && menu.OpcionesAbiertas;
+                if (opcionesAbiertas) FrameworkElement.KeyboardsForUiControl.Remove(GumService.Default.Keyboard);
+                try
+                {
+                    GumService.Default.Update(gameTime);
+                }
+                finally
+                {
+                    if (opcionesAbiertas) FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
+                }
             }
         }
         AplicarCambioDeEscena();
@@ -149,6 +165,7 @@ public class Game1 : Core
         _escenaActual.Draw(gameTime);
         GumService.Default.Draw();
         _1.UI.BotonAnimado.DibujarTextosSuaves();
+        (_escenaActual as Inicio)?.DibujarControles();
         _configuracionPausa?.Draw();
         base.Draw(gameTime);
 

@@ -22,6 +22,11 @@ public class Inicio : Escena
     private ListaOpciones _listaOpciones;
     private BotonAnimado _botonMusica;
     private BotonAnimado _botonCreditos;
+    private BotonAnimado _botonControles;
+    private ModalControles _controles;
+    public bool ControlesAbiertos => _controles?.Abierto == true;
+    public void CerrarControles() => _controles?.Cerrar();
+    public void DibujarControles() => _controles?.Draw();
     private BotonAnimado _volver;
     private Panel _panelInicio;
     private Panel _panelOpciones;
@@ -96,13 +101,17 @@ public class Inicio : Escena
         _records = AgregarBoton(panel, "Records", 220);
         _records.Click += AbrirRecords;
 
-        // Musica, Misc y Creditos, de izquierda a derecha, con 12 px de separacion.
+        // Musica, Misc, Creditos y Controles, con 12 px de separacion.
         _botonMusica = AgregarBotonInferior(panel,
-            OpcionesJuego.SilenciarMusica ? _hojaMusicaSilenciada : _hojaMusica, -148);
+            OpcionesJuego.SilenciarMusica ? _hojaMusicaSilenciada : _hojaMusica, -210);
         _botonMusica.Click += CambiarMusica;
-        AgregarBotonInferior(panel, _hojaMisc, -86).Click += AbrirMisc;
-        _botonCreditos = AgregarBotonInferior(panel, _hojaCreditos, -24);
+        AgregarBotonInferior(panel, _hojaMisc, -148).Click += AbrirMisc;
+        _botonCreditos = AgregarBotonInferior(panel, _hojaCreditos, -86);
         _botonCreditos.Click += AbrirCreditos;
+        _botonControles = AgregarBotonInferior(panel,
+            Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet"), -24, 6);
+        _botonControles.Click += AbrirControles;
+        _controles = new ModalControles();
 
         _panelOpciones = new Panel();
         _panelOpciones.Dock(Dock.Fill);
@@ -180,9 +189,20 @@ public class Inicio : Escena
         _listaOpciones.SincronizarEntrada();
     }
 
-    private BotonAnimado AgregarBotonInferior(Panel panel, Texture2D hoja, float x)
+    private void AbrirControles(object sender, EventArgs args)
     {
-        var boton = new BotonAnimado(hoja, 50, 50, 9, TimeSpan.FromSeconds(0.12))
+        if (_enTransicion || OpcionesAbiertas || ControlesAbiertos) return;
+        foreach (BotonAnimado boton in _botones)
+        {
+            boton.IsFocused = false;
+            boton.IsEnabled = false;
+        }
+        _controles.Abrir();
+    }
+
+    private BotonAnimado AgregarBotonInferior(Panel panel, Texture2D hoja, float x, int cuadros = 9)
+    {
+        var boton = new BotonAnimado(hoja, 50, 50, cuadros, TimeSpan.FromSeconds(0.12))
         {
             Text = "",
             Width = 50,
@@ -228,6 +248,17 @@ public class Inicio : Escena
     public override void Update(GameTime gameTime)
     {
         _titulo.Update(gameTime);
+        if (ControlesAbiertos)
+        {
+            _controles.Update(gameTime);
+            if (!ControlesAbiertos)
+            {
+                foreach (BotonAnimado boton in _botones) boton.IsEnabled = true;
+                _botonControles.IsFocused = true;
+                _tecladoAnterior = Keyboard.GetState();
+            }
+            return;
+        }
         if (_enTransicion)
         {
             _tiempoTransicion += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -366,6 +397,8 @@ public class Inicio : Escena
         _listaOpciones?.Dispose();
         if (_botonMusica != null) _botonMusica.Click -= CambiarMusica;
         if (_botonCreditos != null) _botonCreditos.Click -= AbrirCreditos;
+        if (_botonControles != null) _botonControles.Click -= AbrirControles;
+        _controles?.Dispose();
         if (_volver != null) _volver.Click -= Volver;
         foreach (BotonAnimado boton in _botones) boton.Dispose();
         _botones.Clear();

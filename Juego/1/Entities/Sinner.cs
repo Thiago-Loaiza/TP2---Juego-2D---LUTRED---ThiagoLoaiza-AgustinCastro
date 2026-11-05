@@ -309,14 +309,16 @@ public class Sinner
             _auraDominio?.Update(gameTime);
         }
         KeyboardState teclado = Keyboard.GetState();
-        bool dashPresionado = teclado.IsKeyDown(Keys.Q) && _tecladoAnterior.IsKeyUp(Keys.Q);
+        bool dashPresionado = (teclado.IsKeyDown(Keys.Q) && _tecladoAnterior.IsKeyUp(Keys.Q))
+            || (Game1.Arcade && teclado.IsKeyDown(Keys.J) && _tecladoAnterior.IsKeyUp(Keys.J));
         ParryIniciadoEsteFrame = false;
 
         bool parryPresionado = teclado.IsKeyDown(Keys.Space)
             && _tecladoAnterior.IsKeyUp(Keys.Space);
         ParryPresionadoEsteFrame = parryPresionado;
         bool shiftPresionado = (teclado.IsKeyDown(Keys.LeftShift) && _tecladoAnterior.IsKeyUp(Keys.LeftShift))
-            || (teclado.IsKeyDown(Keys.RightShift) && _tecladoAnterior.IsKeyUp(Keys.RightShift));
+            || (teclado.IsKeyDown(Keys.RightShift) && _tecladoAnterior.IsKeyUp(Keys.RightShift))
+            || (Game1.Arcade && teclado.IsKeyDown(Keys.H) && _tecladoAnterior.IsKeyUp(Keys.H));
         if (OpcionesJuego.AlternarCorrer && shiftPresionado)
             _correrAlternado = !_correrAlternado;
         if (!OpcionesJuego.AlternarCorrer)
@@ -362,7 +364,8 @@ public class Sinner
 
         bool corriendo = OpcionesJuego.AlternarCorrer
             ? _correrAlternado
-            : teclado.IsKeyDown(Keys.LeftShift) || teclado.IsKeyDown(Keys.RightShift);
+            : teclado.IsKeyDown(Keys.LeftShift) || teclado.IsKeyDown(Keys.RightShift)
+                || (Game1.Arcade && teclado.IsKeyDown(Keys.H));
         if (direccion != _direccionCaliz || !corriendo || direccion == Vector2.Zero)
         {
             _tiempoCaliz = 0f;

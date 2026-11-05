@@ -72,21 +72,23 @@ public sealed class ConfiguracionPausa : IDisposable
     // Tambien bloquea el fotograma de apertura/cierre para que el clic no llegue a la escena.
     public bool Update(GameTime gameTime, bool escapePulsado)
     {
+        KeyboardState teclado = Keyboard.GetState();
+        bool pausaArcade = Game1.Arcade && Pulsada(teclado, Keys.Enter) && !_confirmandoSalida;
         _tiempo += gameTime.ElapsedGameTime.TotalSeconds;
-        _listaOpciones.Update(gameTime, AreaLista, Abierto && !_confirmandoSalida,
+        _listaOpciones.Update(gameTime, AreaLista, Abierto && !_confirmandoSalida && !pausaArcade,
             usarTab: true, incluirSalir: _salir != null);
         _confirmar?.Update(gameTime);
         _negar?.Update(gameTime);
         if (_confirmandoSalida) _tiempoConfirmacion += (float)gameTime.ElapsedGameTime.TotalSeconds;
         MouseState raton = Mouse.GetState();
-        KeyboardState teclado = Keyboard.GetState();
         bool clic = raton.LeftButton == ButtonState.Pressed && _ratonAnterior.LeftButton == ButtonState.Released;
         bool bloquear = Abierto;
         if (Core.Instance.IsActive)
         {
             if (!Abierto)
             {
-                if (escapePulsado || (clic && AreaBoton.Contains(raton.Position)))
+                if (pausaArcade || (escapePulsado && (!Game1.Arcade || !teclado.IsKeyDown(Keys.B)))
+                    || (clic && AreaBoton.Contains(raton.Position)))
                 {
                     Abierto = true;
                     _pausoAudio = !Core.Audio.IsPaused;
@@ -98,6 +100,10 @@ public sealed class ConfiguracionPausa : IDisposable
             else if (_confirmandoSalida)
             {
                 ActualizarConfirmacion(teclado, raton, clic, escapePulsado);
+            }
+            else if (pausaArcade)
+            {
+                Cerrar();
             }
             else if (_salir != null && ((clic && AreaSalir.Contains(raton.Position))
                 || (_listaOpciones.SalirSeleccionado && Aceptar(teclado))))

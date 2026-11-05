@@ -264,7 +264,8 @@ public sealed class ListaOpciones : IDisposable
                 ? (int)((raton.Y - _area.Top) / Escala + _scroll) / 120 : _seleccion;
             return fila switch
             {
-                0 => "OFF: manten Shift. ON: pulsa Shift para alternar.",
+                0 => Game1.Arcade ? "OFF: manten Boton 2. ON: pulsa Boton 2 para alternar."
+                    : "OFF: manten Shift. ON: pulsa Shift para alternar.",
                 1 => "Silencia la musica y conserva su volumen.",
                 2 when OpcionesJuego.SilenciarMusica => "Desactiva Silenciar musica para ajustar el volumen.",
                 2 => "Arrastra para ajustar la musica de 0 a 100.",

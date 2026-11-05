@@ -204,7 +204,7 @@ public sealed class RegistrarPuntaje : Escena
                         if (raton.Position != _ratonAnterior.Position || clic) _opcionConfirmacion = i;
                         if (clic) aceptar = true;
                     }
-                if (Pulsada(Keys.Escape)) _confirmando = false;
+                if (Pulsada(Keys.Escape) || (Game1.Arcade && Pulsada(Keys.B))) _confirmando = false;
                 else if (aceptar)
                 {
                     if (_opcionConfirmacion == 0) Guardar();
@@ -221,7 +221,8 @@ public sealed class RegistrarPuntaje : Escena
                     if (clic) aceptar = true;
                     break;
                 }
-                if (Pulsada(Keys.Back) && _nombre.Length > 0) { _nombre.Length--; _error = null; }
+                if ((Pulsada(Keys.Back) || (Game1.Arcade && Pulsada(Keys.N))) && _nombre.Length > 0)
+                { _nombre.Length--; _error = null; }
                 if (aceptar) ActivarSeleccion();
             }
         }

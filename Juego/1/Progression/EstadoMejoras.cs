@@ -38,7 +38,8 @@ public sealed class EstadoMejoras
         && (mejora.Id != "TETUTRED" || Cantidad("PiezAgiles") == 2);
     public string Describir(DefinicionMejora mejora) => mejora.Id == "Dominio" && Cantidad("Dominio") >= 1
         ? "2 parrys manuales exitosos seguidos otorgan 12 s de autoparry.\nEl aura parpadea en los ultimos 2 s.\nRecarga: 15 segundos."
-        : mejora.Descripcion;
+        : Game1.Arcade && mejora.Id == "AureolaDivina"
+            ? mejora.Descripcion.Replace("Q:", "Boton 3:") : mejora.Descripcion;
 
     public int[] ElegirOpciones(int piso)
     {

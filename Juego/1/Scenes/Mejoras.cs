@@ -274,7 +274,8 @@ public sealed class Mejoras : Escena
             Core.SpriteBatch.Draw(_pixel, continuar, Color.Black * ((hover ? 0.16f : 0.08f) * alfaInterfaz));
             DibujarTexto("Continuar", new Vector2(continuar.Center.X, continuar.Center.Y), escala, alfaInterfaz);
         }
-        DibujarTexto(_sinMejorasAplicables ? "Sin mejoras aplicables: Enter / Espacio para continuar" : "Enter / Espacio para aceptar la mejora", new Vector2(viewport.Width / 2f, viewport.Height / 2f + 333 * escala), 0.75f * escala, alfaInterfaz * 0.5f);
+        string aceptar = Game1.Arcade ? "Espacio" : "Enter / Espacio";
+        DibujarTexto(_sinMejorasAplicables ? $"Sin mejoras aplicables: {aceptar} para continuar" : $"{aceptar} para aceptar la mejora", new Vector2(viewport.Width / 2f, viewport.Height / 2f + 333 * escala), 0.75f * escala, alfaInterfaz * 0.5f);
         // Velo blanco sobre la escena completa que se disuelve al comenzar la revelacion.
         float velo = 1f - Aparicion(0f);
         Core.SpriteBatch.Draw(_pixel, new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White * velo);

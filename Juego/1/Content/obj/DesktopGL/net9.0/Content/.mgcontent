@@ -159,6 +159,7 @@
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Music-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Negar-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Pausa-Sheet.png</File>
+    <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-Reanudar-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-SFX-NO-Sheet.png</File>
     <File>c:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/UI/Buttons/Buttons_50x50/Button-SFX-Sheet.png</File>
@@ -325,6 +326,7 @@
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File>Sprites/Enemies/JarJar/Sprite-JarJar-Sheet</File>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
