@@ -129,19 +129,6 @@
 /processorParam:Version=3.8.5.1
 /build:Effects/EfectoParry-Sheet.png
 
-#begin Effects/Escombros2-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Effects/Escombros2-Sheet.png
-
 #begin Effects/Escombros-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -154,6 +141,19 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Effects/Escombros-Sheet.png
+
+#begin Effects/Escombros2-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Effects/Escombros2-Sheet.png
 
 #begin Effects/EstrellaParry-Sheet.png
 /importer:TextureImporter
@@ -197,9 +197,6 @@
 /processorParam:Version=3.8.5.1
 /build:Fonts/BoldPixels/BoldPixels.spritefont
 
-#begin Fonts/PMingLiU Regular/Font.fnt
-/copy:Fonts/PMingLiU Regular/Font.fnt
-
 #begin Fonts/PMingLiU Regular/Font_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -212,6 +209,9 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Fonts/PMingLiU Regular/Font_0.png
+
+#begin Fonts/PMingLiU Regular/Font.fnt
+/copy:Fonts/PMingLiU Regular/Font.fnt
 
 #begin Fonts/PMingLiU Regular/Opciones.spritefont
 /importer:FontDescriptionImporter
@@ -470,19 +470,6 @@
 /processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Acciones/Espera-Sheet.png
 
-#begin Pharses/Selection/Acciones/SiEstoySeguro-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Pharses/Selection/Acciones/SiEstoySeguro-Sheet.png
-
 #begin Pharses/Selection/Acciones/Si-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -495,6 +482,19 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Pharses/Selection/Acciones/Si-Sheet.png
+
+#begin Pharses/Selection/Acciones/SiEstoySeguro-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Pharses/Selection/Acciones/SiEstoySeguro-Sheet.png
 
 #begin Pharses/Selection/Duda_Frase-Sheet.png
 /importer:TextureImporter
@@ -932,6 +932,15 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/Duck/DuckSpriteSheet.png
 
+#begin Sprites/Enemies/Dupe/Dupe-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Enemies/Dupe/Dupe-Sheet.png
+
 #begin Sprites/Enemies/Dupe/DupeRUN_DOWN-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -958,15 +967,6 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
 /build:Sprites/Enemies/Dupe/DupeRUN-Sheet.png
-
-#begin Sprites/Enemies/Dupe/Dupe-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Color
-/build:Sprites/Enemies/Dupe/Dupe-Sheet.png
 
 #begin Sprites/Enemies/Dupe/DupeWalk-Sheet.png
 /importer:TextureImporter
@@ -1012,19 +1012,6 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/ErosionBird/Erosion Bird-Sheet.png
 
-#begin Sprites/Enemies/JarJar/Sprite-JarJar.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Sprites/Enemies/JarJar/Sprite-JarJar.png;Sprites/Enemies/JarJar/Sprite-JarJar
-
 #begin Sprites/Enemies/JarJar/Sprite-JarJar-Aura.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1063,6 +1050,19 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/Enemies/JarJar/Sprite-JarJar-Sheet.png;Sprites/Enemies/JarJar/Sprite-JarJar-Sheet
+
+#begin Sprites/Enemies/JarJar/Sprite-JarJar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Enemies/JarJar/Sprite-JarJar.png;Sprites/Enemies/JarJar/Sprite-JarJar
 
 #begin Sprites/Enemies/SHAME/Shame-Sheet.png
 /importer:TextureImporter
@@ -1285,6 +1285,15 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Sinner/PantallaEleccion/Atlas/Neutral.png
 
+#begin Sprites/Sinner/Sinner-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Sinner/Sinner-Sheet.png
+
 #begin Sprites/Sinner/SinnerDASH-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1370,15 +1379,6 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Sinner/SinnerRUN-Sheet.png
 
-#begin Sprites/Sinner/Sinner-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Color
-/build:Sprites/Sinner/Sinner-Sheet.png
-
 #begin Sprites/Sinner/SinnerWalk-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1422,6 +1422,19 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/BorderSreen/EfectoBorde-Sheet.png
+
+#begin Sprites/UI/Buttons/Button-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/UI/Buttons/Button-Sheet.png
 
 #begin Sprites/UI/Buttons/Buttons_50x50/Button-Configuration-Sheet.png
 /importer:TextureImporter
@@ -1527,15 +1540,6 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/Buttons/Buttons_50x50/Button-Pausa-Sheet.png
 
-#begin Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Color
-/build:Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet.png
-
 #begin Sprites/UI/Buttons/Buttons_50x50/Button-Reanudar-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1575,18 +1579,14 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/Buttons/Buttons_50x50/Button-SFX-Sheet.png
 
-#begin Sprites/UI/Buttons/Button-Sheet.png
+#begin Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Sprites/UI/Buttons/Button-Sheet.png
+/build:Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet.png
 
 #begin Sprites/UI/Buttons/ON-OFF-Sheet.png
 /importer:TextureImporter
@@ -1692,6 +1692,19 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Efectos/DominioV2-Sheet.png
 
+#begin Sprites/Upgrades/Efectos/Felldoor-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Upgrades/Efectos/Felldoor-Sheet.png
+
 #begin Sprites/Upgrades/Efectos/FellDoor/Decoration/Arbol-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1746,19 +1759,6 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Upgrades/Efectos/FellDoor/Felldoor-Sheet.png
 
-#begin Sprites/Upgrades/Efectos/Felldoor-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Sprites/Upgrades/Efectos/Felldoor-Sheet.png
-
 #begin Sprites/Upgrades/Efectos/JabalinaV2-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1790,19 +1790,6 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Upgrades/Efectos/Precipitacion-Sheet.png
 
-#begin Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=False
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/processorParam:Version=3.8.5.1
-/build:Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet.png
-
 #begin Sprites/Upgrades/Efectos/Shield/Shield-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1815,6 +1802,19 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Sprites/Upgrades/Efectos/Shield/Shield-Sheet.png
+
+#begin Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/processorParam:Version=3.8.5.1
+/build:Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet.png
 
 #begin Sprites/Upgrades/Icons/AureolaDivina.png
 /importer:TextureImporter

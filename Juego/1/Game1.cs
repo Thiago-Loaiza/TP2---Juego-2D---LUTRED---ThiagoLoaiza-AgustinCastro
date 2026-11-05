@@ -15,16 +15,16 @@ public class Game1 : Core
 {
     // true = ON: habilita H (correr), J (dash), B (volver), N (borrar) y Enter (pausa).
     // false = OFF: conserva solamente los controles habituales del teclado.
-    public static bool Arcade = true;
+    public static bool Arcade = false;
 
     // true = ON: Jugar abre la eleccion. false = OFF: entra directamente a la partida.
-    public static bool EmpezarConEleccion = true;
+    public static bool EmpezarConEleccion = false;
 
     // Jugar abre mejoras y despues la pregunta; desactivar para el inicio habitual.
-    public static bool EmpezarConMejoras = true;
+    public static bool EmpezarConMejoras = false;
 
     // Permite ofrecer mejoras sin exigir su piso minimo; conserva requisitos y limites.
-    public static bool IgnorarNivelMinimoMejoras = true;
+    public static bool IgnorarNivelMinimoMejoras = false;
 
     private Escena _escenaActual;
     private RenderTarget2D _pantallaDupe;
