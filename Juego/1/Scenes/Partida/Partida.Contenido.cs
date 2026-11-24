@@ -1,5 +1,6 @@
 using System;
 using _1.Entities;
+using _1.Mapa.Decoraciones;
 using _1.UI;
 using LutredLibrary;
 using LutredLibrary.Graphics;
@@ -22,6 +23,7 @@ public partial class Partida
         _fuenteContador = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
         Puntaje.ComenzarNivel();
         _marcador = new MarcadorPuntaje(Content, Puntaje);
+        _decoraciones = new DecoracionesMapa(Content);
         _indicadorOrbes = Content.Load<Texture2D>("Sprites/Misc/Orbs/IndicadorPuntos");
         _animacionOrbe = Orbe.CrearAnimacion(
             Content.Load<Texture2D>("Sprites/Misc/Orbs/Punto-Sheet"));
@@ -33,6 +35,7 @@ public partial class Partida
         _tintaAntigua.Parameters["Grano"].SetValue(0.10f);
         _tintaAntigua.Parameters["EscalaGrano"].SetValue(512f);
         _tintaAntigua.Parameters["GrosorTinta"].SetValue(3f);
+        _tintaAntigua.Parameters["Intensidad"].SetValue(1f);
 
         int layer = _numeroNivel <= CantidadLayers ? _numeroNivel : 4 + (_numeroNivel - 9) % 5;
         int transicionEntrada = (_numeroNivel - 1) % CantidadTransiciones + 1;

@@ -83,6 +83,7 @@ public partial class Partida : Escena
             return;
         }
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (!_derrotado && !_enFellDoor) _decoraciones.Update(segundos);
         if (!_derrotado)
             _faseLatidoFondo = (_faseLatidoFondo + segundos * MathHelper.TwoPi / 2.4f) % MathHelper.TwoPi;
         if (!_derrotado && _faseEntrada == FaseEntrada.Jugando) Puntaje.Actualizar(segundos);

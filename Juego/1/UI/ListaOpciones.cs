@@ -10,9 +10,11 @@ namespace _1.UI;
 // La misma lista se usa en el menu y durante la pausa.
 public sealed class ListaOpciones : IDisposable
 {
-    private const float AltoContenido = 480;
+    private const int CantidadOpciones = 5;
+    private const float AltoContenido = CantidadOpciones * 120;
     private readonly BotonInterruptor _correr;
     private readonly BotonInterruptor _silencio;
+    private readonly BotonInterruptor _locutor;
     private readonly Texture2D _pixel;
     private readonly SpriteFont _fuente;
     private readonly RasterizerState _recorte = new() { ScissorTestEnable = true };
@@ -23,9 +25,9 @@ public sealed class ListaOpciones : IDisposable
     private int _arrastrando = -1;
     private float _agarreBarra;
     private Rectangle _area;
-    public bool ReanudarSeleccionado => _seleccion == 4;
-    public bool SalirSeleccionado => _seleccion == 5;
-    public bool AyudaVisible => _area.Contains(Mouse.GetState().Position) || (_seleccion >= 0 && _seleccion < 4);
+    public bool ReanudarSeleccionado => _seleccion == CantidadOpciones;
+    public bool SalirSeleccionado => _seleccion == CantidadOpciones + 1;
+    public bool AyudaVisible => _area.Contains(Mouse.GetState().Position) || (_seleccion >= 0 && _seleccion < CantidadOpciones);
     private float Escala => Math.Min(Core.GraphicsDevice.Viewport.Width / 1280f,
         Core.GraphicsDevice.Viewport.Height / 720f);
     private float MaxScroll => Math.Max(0, AltoContenido - _area.Height / Escala);
@@ -35,6 +37,7 @@ public sealed class ListaOpciones : IDisposable
         var hoja = Core.Content.Load<Texture2D>("Sprites/UI/Buttons/ON-OFF-Sheet");
         _correr = new BotonInterruptor(hoja, OpcionesJuego.AlternarCorrer);
         _silencio = new BotonInterruptor(hoja, OpcionesJuego.SilenciarMusica);
+        _locutor = new BotonInterruptor(hoja, OpcionesJuego.SilenciarLocutor);
         _fuente = Core.Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
         _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
@@ -44,6 +47,7 @@ public sealed class ListaOpciones : IDisposable
         _area.X + (int)(x * Escala), _area.Y + (int)((y - _scroll) * Escala),
         (int)(ancho * Escala), (int)(alto * Escala));
     private Rectangle Interruptor(int fila) => Area(390, fila * 120 + 10, 180, 90);
+    private static bool EsInterruptor(int fila) => fila == 0 || fila == 1 || fila == 4;
     private Rectangle Pista(int fila) => Area(350, fila * 120 + 48, 190, 10);
     private Rectangle Carril => new(_area.Right - (int)(12 * Escala), _area.Top,
         Math.Max(4, (int)(6 * Escala)), _area.Height);
@@ -73,8 +77,10 @@ public sealed class ListaOpciones : IDisposable
         _scroll = Math.Clamp(_scroll, 0, MaxScroll);
         _correr.Update(tiempo);
         _silencio.Update(tiempo);
+        _locutor.Update(tiempo);
         _correr.CambiarEstado(OpcionesJuego.AlternarCorrer);
         _silencio.CambiarEstado(OpcionesJuego.SilenciarMusica);
+        _locutor.CambiarEstado(OpcionesJuego.SilenciarLocutor);
         var raton = Mouse.GetState();
         var teclado = Keyboard.GetState();
         bool pulsado(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
@@ -90,19 +96,19 @@ public sealed class ListaOpciones : IDisposable
                 if (clic && MaxScroll > 0 && new Rectangle(Carril.X - 8, Carril.Y, Carril.Width + 16, Carril.Height).Contains(raton.Position))
                 {
                     _agarreBarra = Barra.Contains(raton.Position) ? raton.Y - Barra.Y : Barra.Height / 2f;
-                    _arrastrando = 4;
+                    _arrastrando = CantidadOpciones;
                 }
                 else if (clic)
-                    for (int fila = 0; fila < 4; fila++)
+                    for (int fila = 0; fila < CantidadOpciones; fila++)
                     {
-                        Rectangle control = fila < 2 ? Interruptor(fila) : Area(340, fila * 120 + 25, 250, 60);
+                        Rectangle control = EsInterruptor(fila) ? Interruptor(fila) : Area(340, fila * 120 + 25, 250, 60);
                         if (!control.Contains(raton.Position)) continue;
                         _seleccion = fila;
-                        if (fila < 2) Alternar(fila);
+                        if (EsInterruptor(fila)) Alternar(fila);
                         else if (fila != 2 || !OpcionesJuego.SilenciarMusica) _arrastrando = fila;
                     }
             }
-            if (_arrastrando == 4)
+            if (_arrastrando == CantidadOpciones)
                 _scroll = Math.Clamp((raton.Y - Carril.Y - _agarreBarra)
                     / Math.Max(1, Carril.Height - Barra.Height) * MaxScroll, 0, MaxScroll);
             else if (_arrastrando >= 2)
@@ -110,20 +116,20 @@ public sealed class ListaOpciones : IDisposable
                 var pista = Pista(_arrastrando);
                 EstablecerVolumen(_arrastrando, (int)MathF.Round((raton.X - pista.X) * 100f / pista.Width));
             }
-            int cantidad = incluirSalir ? 6 : usarTab ? 5 : 4;
+            int cantidad = CantidadOpciones + (incluirSalir ? 2 : usarTab ? 1 : 0);
             bool izquierda = pulsado(Keys.Left) || pulsado(Keys.A);
             bool derecha = pulsado(Keys.Right) || pulsado(Keys.D);
             if (pulsado(Keys.Down) || pulsado(Keys.S) || (usarTab && pulsado(Keys.Tab))) Seleccionar((_seleccion + 1) % cantidad);
             if (pulsado(Keys.Up) || pulsado(Keys.W)) Seleccionar(_seleccion < 0 ? cantidad - 1 : (_seleccion + cantidad - 1) % cantidad);
             bool ajustarVolumen = _seleccion >= 2 && _seleccion < 4;
-            if (incluirSalir && _seleccion >= 4 && (izquierda || derecha))
-                Seleccionar(izquierda ? 5 : 4);
+            if (incluirSalir && _seleccion >= CantidadOpciones && (izquierda || derecha))
+                Seleccionar(izquierda ? CantidadOpciones + 1 : CantidadOpciones);
             else if (!ajustarVolumen && (izquierda || derecha))
                 Seleccionar(_seleccion < 0 ? (derecha ? 0 : cantidad - 1)
                     : (_seleccion + (derecha ? 1 : cantidad - 1)) % cantidad);
             if (_seleccion >= 0)
             {
-                if (_seleccion < 2 && ((usarEnter && pulsado(Keys.Enter)) || pulsado(Keys.Space))) Alternar(_seleccion);
+                if (EsInterruptor(_seleccion) && ((usarEnter && pulsado(Keys.Enter)) || pulsado(Keys.Space))) Alternar(_seleccion);
                 if (ajustarVolumen && (izquierda || derecha))
                     EstablecerVolumen(_seleccion, (_seleccion == 2 ? OpcionesJuego.VolumenMusica : OpcionesJuego.VolumenSfx)
                         + (derecha ? 5 : -5));
@@ -136,7 +142,7 @@ public sealed class ListaOpciones : IDisposable
     private void Seleccionar(int fila)
     {
         _seleccion = fila;
-        if (fila >= 4) return;
+        if (fila >= CantidadOpciones) return;
         float altoVisible = _area.Height / Escala;
         if (fila * 120 < _scroll) _scroll = fila * 120;
         if (fila * 120 + 120 > _scroll + altoVisible) _scroll = fila * 120 + 120 - altoVisible;
@@ -155,6 +161,11 @@ public sealed class ListaOpciones : IDisposable
             OpcionesJuego.SilenciarMusica = !OpcionesJuego.SilenciarMusica;
             _silencio.CambiarEstado(OpcionesJuego.SilenciarMusica);
         }
+        if (fila == 4 && !_locutor.Animando)
+        {
+            OpcionesJuego.SilenciarLocutor = !OpcionesJuego.SilenciarLocutor;
+            _locutor.CambiarEstado(OpcionesJuego.SilenciarLocutor);
+        }
     }
 
     private static void EstablecerVolumen(int fila, int valor)
@@ -171,14 +182,15 @@ public sealed class ListaOpciones : IDisposable
         Rectangle anterior = dispositivo.ScissorRectangle;
         dispositivo.ScissorRectangle = Rectangle.Intersect(area, dispositivo.Viewport.Bounds);
         var batch = Core.SpriteBatch;
-        _correr.Opacidad = _silencio.Opacidad = opacidad;
+        _correr.Opacidad = _silencio.Opacidad = _locutor.Opacidad = opacidad;
         batch.Begin(samplerState: SamplerState.PointClamp, rasterizerState: _recorte);
         _correr.Draw(batch, Interruptor(0));
         _silencio.Draw(batch, Interruptor(1));
-        for (int fila = 0; fila < 4; fila++)
+        _locutor.Draw(batch, Interruptor(4));
+        for (int fila = 0; fila < CantidadOpciones; fila++)
         {
             batch.Draw(_pixel, Area(10, fila * 120 + 118, 570, 1), Color.DarkRed * opacidad);
-            if (fila < 2) continue;
+            if (EsInterruptor(fila)) continue;
             bool habilitado = fila != 2 || !OpcionesJuego.SilenciarMusica;
             Color color = (habilitado ? Color.Red : Color.DimGray) * opacidad;
             var pista = Pista(fila);
@@ -195,13 +207,13 @@ public sealed class ListaOpciones : IDisposable
         }
         batch.End();
         batch.Begin(samplerState: SamplerState.LinearClamp, rasterizerState: _recorte);
-        string[] nombres = { "Alternar correr", "Silenciar musica", "Volumen musica", "Volumen SFX" };
-        for (int fila = 0; fila < 4; fila++)
+        string[] nombres = { "Alternar correr", "Silenciar musica", "Volumen musica", "Volumen SFX", "Silenciar locutor" };
+        for (int fila = 0; fila < CantidadOpciones; fila++)
         {
             bool desactivado = fila == 2 && OpcionesJuego.SilenciarMusica;
             Color color = (desactivado ? Color.Gray : Color.White) * opacidad;
             Texto(nombres[fila], Area(20, fila * 120 + 32, 320, 45), 0.32f, color);
-            if (fila >= 2)
+            if (!EsInterruptor(fila))
                 Texto($"{(fila == 2 ? OpcionesJuego.VolumenMusica : OpcionesJuego.VolumenSfx)}",
                     Area(550, fila * 120 + 32, 40, 45), 0.27f, color);
             if (_seleccion == fila)
@@ -270,6 +282,7 @@ public sealed class ListaOpciones : IDisposable
                 2 when OpcionesJuego.SilenciarMusica => "Desactiva Silenciar musica para ajustar el volumen.",
                 2 => "Arrastra para ajustar la musica de 0 a 100.",
                 3 => "Arrastra para ajustar los efectos de 0 a 100.",
+                4 => "Silencia los anuncios del locutor al alcanzar un nuevo rango.",
                 _ => "Rueda para bajar. Flechas para elegir y ajustar."
             };
         }
@@ -279,6 +292,7 @@ public sealed class ListaOpciones : IDisposable
     {
         _correr.Dispose();
         _silencio.Dispose();
+        _locutor.Dispose();
         _pixel.Dispose();
         _recorte.Dispose();
     }

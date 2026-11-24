@@ -90,6 +90,8 @@ public sealed class GeneradorMapa
                 eleccion -= plantilla.Peso;
                 if (eleccion < 0) { elegida = plantilla; break; }
             }
+            if (elegida.ProbabilidadAparicion < 1f && azar.NextSingle() >= elegida.ProbabilidadAparicion)
+                continue;
             int ancho = (elegida.Ancho * unidadEstructura + TamanoChunk - 1) / TamanoChunk;
             int alto = (elegida.Alto * unidadEstructura + TamanoChunk - 1) / TamanoChunk;
             var huella = new Rectangle(azar.Next(ChunksPorLado - ancho + 1),

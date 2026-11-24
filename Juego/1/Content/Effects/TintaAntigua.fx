@@ -14,6 +14,7 @@ float Grano;
 float EscalaGrano;
 float2 TamanoTexel;
 float GrosorTinta;
+float Intensidad;
 
 struct EntradaPixel
 {
@@ -49,7 +50,7 @@ float4 DibujarTinta(EntradaPixel entrada) : COLOR0
     sombra = min(sombra, Luminosidad(entrada.UV - float2(0, paso.y)));
     tinta *= smoothstep(0.70, 0.78, sombra);
     float alfa = muestra.a * entrada.Color.a;
-    return float4(tinta, tinta, tinta, 1.0) * alfa;
+    return float4(lerp(color, float3(tinta, tinta, tinta), Intensidad), 1.0) * alfa;
 }
 
 technique TintaAntigua

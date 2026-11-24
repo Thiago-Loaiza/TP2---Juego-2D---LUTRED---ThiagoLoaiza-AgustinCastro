@@ -8,6 +8,8 @@ public static class OpcionesJuego
 {
     private static readonly GuardadoOpciones Archivo = new();
     private static bool _alternarCorrer;
+    private static bool _silenciarLocutor;
+    public static event Action LocutorSilenciado;
     private static bool _pendiente;
     private static float _esperaGuardado;
     public static string ErrorGuardado => Archivo.Error;
@@ -50,10 +52,23 @@ public static class OpcionesJuego
         }
     }
 
+    public static bool SilenciarLocutor
+    {
+        get => _silenciarLocutor;
+        set
+        {
+            if (_silenciarLocutor == value) return;
+            _silenciarLocutor = value;
+            if (value) LocutorSilenciado?.Invoke();
+            SolicitarGuardado();
+        }
+    }
+
     public static void Cargar()
     {
         DatosOpciones datos = Archivo.Cargar();
         _alternarCorrer = datos.AlternarCorrer;
+        _silenciarLocutor = datos.SilenciarLocutor;
         Core.Audio.MusicVolume = datos.VolumenMusica / 100f;
         Core.Audio.EffectsVolume = datos.VolumenSfx / 100f;
         Core.Audio.IsMusicMuted = datos.SilenciarMusica;
@@ -73,6 +88,6 @@ public static class OpcionesJuego
     {
         if (!_pendiente) return;
         _pendiente = false;
-        Archivo.Guardar(new DatosOpciones(AlternarCorrer, SilenciarMusica, VolumenMusica, VolumenSfx));
+        Archivo.Guardar(new DatosOpciones(AlternarCorrer, SilenciarMusica, VolumenMusica, VolumenSfx, SilenciarLocutor));
     }
 }

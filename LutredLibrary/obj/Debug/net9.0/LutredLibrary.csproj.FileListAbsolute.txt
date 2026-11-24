@@ -62,3 +62,16 @@ C:\Users\juanl\AppData\Local\Packages\sandbox.{baaa0ddb-eeb1-46d9-9cd3-ab9c55aee
 C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\LutredLibrary.deps.json
 C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\LutredLibrary.dll
 C:\Users\juanl\AppData\Local\Packages\sandbox.{9d2f5f03-d3cd-4dd1-8529-452a76e420dc}\AC\Temp\Lutred-Creditos-Audio\LutredLibrary.pdb
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.deps.json
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.dll
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\bin\Debug\net9.0\LutredLibrary.pdb
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.csproj.AssemblyReference.cache
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.AssemblyInfoInputs.cache
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.AssemblyInfo.cs
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.csproj.CoreCompileInputs.cache
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.sourcelink.json
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.dll
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\refint\LutredLibrary.dll
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\LutredLibrary.pdb
+c:\Users\juanl\OneDrive\Desktop\Juegos Creados\2026\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\LutredLibrary\obj\Debug\net9.0\ref\LutredLibrary.dll

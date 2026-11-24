@@ -86,7 +86,7 @@ public partial class Partida
         var generador = new GeneradorMapa(tamanoChunk: _generador.TamanoChunk * 3 / 8,
             chunksPorLado: _generador.ChunksPorLado, separacionChunks: 2);
         var mapa = generador.Generar(_centroFellDoor, Content.Load<Texture2D>("Textures/Granito"),
-            CatalogoEstructuras.Crear(), Random.Shared.Next(), tamanoEstructuras: _generador.TamanoChunk);
+            _catalogoEstructuras, Random.Shared.Next(), tamanoEstructuras: _generador.TamanoChunk);
         _estructuras.Clear();
         _estructuras.AddRange(mapa.Estructuras);
         _obstaculos.Clear();

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using _1.Colisiones;
 using _1.Mapa;
+using _1.Mapa.Decoraciones;
 using _1.Mapa.Estructuras;
 using LutredLibrary;
 using Microsoft.Xna.Framework;
@@ -12,6 +13,8 @@ namespace _1.Scenes;
 public partial class Partida
 {
     private readonly GeneradorMapa _generador = new();
+    private IReadOnlyList<PlantillaEstructura> _catalogoEstructuras;
+    private DecoracionesMapa _decoraciones;
     private readonly List<EstructuraSolida> _estructuras = new();
     private readonly List<ColisionSolida> _obstaculos = new();
     private List<Vector2> _posicionesLibres = new();
@@ -20,14 +23,16 @@ public partial class Partida
     private void GenerarMapa()
     {
         Texture2D ladrillos = Content.Load<Texture2D>("Textures/LadrillosTextura");
+        _catalogoEstructuras = CatalogoEstructuras.Crear(Content);
         MapaGenerado mapa = _generador.Generar(_sinner.Position, ladrillos,
-            CatalogoEstructuras.Crear(), Random.Shared.Next());
+            _catalogoEstructuras, Random.Shared.Next());
         _limitesExteriores = mapa.Limites;
         _limitesExteriores.Inflate(_generador.TamanoChunk, _generador.TamanoChunk);
         _estructuras.Clear();
         _obstaculos.Clear();
         _estructuras.AddRange(mapa.Estructuras);
         _obstaculos.AddRange(mapa.Obstaculos);
+        _decoraciones.Generar(mapa);
         GenerarOrbes(mapa.Limites);
         // JarJar solo se teletransporta a lugares sin paredes y conectados con el inicio.
         _posicionesLibres = GeneradorOrbes.PosicionesAccesibles(mapa.Limites,

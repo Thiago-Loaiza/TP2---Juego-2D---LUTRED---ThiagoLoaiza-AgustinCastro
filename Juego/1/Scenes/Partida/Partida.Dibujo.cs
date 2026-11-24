@@ -79,10 +79,30 @@ public partial class Partida
                 transformMatrix: transformacion);
             Rectangle visible = AreaVisible();
             foreach (EstructuraSolida estructura in _estructuras)
-                if (estructura.Limites.Intersects(visible)) estructura.Draw(Core.SpriteBatch);
-            if (_enFellDoor)
-                Core.SpriteBatch.Draw(_pixelTransicion, visible, new Color(100, 0, 12) * 0.65f);
+                if (estructura.Limites.Intersects(visible) && estructura is not EstructuraImagen)
+                    estructura.Draw(Core.SpriteBatch);
             Core.SpriteBatch.End();
+
+            // El mismo filtro de tinta, con el tamano de texel propio de cada PNG.
+            Vector2 texelPared = _tintaAntigua.Parameters["TamanoTexel"].GetValueVector2();
+            _tintaAntigua.Parameters["Intensidad"].SetValue(0.5f);
+            foreach (EstructuraSolida estructura in _estructuras)
+            {
+                if (estructura is not EstructuraImagen imagen || !imagen.Limites.Intersects(visible)) continue;
+                _tintaAntigua.Parameters["TamanoTexel"].SetValue(new Vector2(1f / imagen.Imagen.Width, 1f / imagen.Imagen.Height));
+                Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: _enFellDoor ? null : _tintaAntigua,
+                    transformMatrix: transformacion);
+                imagen.Draw(Core.SpriteBatch);
+                Core.SpriteBatch.End();
+            }
+            _tintaAntigua.Parameters["TamanoTexel"].SetValue(texelPared);
+            _tintaAntigua.Parameters["Intensidad"].SetValue(1f);
+            if (_enFellDoor)
+            {
+                Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, transformMatrix: transformacion);
+                Core.SpriteBatch.Draw(_pixelTransicion, visible, new Color(100, 0, 12) * 0.65f);
+                Core.SpriteBatch.End();
+            }
         }
 
         Core.SpriteBatch.Begin(
@@ -105,6 +125,8 @@ public partial class Partida
             }
             else
             {
+                Rectangle visible = AreaVisible();
+                _decoraciones.DibujarPiso(Core.SpriteBatch, visible);
                 DibujarPuertaFellDoor();
                 for (int i = 0; i < _jarJars.Count; i++)
                 {
@@ -122,7 +144,9 @@ public partial class Partida
                 _erosionBird?.DrawLanzas(Core.SpriteBatch);
                 _shame.Draw(Core.SpriteBatch);
                 foreach (Dupe dupe in _dupes) dupe.Draw(Core.SpriteBatch);
+                _decoraciones.DibujarVerticales(Core.SpriteBatch, visible, _sinner.Colision.Centro.Y, delante: false);
                 _sinner.Draw(Core.SpriteBatch);
+                _decoraciones.DibujarVerticales(Core.SpriteBatch, visible, _sinner.Colision.Centro.Y, delante: true);
                 _delusion?.DrawBolas(Core.SpriteBatch);
                 for (int i = 0; i < _dukes.Count; i++)
                 {

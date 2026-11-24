@@ -82,12 +82,19 @@ public sealed class MarcadorPuntaje : IDisposable
             _imagenes[i] = content.Load<Texture2D>("Sprites/Ranks/" + EstadoPuntaje.Rangos[i].Audio);
         }
         _estado.RangoSubido += SubirRango;
+        OpcionesJuego.LocutorSilenciado += DetenerVoces;
+    }
+
+    private void DetenerVoces()
+    {
+        foreach (var voz in _voces) Core.Audio.StopSoundEffect(voz);
     }
 
     private void SubirRango(int rango)
     {
-        foreach (var voz in _voces) Core.Audio.StopSoundEffect(voz);
-        Core.Audio.PlaySoundEffect(_voces[rango], restart: true);
+        DetenerVoces();
+        if (!OpcionesJuego.SilenciarLocutor)
+            Core.Audio.PlaySoundEffect(_voces[rango], restart: true);
         _pulso = 0.35f;
     }
 
@@ -233,6 +240,7 @@ public sealed class MarcadorPuntaje : IDisposable
     public void Dispose()
     {
         _estado.RangoSubido -= SubirRango;
+        OpcionesJuego.LocutorSilenciado -= DetenerVoces;
         foreach (var voz in _voces) Core.Audio.ReleaseSoundEffect(voz);
         _pixel.Dispose();
         _texturaHumo.Dispose();

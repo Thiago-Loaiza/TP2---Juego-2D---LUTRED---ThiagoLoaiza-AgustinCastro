@@ -123,6 +123,15 @@
     <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/SHAME/Shame-Sheet.png</File>
     <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Zorak/Particulas-Sheet.png</File>
     <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Enemies/Zorak/Zorak-Sheet.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Decorations/Sprite-cruz-Sheet.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Decorations/Sprite-flor-1.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Decorations/Sprite-flor-2.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Decorations/Sprite-Pasto-Sheet.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Decorations/Sprite-roca-1.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Decorations/Sprite-roca-2.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Structures/Doge.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Structures/Sus.png</File>
+    <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Structures/Creeper.png</File>
     <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Orbs/IndicadorPuntos.png</File>
     <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Misc/Orbs/Punto-Sheet.png</File>
     <File>C:/Users/juanl/OneDrive/Desktop/TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro/Juego/1/Content/Sprites/Ranks/Asombroso.png</File>
@@ -326,6 +335,15 @@
     <File xsi:nil="true" />
     <File>Sprites/Enemies/JarJar/Sprite-JarJar-Sheet</File>
     <File>Sprites/Enemies/JarJar/Sprite-JarJar</File>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

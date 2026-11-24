@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace _1.Persistence;
 
 public sealed record DatosOpciones(bool AlternarCorrer = false, bool SilenciarMusica = false,
-    int VolumenMusica = 50, int VolumenSfx = 50);
+    int VolumenMusica = 50, int VolumenSfx = 50, bool SilenciarLocutor = false);
 
 public sealed class GuardadoOpciones
 {
