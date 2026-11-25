@@ -116,7 +116,7 @@ public class Inicio : Escena
         _panelOpciones = new Panel();
         _panelOpciones.Dock(Dock.Fill);
         _panelOpciones.AddToRoot();
-        _listaOpciones = new ListaOpciones();
+        _listaOpciones = new ListaOpciones(incluirFun: true);
         _volver = AgregarBoton(_panelOpciones, "Volver", 240);
         _volver.Click += Volver;
         _panelOpciones.IsVisible = false;
@@ -234,7 +234,12 @@ public class Inicio : Escena
     private void Jugar(object sender, EventArgs args)
     {
         if (_enTransicion) return;
-        var mejoras = new _1.Progression.EstadoMejoras();
+        var mejoras = new _1.Progression.EstadoMejoras(Game1.FastTrack);
+        if (mejoras.FastTrack)
+        {
+            _cambiarEscena(new Partida(_cambiarEscena, mejoras: mejoras));
+            return;
+        }
         if (Game1.EmpezarConMejoras)
         {
             _cambiarEscena(new Mejoras(() => _cambiarEscena(new Seleccion(_cambiarEscena, mejoras: mejoras)), mejoras));

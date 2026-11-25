@@ -134,6 +134,7 @@ public sealed class MarcadorPuntaje : IDisposable
     public void Draw(Viewport vista)
     {
         float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
+        float opacidad = OpcionesJuego.VisibilidadRangos / 100f;
         Vector2 origen = new(24f * escala, vista.Height - 340f * escala);
         float pulso = MathF.Sin(_pulso / 0.35f * MathHelper.Pi);
         if (_estado.Rango >= 0)
@@ -142,29 +143,37 @@ public sealed class MarcadorPuntaje : IDisposable
             float escalaImagen = Math.Min(280f / recorte.Width, 92f / recorte.Height)
                 * escala * (1f + pulso * 0.05f);
             Core.SpriteBatch.Draw(_imagenes[_estado.Rango], origen + new Vector2(140, 48) * escala,
-                recorte, Color.White, 0f, new Vector2(recorte.Width, recorte.Height) * 0.5f,
+                recorte, Color.White * opacidad, 0f, new Vector2(recorte.Width, recorte.Height) * 0.5f,
                 escalaImagen, SpriteEffects.None, 0f);
         }
         string multiplicador = "X" + _estado.MultiplicadorRango.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
         Color colorRango = _estado.Rango < 0 ? Color.White : ColoresRango[_estado.Rango];
         DibujarTexto(_fuente, multiplicador, origen + new Vector2(300, 33) * escala,
-            0.85f * escala, color: colorRango);
+            0.85f * escala, opacidad, color: colorRango);
         var barra = new Rectangle((int)origen.X, (int)(origen.Y + 102 * escala), (int)(360 * escala), Math.Max(3, (int)(12 * escala)));
-        Core.SpriteBatch.Draw(_pixel, barra, Color.Black);
+        Core.SpriteBatch.Draw(_pixel, barra, Color.Black * opacidad);
         int borde = Math.Max(1, (int)(2 * escala));
         var interior = new Rectangle(barra.X + borde, barra.Y + borde, barra.Width - borde * 2, barra.Height - borde * 2);
-        Core.SpriteBatch.Draw(_pixel, interior, new Color(60, 60, 60));
+        Core.SpriteBatch.Draw(_pixel, interior, new Color(60, 60, 60) * opacidad);
         interior.Width = (int)(interior.Width * _barra);
-        if (interior.Width > 0) Core.SpriteBatch.Draw(_pixel, interior, colorRango);
-        DibujarTexto(_fuente, _estado.TextoPiso, origen + new Vector2(0, 122) * escala, escala);
-        DibujarHumo(origen, escala);
+        if (interior.Width > 0) Core.SpriteBatch.Draw(_pixel, interior, colorRango * opacidad);
+        DibujarTexto(_fuente, _estado.TextoPiso, origen + new Vector2(0, 122) * escala, escala, opacidad);
+        if (OpcionesJuego.MultiplicadorTotal)
+        {
+            string total = "TOTAL X" + _estado.Multiplicador.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+            float inicio = _fuente.MeasureString(_estado.TextoPiso).X + 12f;
+            float tamano = Math.Min(0.62f, Math.Max(1f, 360f - inicio) / _fuente.MeasureString(total).X);
+            DibujarTexto(_fuente, total, origen + new Vector2(inicio, 128) * escala,
+                tamano * escala, opacidad, color: colorRango);
+        }
+        DibujarHumo(origen, escala, opacidad);
         for (int i = 0; i < _estado.Acciones.Count; i++)
         {
             var premio = _estado.Acciones[i];
             float y = _posiciones.TryGetValue(premio, out float posicion) ? posicion : i * 25 + 25;
             string texto = premio.Nombre + " +" + premio.Base;
             float tamano = Math.Min(0.72f, 360f / _fuente.MeasureString(texto).X);
-            DibujarAccion(premio, texto, origen + new Vector2(0, 165 + y) * escala, tamano * escala, escala);
+            DibujarAccion(premio, texto, origen + new Vector2(0, 165 + y) * escala, tamano * escala, escala, opacidad);
         }
     }
 
@@ -181,7 +190,7 @@ public sealed class MarcadorPuntaje : IDisposable
             0f, Vector2.Zero, escala, SpriteEffects.None, 0f);
     }
 
-    private void DibujarAccion(PremioPuntaje premio, string texto, Vector2 posicion, float tamano, float escalaPantalla)
+    private void DibujarAccion(PremioPuntaje premio, string texto, Vector2 posicion, float tamano, float escalaPantalla, float opacidad)
     {
         EstiloAccion estilo = Estilo(premio.Nombre);
         float pulso = 0.5f - 0.5f * MathF.Cos(_relojEfectos * MathHelper.TwoPi * 1.8f);
@@ -197,13 +206,13 @@ public sealed class MarcadorPuntaje : IDisposable
                     float angulo = i * MathHelper.TwoPi / 12f;
                     Vector2 desplazamiento = new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * radio;
                     Core.SpriteBatch.DrawString(_fuente, texto, posicion + desplazamiento,
-                        estilo.Luz * (intensidad * (capa == 0 ? 0.16f : 0.06f)),
+                        estilo.Luz * (intensidad * (capa == 0 ? 0.16f : 0.06f) * opacidad),
                         0f, Vector2.Zero, tamano, SpriteEffects.None, 0f);
                 }
             }
         }
         Color borde = estilo.Palpitante ? Color.Lerp(estilo.Borde, Color.White, pulso * 0.65f) : estilo.Borde;
-        DibujarTexto(_fuente, texto, posicion, tamano, color: estilo.Relleno,
+        DibujarTexto(_fuente, texto, posicion, tamano, opacidad, color: estilo.Relleno,
             colorBorde: borde, grosorBorde: estilo.Grosor * escalaPantalla);
     }
 
@@ -222,7 +231,7 @@ public sealed class MarcadorPuntaje : IDisposable
             });
     }
 
-    private void DibujarHumo(Vector2 origen, float escala)
+    private void DibujarHumo(Vector2 origen, float escala, float opacidadRangos)
     {
         foreach (ParticulaHumo particula in _humo)
         {
@@ -231,7 +240,7 @@ public sealed class MarcadorPuntaje : IDisposable
             float opacidad = Math.Min(1f, particula.Edad / 0.08f) * (1f - progreso) * 0.75f;
             Vector2 posicion = origen + (new Vector2(0, 165 + y) + particula.Posicion) * escala;
             float radio = particula.Radio + progreso * 5f;
-            Core.SpriteBatch.Draw(_texturaHumo, posicion, null, Color.White * opacidad,
+            Core.SpriteBatch.Draw(_texturaHumo, posicion, null, Color.White * (opacidad * opacidadRangos),
                 0f, new Vector2(_texturaHumo.Width, _texturaHumo.Height) * 0.5f,
                 radio * 2f * escala / _texturaHumo.Width, SpriteEffects.None, 0f);
         }

@@ -5,7 +5,9 @@ using System.Text.Json;
 namespace _1.Persistence;
 
 public sealed record DatosOpciones(bool AlternarCorrer = false, bool SilenciarMusica = false,
-    int VolumenMusica = 50, int VolumenSfx = 50, bool SilenciarLocutor = false);
+    int VolumenMusica = 50, int VolumenSfx = 50, bool SilenciarLocutor = false,
+    int VisibilidadRangos = 100, bool MultiplicadorTotal = false, bool MostrarFps = false,
+    bool PantallaCompleta = false);
 
 public sealed class GuardadoOpciones
 {
@@ -27,7 +29,8 @@ public sealed class GuardadoOpciones
             return datos with
             {
                 VolumenMusica = Math.Clamp(datos.VolumenMusica, 0, 100),
-                VolumenSfx = Math.Clamp(datos.VolumenSfx, 0, 100)
+                VolumenSfx = Math.Clamp(datos.VolumenSfx, 0, 100),
+                VisibilidadRangos = Math.Clamp(datos.VisibilidadRangos, 25, 100)
             };
         }
         catch (FileNotFoundException) { }

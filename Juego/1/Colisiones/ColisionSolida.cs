@@ -8,6 +8,18 @@ public readonly struct ColisionSolida
     private readonly Rectangle _rectangulo;
     private readonly CirculoColision _circulo;
     private readonly bool _esCirculo;
+    public Rectangle Limites
+    {
+        get
+        {
+            if (!_esCirculo) return _rectangulo;
+            int x = (int)MathF.Floor(_circulo.Centro.X - _circulo.Radio);
+            int y = (int)MathF.Floor(_circulo.Centro.Y - _circulo.Radio);
+            return new Rectangle(x, y,
+                (int)MathF.Ceiling(_circulo.Centro.X + _circulo.Radio) - x,
+                (int)MathF.Ceiling(_circulo.Centro.Y + _circulo.Radio) - y);
+        }
+    }
 
     public ColisionSolida(Rectangle rectangulo)
     {

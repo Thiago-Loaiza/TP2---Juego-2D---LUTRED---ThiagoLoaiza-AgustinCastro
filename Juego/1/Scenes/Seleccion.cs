@@ -13,6 +13,7 @@ using LutredLibrary.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
 using MonoGameGum.GueDeriving;
 
@@ -23,22 +24,28 @@ public sealed class Seleccion : Escena
     private enum Estado { Neutral, Escapar, Continuar }
     private const float PrimeraOpcionY = -225f;
     private const float SeparacionOpciones = 65f;
-    private const float OpcionTiempoY = -95f;
+    private float OpcionTiempoY => _menosTiempoObligatorio ? -160f : -95f;
     private const float EscalaOpciones = 1.7f;
     private const decimal BonoMenosTiempo = 0.3m;
     private readonly Action<Escena> _cambiarEscena;
     private readonly EstadoMejoras _mejoras;
-    private readonly int _numeroNivel;
+    private int _numeroNivel;
+    private readonly int _nivelDestino;
+    private readonly int _ultimoNivelJugado;
+    private Action _siguienteEleccion;
+    private bool _apareciendoOpciones;
+    private float _opacidadOpciones = 1f;
     private readonly bool _transicionReproducida;
-    private readonly int _cantidadDuke;
-    private readonly int _cantidadJarJar;
-    private readonly int _cantidadDupe;
-    private readonly bool _sorakElegido;
-    private readonly bool _erosionBirdElegido;
-    private readonly bool _delusionElegido;
-    private readonly bool _tooManyParriesElegido;
-    private readonly double _duracionNivel;
-    private enum Enemigo { Sorak, JarJar, Duke, ErosionBird, Delusion, TooManyParries, Dupe }
+    private int _cantidadDuke;
+    private int _cantidadJarJar;
+    private int _cantidadDupe;
+    private bool _sorakElegido;
+    private bool _erosionBirdElegido;
+    private bool _delusionElegido;
+    private bool _tooManyParriesElegido;
+    private double _duracionNivel;
+    private enum Enemigo { Sorak, JarJar, Duke, ErosionBird, Delusion, TooManyParries, Dupe, LoMismo }
+    private bool _menosTiempoObligatorio;
     private Enemigo? _enemigoSeleccionado;
     private bool _entrando;
     private int _opcionBajoCursor = -1;
@@ -54,6 +61,9 @@ public sealed class Seleccion : Escena
     private readonly float[] _mezcla = { 1f, 0f, 0f };
     private Estado _estado;
     private readonly AnimatedSprite[] _frases = new AnimatedSprite[3];
+    private AnimatedSprite _indicadorDecision;
+    private MouseState _ratonDecisionAnterior;
+    private bool _seleccionConRaton;
     private readonly List<BotonAnimado> _accionesAnimadas = new();
     private int _varianteEleccion = Random.Shared.Next(2);
     private SpriteFont _fuenteRivales;
@@ -71,10 +81,13 @@ public sealed class Seleccion : Escena
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
         double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null,
-        bool delusionElegido = false, bool tooManyParriesElegido = false, int cantidadDupe = 0)
+        bool delusionElegido = false, bool tooManyParriesElegido = false, int cantidadDupe = 0,
+        int? nivelDestino = null)
     {
         _cambiarEscena = cambiarEscena;
         _numeroNivel = numeroNivel;
+        _nivelDestino = nivelDestino ?? numeroNivel;
+        _ultimoNivelJugado = numeroNivel - 1;
         _mejoras = mejoras ?? new EstadoMejoras();
         _transicionReproducida = transicionReproducida;
         if (cantidadDuke < 0)
@@ -98,30 +111,39 @@ public sealed class Seleccion : Escena
             throw new ArgumentOutOfRangeException(nameof(duracionNivel));
         }
         _duracionNivel = duracionNivel;
+        SortearRivales();
+    }
+
+    private void SortearRivales()
+    {
+        _opcionesRivales.Clear();
+        _menosTiempoObligatorio = _mejoras.Modificadores.MenosTiempoObligatorio;
         var pool = new List<Enemigo> { Enemigo.JarJar, Enemigo.Duke, Enemigo.Dupe };
-        if (!sorakElegido)
+        if (_mejoras.Modificadores.LoMismoDisponible) pool.Add(Enemigo.LoMismo);
+        if (!_sorakElegido)
         {
             pool.Add(Enemigo.Sorak);
         }
-        if (!erosionBirdElegido)
+        if (!_erosionBirdElegido)
         {
             pool.Add(Enemigo.ErosionBird);
         }
-        if (!delusionElegido)
+        if (!_delusionElegido)
         {
             pool.Add(Enemigo.Delusion);
         }
-        if (!tooManyParriesElegido)
+        if (!_tooManyParriesElegido)
         {
             pool.Add(Enemigo.TooManyParries);
         }
         // Dos rivales distintos por pantalla. Zorak sale de la pool una vez elegido.
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; !_menosTiempoObligatorio && i < 2; i++)
         {
             int indice = Random.Shared.Next(pool.Count);
             _opcionesRivales.Add(pool[indice]);
             pool.RemoveAt(indice);
         }
+        Array.Clear(_brilloOpciones);
     }
 
     protected override void LoadContent()
@@ -131,6 +153,15 @@ public sealed class Seleccion : Escena
         _fuenteRivales = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
         _pixelPanel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixelPanel.SetData(new[] { Color.White });
+        Texture2D hojaIndicador = Content.Load<Texture2D>("Sprites/UI/INDICADOR-Sheet");
+        var cuadrosIndicador = new List<TextureRegion>();
+        for (int i = 0; i < 4; i++)
+            cuadrosIndicador.Add(new TextureRegion(hojaIndicador, i * 100, 0, 100, 100));
+        _indicadorDecision = new AnimatedSprite(new Animation(cuadrosIndicador, TimeSpan.FromSeconds(0.12)))
+        {
+            Origin = new Vector2(50, 0)
+        };
+        _ratonDecisionAnterior = Mouse.GetState();
         string[] frases = { "Elejir_Frase1", "Elejir_Frase2", "Duda_Frase" };
         for (int i = 0; i < frases.Length; i++)
         {
@@ -186,14 +217,12 @@ public sealed class Seleccion : Escena
             Escapar);
         AgregarAccionAnimada(panel, "Espera...", "Espera", 390,
             () => CambiarEstado(Estado.Neutral));
-        for (int i = 0; i < _opcionesRivales.Count; i++)
+        for (int i = 0; i < 2; i++)
         {
-            Enemigo rival = _opcionesRivales[i];
-            AgregarBoton(panel, TextoRival(rival), 0, PrimeraOpcionY + i * SeparacionOpciones,
-                () => ElegirEnemigo(rival));
-            var boton = _botones[i + 4].boton;
-            boton.Width = Math.Min(1232f, _fuenteRivales.MeasureString(TextoRival(rival)).X * EscalaOpciones * 1.025f + 24f);
-            boton.Height = 62;
+            int indice = i;
+            AgregarBoton(panel, "", 0, PrimeraOpcionY + i * SeparacionOpciones,
+                () => { if (indice < _opcionesRivales.Count) ElegirEnemigo(_opcionesRivales[indice]); });
+            _botones[i + 4].boton.Height = 62;
             _botones[i + 4].texto.Visible = false;
 
         }
@@ -206,7 +235,20 @@ public sealed class Seleccion : Escena
         _destello.Dock(Dock.Fill);
         _destello.Visible = false;
         panel.Visual.Children.Add(_destello);
+        PrepararBotonesRivales();
         ActualizarOpciones();
+    }
+
+    private void PrepararBotonesRivales()
+    {
+        for (int i = 0; i < _opcionesRivales.Count; i++)
+        {
+            string texto = TextoRival(_opcionesRivales[i]);
+            var boton = _botones[i + 4].boton;
+            boton.Text = texto;
+            boton.Width = Math.Min(1232f, _fuenteRivales.MeasureString(texto).X * EscalaOpciones * 1.025f + 24f);
+        }
+        _botones[6].boton.Y = OpcionTiempoY;
     }
 
     private void Escapar()
@@ -216,7 +258,7 @@ public sealed class Seleccion : Escena
         ActualizarOpciones();
         // La seleccion ofrece el piso siguiente; el ultimo completado es el anterior.
         _cambiarEscena(new Salvacion(_cambiarEscena, _mejoras.Puntaje.Total,
-            nivelLlegado: Math.Max(0, _numeroNivel - 1)));
+            nivelLlegado: Math.Max(0, _ultimoNivelJugado), registrarRecord: !_mejoras.FastTrack));
     }
 
     private void AgregarBoton(Panel panel, string texto, float x, float y, Action accion)
@@ -286,6 +328,7 @@ public sealed class Seleccion : Escena
             _varianteEleccion = Random.Shared.Next(2);
         }
         _estado = estado;
+        _seleccionConRaton = false;
         int indiceFrase = estado == Estado.Escapar ? 2 : _varianteEleccion;
         _frases[indiceFrase].Animation = _frases[indiceFrase].Animation;
         if (estado == Estado.Continuar)
@@ -306,18 +349,19 @@ public sealed class Seleccion : Escena
             {
                 Estado.Neutral => i < 2,
                 Estado.Escapar => i == 2 || i == 3,
-                _ => i >= 4
+                _ => i == 6 || (i >= 4 && i < 4 + _opcionesRivales.Count)
             };
             _botones[i].boton.IsEnabled = _botones[i].boton.Visual.Visible
-                && !_entrando && _destelloRestante <= 0f;
+                && !_entrando && !_apareciendoOpciones && _destelloRestante <= 0f;
         }
-        int foco = _estado == Estado.Neutral ? 0 : _estado == Estado.Escapar ? 3 : 4;
-        _botones[foco].boton.IsFocused = true;
+        int foco = _estado == Estado.Neutral ? 0 : _estado == Estado.Escapar ? 3 : _menosTiempoObligatorio ? 6 : 4;
+        _botones[foco].boton.IsFocused = _botones[foco].boton.IsEnabled;
+        _opcionBajoCursor = -1;
     }
 
     private void ElegirEnemigo(Enemigo enemigo)
     {
-        if (_entrando || _estado != Estado.Continuar || _destelloRestante > 0f
+        if (_entrando || _apareciendoOpciones || _estado != Estado.Continuar || _destelloRestante > 0f || _menosTiempoObligatorio
             || !_opcionesRivales.Contains(enemigo)
             || (enemigo == Enemigo.Sorak && _sorakElegido)
             || (enemigo == Enemigo.ErosionBird && _erosionBirdElegido)
@@ -332,29 +376,70 @@ public sealed class Seleccion : Escena
 
     private void EntrarAPrueba(bool menosTiempo = false)
     {
-        if (_entrando || _estado != Estado.Continuar || _destelloRestante > 0f
-            || (!menosTiempo && !_enemigoSeleccionado.HasValue))
+        if (_entrando || _apareciendoOpciones || _estado != Estado.Continuar || _destelloRestante > 0f
+            || (!menosTiempo && (_menosTiempoObligatorio || !_enemigoSeleccionado.HasValue)))
         {
             return;
         }
         _entrando = true;
         ActualizarOpciones();
-        _mejoras.Puntaje.AgregarBonoDificultad(menosTiempo
-            ? BonoMenosTiempo : BonoRival(_enemigoSeleccionado.Value));
+        _mejoras.Modificadores.RegistrarEleccion(_opcionesRivales.Contains(Enemigo.LoMismo));
+        if (menosTiempo) _mejoras.Puntaje.AgregarBonoDificultad(BonoMenosTiempo);
+        else if (_enemigoSeleccionado != Enemigo.LoMismo)
+            _mejoras.Puntaje.AgregarBonoDificultad(BonoRival(_enemigoSeleccionado.Value));
+        if (_enemigoSeleccionado == Enemigo.Duke) _cantidadDuke++;
+        if (_enemigoSeleccionado == Enemigo.JarJar) _cantidadJarJar++;
+        if (_enemigoSeleccionado == Enemigo.Dupe) _cantidadDupe++;
+        _sorakElegido |= _enemigoSeleccionado == Enemigo.Sorak;
+        _erosionBirdElegido |= _enemigoSeleccionado == Enemigo.ErosionBird;
+        _delusionElegido |= _enemigoSeleccionado == Enemigo.Delusion;
+        _tooManyParriesElegido |= _enemigoSeleccionado == Enemigo.TooManyParries;
+        if (menosTiempo) _duracionNivel = Math.Max(double.Epsilon, _duracionNivel * 0.67);
+        if (_numeroNivel < _nivelDestino)
+        {
+            _siguienteEleccion = () =>
+            {
+                _numeroNivel++;
+                _enemigoSeleccionado = null;
+                SortearRivales();
+                PrepararBotonesRivales();
+                _entrando = false;
+                _apareciendoOpciones = true;
+                ActualizarOpciones();
+            };
+            return;
+        }
         _cambiarEscena(new Partida(_cambiarEscena, _numeroNivel, _transicionReproducida,
-            _cantidadDuke + (_enemigoSeleccionado == Enemigo.Duke ? 1 : 0),
-            _cantidadJarJar + (_enemigoSeleccionado == Enemigo.JarJar ? 1 : 0),
-            _sorakElegido || _enemigoSeleccionado == Enemigo.Sorak,
-            duracionNivel: menosTiempo ? Math.Max(double.Epsilon, _duracionNivel * 0.67) : _duracionNivel,
-            erosionBirdElegido: _erosionBirdElegido || _enemigoSeleccionado == Enemigo.ErosionBird, mejoras: _mejoras,
-            delusionElegido: _delusionElegido || _enemigoSeleccionado == Enemigo.Delusion,
-            tooManyParriesElegido: _tooManyParriesElegido || _enemigoSeleccionado == Enemigo.TooManyParries,
-            cantidadDupe: _cantidadDupe + (_enemigoSeleccionado == Enemigo.Dupe ? 1 : 0)));
+            _cantidadDuke, _cantidadJarJar, _sorakElegido,
+            duracionNivel: _duracionNivel,
+            erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras,
+            delusionElegido: _delusionElegido,
+            tooManyParriesElegido: _tooManyParriesElegido, cantidadDupe: _cantidadDupe));
     }
 
     public override void Update(GameTime gameTime)
     {
         double dt = gameTime.ElapsedGameTime.TotalSeconds;
+        if (_siguienteEleccion != null)
+        {
+            _opacidadOpciones = Math.Max(0f, _opacidadOpciones - (float)dt / 0.3f);
+            if (_opacidadOpciones <= 0f)
+            {
+                var siguiente = _siguienteEleccion;
+                _siguienteEleccion = null;
+                siguiente();
+                return;
+            }
+        }
+        else if (_apareciendoOpciones)
+        {
+            _opacidadOpciones = Math.Min(1f, _opacidadOpciones + (float)dt / 0.3f);
+            if (_opacidadOpciones >= 1f)
+            {
+                _apareciendoOpciones = false;
+                ActualizarOpciones();
+            }
+        }
         if (_destelloRestante > 0f)
         {
             _destelloRestante = Math.Max(0f, _destelloRestante - (float)dt);
@@ -386,6 +471,20 @@ public sealed class Seleccion : Escena
         if (_estado != Estado.Continuar)
         {
             _frases[_estado == Estado.Escapar ? 2 : _varianteEleccion].Update(gameTime);
+            _indicadorDecision.Update(gameTime);
+            var raton = Mouse.GetState();
+            var teclado = Keyboard.GetState();
+            var mando = GamePad.GetState(PlayerIndex.One);
+            if (raton.Position != _ratonDecisionAnterior.Position || raton.LeftButton == ButtonState.Pressed)
+                _seleccionConRaton = true;
+            if (teclado.IsKeyDown(Keys.A) || teclado.IsKeyDown(Keys.D) || teclado.IsKeyDown(Keys.W)
+                || teclado.IsKeyDown(Keys.S) || teclado.IsKeyDown(Keys.Left) || teclado.IsKeyDown(Keys.Right)
+                || teclado.IsKeyDown(Keys.Up) || teclado.IsKeyDown(Keys.Down) || teclado.IsKeyDown(Keys.Tab)
+                || mando.DPad.Left == ButtonState.Pressed || mando.DPad.Right == ButtonState.Pressed
+                || mando.DPad.Up == ButtonState.Pressed || mando.DPad.Down == ButtonState.Pressed
+                || mando.ThumbSticks.Left.LengthSquared() > 0.25f)
+                _seleccionConRaton = false;
+            _ratonDecisionAnterior = raton;
         }
         for (int i = 0; i < _accionesAnimadas.Count; i++)
         {
@@ -446,8 +545,59 @@ public sealed class Seleccion : Escena
             frase.Position = new Vector2(viewport.Width * 0.5f, 110f * escala);
             frase.Scale = new Vector2(1.2f * escala);
             frase.Draw(Core.SpriteBatch);
+            DibujarIndicadorDecision(viewport);
         }
         Core.SpriteBatch.End();
+    }
+
+    private void DibujarIndicadorDecision(Viewport viewport)
+    {
+        if (_entrando || _estado == Estado.Continuar) return;
+        int comienzo = _estado == Estado.Neutral ? 0 : 2;
+        Button seleccionado = null;
+        Point raton = Mouse.GetState().Position;
+        for (int i = comienzo; i < comienzo + 2; i++)
+        {
+            Button boton = _botones[i].boton;
+            if (!boton.IsEnabled || !boton.Visual.Visible) continue;
+            var visual = boton.Visual;
+            var area = new Rectangle((int)visual.AbsoluteLeft, (int)visual.AbsoluteTop,
+                (int)visual.GetAbsoluteWidth(), (int)visual.GetAbsoluteHeight());
+            if (_seleccionConRaton && area.Contains(raton)) { seleccionado = boton; break; }
+            if (boton.IsFocused) seleccionado = boton;
+        }
+        if (seleccionado == null) return;
+        var objetivo = seleccionado.Visual;
+        float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
+        _indicadorDecision.Position = new Vector2(objetivo.AbsoluteLeft + objetivo.GetAbsoluteWidth() / 2f,
+            objetivo.AbsoluteTop + objetivo.GetAbsoluteHeight() - 10 * escala);
+        float pulso = 0.5f - 0.5f * MathF.Cos((float)_relojEstado * MathHelper.TwoPi * 1.5f);
+        _indicadorDecision.Scale = new Vector2(0.8f * escala * (1f + pulso * 0.05f));
+        Vector2 posicion = _indicadorDecision.Position;
+        TextureRegion region = _indicadorDecision.Region;
+        // Un halo rojo pulsante y un contorno oscuro permiten verlo sobre ambos fondos.
+        for (int capa = 0; capa < 2; capa++)
+        {
+            float radio = (2f + capa * 3f + pulso * 3f) * escala;
+            float opacidad = (capa == 0 ? 0.16f : 0.07f) * (0.4f + pulso * 0.6f);
+            for (int i = 0; i < 12; i++)
+            {
+                float angulo = i * MathHelper.TwoPi / 12f;
+                Vector2 desplazamiento = new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * radio;
+                Core.SpriteBatch.Draw(region.Texture, posicion + desplazamiento, region.Bounds,
+                    Color.White * opacidad, 0f, _indicadorDecision.Origin, _indicadorDecision.Scale,
+                    SpriteEffects.None, 0f);
+            }
+        }
+        for (int i = 0; i < 8; i++)
+        {
+            float angulo = i * MathHelper.TwoPi / 8f;
+            Vector2 desplazamiento = new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * 1.5f * escala;
+            Core.SpriteBatch.Draw(region.Texture, posicion + desplazamiento, region.Bounds,
+                Color.Black * 0.8f, 0f, _indicadorDecision.Origin, _indicadorDecision.Scale,
+                SpriteEffects.None, 0f);
+        }
+        _indicadorDecision.Draw(Core.SpriteBatch);
     }
 
     private static decimal BonoRival(Enemigo rival) => rival switch
@@ -464,7 +614,8 @@ public sealed class Seleccion : Escena
 
     private static string FormatoMultiplicador(decimal valor) => valor.ToString("0.##", CultureInfo.InvariantCulture) + "x";
     private static string TextoMenosTiempo => "Menos tiempo. +" + FormatoMultiplicador(BonoMenosTiempo);
-    private string TextoRival(Enemigo rival) => NombreRival(rival) + ". +" + FormatoMultiplicador(BonoRival(rival));
+    private string TextoRival(Enemigo rival) => rival == Enemigo.LoMismo ? "Lo mismo"
+        : NombreRival(rival) + ". +" + FormatoMultiplicador(BonoRival(rival));
 
     private string NombreRival(Enemigo rival) => rival switch
     {
@@ -537,7 +688,8 @@ public sealed class Seleccion : Escena
 
     private int ObtenerOpcionResaltada()
     {
-        if (_opcionBajoCursor >= 0) return _opcionBajoCursor;
+        if (_estado != Estado.Continuar) return -1;
+        if (_opcionBajoCursor >= 0 && _opcionBajoCursor < _brilloOpciones.Length) return _opcionBajoCursor;
         for (int i = 0; i < _brilloOpciones.Length; i++)
             if (_botones[i + 4].boton.IsFocused) return i;
         return -1;
@@ -553,6 +705,7 @@ public sealed class Seleccion : Escena
         Enemigo.ErosionBird => "Invoca lanzas: corre al lado sin portales o parrea el ataque.",
         Enemigo.Delusion => "Te persigue y lanza fuego: parrea sus bolas; el fuego azul no te hiere.",
         Enemigo.TooManyParries => "Abusar del parry lo bloquea unos segundos: espacia los parries.",
+        Enemigo.LoMismo => "Avanza sin agregar enemigos ni aumentar el multiplicador.",
         _ => throw new ArgumentOutOfRangeException(nameof(rival))
     };
 
@@ -598,12 +751,12 @@ public sealed class Seleccion : Escena
                 float angulo = i * MathHelper.TwoPi / 12f;
                 Vector2 halo = new Vector2(MathF.Cos(angulo), MathF.Sin(angulo)) * 3f;
                 Core.SpriteBatch.DrawString(_fuenteRivales, texto, posicion + halo,
-                    new Color(255, 65, 80) * (brillo * 0.13f),
+                    new Color(255, 65, 80) * (brillo * 0.13f * _opacidadOpciones),
                     0f, origen, escala, SpriteEffects.None, 0f);
             }
         }
         Color color = Color.Lerp(new Color(255, 65, 80), new Color(255, 175, 170), brillo);
-        Core.SpriteBatch.DrawString(_fuenteRivales, texto, posicion, color,
+        Core.SpriteBatch.DrawString(_fuenteRivales, texto, posicion, color * _opacidadOpciones,
             0f, origen, escala, SpriteEffects.None, 0f);
     }
     private void DibujarFondo(int estado, Rectangle destino, float opacidad)

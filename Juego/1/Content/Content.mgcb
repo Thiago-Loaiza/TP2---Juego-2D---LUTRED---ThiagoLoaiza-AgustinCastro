@@ -1202,6 +1202,28 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/Misc/Structures/Creeper.png
 
+#begin Sprites/UI/INDICADOR-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/INDICADOR-Sheet.png
+
+#begin Sprites/UI/ARCADE-AYUDA-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/ARCADE-AYUDA-Sheet.png
+
 #begin Sprites/Misc/Orbs/IndicadorPuntos.png
 /importer:TextureImporter
 /processor:TextureProcessor

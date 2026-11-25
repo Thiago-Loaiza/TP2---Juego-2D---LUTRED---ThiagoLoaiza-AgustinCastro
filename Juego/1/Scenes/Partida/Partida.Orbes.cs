@@ -10,16 +10,16 @@ namespace _1.Scenes;
 
 public partial class Partida
 {
-    private const int TotalOrbes = 10;
+    private int TotalOrbes => _mejoras.OrbesNivel(_numeroNivel);
     private readonly List<Orbe> _orbes = new();
     private Animation _animacionOrbe;
     private int _orbesRecogidos;
     private bool PocosOrbes => _orbes.Count > 0 && _orbes.Count * 4 <= TotalOrbes;
 
-    private void GenerarOrbes(Rectangle limites)
+    private void GenerarOrbes()
     {
-        List<Vector2> posicionesOrbes = GeneradorOrbes.Generar(limites,
-            _sinner.Colision.Centro, _obstaculos, TotalOrbes, Random.Shared);
+        List<Vector2> posicionesOrbes = GeneradorOrbes.Generar(_posicionesLibres,
+            _sinner.Colision.Centro, TotalOrbes, Random.Shared);
         _orbes.Clear();
         for (int i = 0; i < posicionesOrbes.Count; i++)
         {

@@ -43,8 +43,8 @@ public partial class Partida
                 cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido,
                 duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras,
                 delusionElegido: _delusionElegido, tooManyParriesElegido: _tooManyParriesElegido,
-                cantidadDupe: _cantidadDupe));
-            if (_numeroNivel % 4 == 0)
+                cantidadDupe: _cantidadDupe, nivelDestino: _mejoras.SiguienteNivel(_numeroNivel)));
+            if (_numeroNivel % 4 == 0 || (_mejoras.FastTrack && _numeroNivel < 16))
             {
                 _cambiarEscena(new Mejoras(AbrirPregunta, _mejoras, _numeroNivel));
             }

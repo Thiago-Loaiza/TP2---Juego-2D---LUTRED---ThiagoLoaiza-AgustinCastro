@@ -39,8 +39,8 @@ public partial class Partida
             Content.Load<SoundEffect>("Music/Misc/Felldoor/Ambience4"),
             volume: 0f, isLooped: true, isMusic: true);
         // La misma busqueda de espacio conectado que utilizan los puntos.
-        var candidatos = GeneradorOrbes.Generar(limites, _sinner.Colision.Centro,
-            _obstaculos, TotalOrbes + 1, Random.Shared);
+        var candidatos = GeneradorOrbes.Generar(_posicionesLibres, _sinner.Colision.Centro,
+            TotalOrbes + 1, Random.Shared);
         _posicionPuerta = candidatos[0];
         foreach (Vector2 candidato in candidatos)
         {
@@ -84,7 +84,7 @@ public partial class Partida
         _limitesOriginales = _limitesExteriores;
         // 48 px por celda: 25% menos que los 64 anteriores; paredes de 128 px (antes 64).
         var generador = new GeneradorMapa(tamanoChunk: _generador.TamanoChunk * 3 / 8,
-            chunksPorLado: _generador.ChunksPorLado, separacionChunks: 2);
+            chunksPorLado: _1.Progression.EstadoExpansion.ChunksIniciales, separacionChunks: 2);
         var mapa = generador.Generar(_centroFellDoor, Content.Load<Texture2D>("Textures/Granito"),
             _catalogoEstructuras, Random.Shared.Next(), tamanoEstructuras: _generador.TamanoChunk);
         _estructuras.Clear();

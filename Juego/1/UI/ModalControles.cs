@@ -19,11 +19,10 @@ public sealed class ModalControles : IDisposable
         "WASD (flechas en menus)", "Espacio", "Shift", "Q",
         "Espacio / Enter", "Escape", "Escape", "Backspace"
     };
-    private static readonly string[] Arcade =
-    {
-        "Palanca", "Boton 1", "Boton 2", "Boton 3",
-        "Boton 1 / Boton superior", "Boton 4", "Boton superior (partida y mejoras)", "Boton 5"
-    };
+    private const int AnchoCuadroArcade = 600;
+    private const float DuracionCuadroArcade = 0.12f;
+    private readonly Texture2D _ayudaArcade;
+    private float _tiempoArcade;
     private readonly Texture2D _pixel;
     private readonly SpriteFont _fuente;
     private KeyboardState _tecladoAnterior;
@@ -38,6 +37,7 @@ public sealed class ModalControles : IDisposable
     public ModalControles()
     {
         _fuente = Core.Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
+        _ayudaArcade = Core.Content.Load<Texture2D>("Sprites/UI/ARCADE-AYUDA-Sheet");
         _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
     }
@@ -47,6 +47,7 @@ public sealed class ModalControles : IDisposable
         Abierto = true;
         _cerrando = false;
         _progreso = 0f;
+        _tiempoArcade = 0f;
         _tecladoAnterior = Keyboard.GetState();
         _ratonAnterior = Mouse.GetState();
     }
@@ -70,6 +71,9 @@ public sealed class ModalControles : IDisposable
     public void Update(GameTime tiempo)
     {
         if (!Abierto) return;
+        if (Game1.Arcade)
+            _tiempoArcade = (_tiempoArcade + (float)tiempo.ElapsedGameTime.TotalSeconds)
+                % (_ayudaArcade.Width / AnchoCuadroArcade * DuracionCuadroArcade);
         float paso = (float)tiempo.ElapsedGameTime.TotalSeconds / DuracionTransicion;
         _progreso = Math.Clamp(_progreso + (_cerrando ? -paso : paso), 0f, 1f);
         if (_cerrando && _progreso == 0f) { Abierto = false; return; }
@@ -97,13 +101,21 @@ public sealed class ModalControles : IDisposable
         batch.Draw(_pixel, new Rectangle(marco.X + borde, marco.Y + borde,
             marco.Width - borde * 2, marco.Height - borde * 2), Color.Black * Suave);
         Texto("CONTROLES", -450, -305, 900, 32, centrado: true);
-        Texto("PC", -450, -259, 900, 26, centrado: true);
-        DibujarControles(Teclado, -219);
-        batch.Draw(_pixel, Area(-465, -24, 930, 2), Color.White * Suave);
-        Texto("ARCADE", -450, -8, 900, 26, centrado: true);
-        DibujarControles(Arcade, 32);
-        Texto("Fila superior: 1, 2, 3  /  Fila inferior: 4, 5, 6",
-            -450, 225, 900, 18, centrado: true);
+        if (Game1.Arcade)
+        {
+            batch.End();
+            batch.Begin(samplerState: SamplerState.PointClamp);
+            int cuadro = (int)(_tiempoArcade / DuracionCuadroArcade) % (_ayudaArcade.Width / AnchoCuadroArcade);
+            batch.Draw(_ayudaArcade, Area(-420, -249, 840, 490),
+                new Rectangle(cuadro * AnchoCuadroArcade, 0, AnchoCuadroArcade, _ayudaArcade.Height), Color.White * Suave);
+            batch.End();
+            batch.Begin(samplerState: SamplerState.LinearClamp);
+        }
+        else
+        {
+            Texto("PC", -450, -259, 900, 32, centrado: true);
+            DibujarControles(Teclado, -208);
+        }
         bool hover = AreaCerrar.Contains(Mouse.GetState().Position);
         batch.Draw(_pixel, AreaCerrar, (hover ? Color.White : new Color(170, 170, 170)) * Suave);
         Rectangle interior = AreaCerrar;
@@ -119,8 +131,8 @@ public sealed class ModalControles : IDisposable
     {
         for (int i = 0; i < Acciones.Length; i++)
         {
-            Texto(Acciones[i], -450, y + i * 23, 395, 21);
-            Texto(teclas[i], -25, y + i * 23, 475, 21);
+            Texto(Acciones[i], -450, y + i * 54, 425, 40);
+            Texto(teclas[i], 5, y + i * 54, 445, 40);
         }
     }
 

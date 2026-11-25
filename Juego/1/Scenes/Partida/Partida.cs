@@ -33,6 +33,8 @@ public partial class Partida : Escena
         }
         _numeroNivel = numeroNivel;
         _mejoras = mejoras ?? new EstadoMejoras();
+        _mejoras.Expansion.AvanzarHasta(numeroNivel);
+        _generador = new _1.Mapa.GeneradorMapa(chunksPorLado: _mejoras.ChunksNivel(numeroNivel));
         _transicionReproducida = transicionReproducida;
         if (cantidadDuke < 0)
         {

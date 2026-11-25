@@ -12,7 +12,7 @@ namespace _1.Scenes;
 
 public partial class Partida
 {
-    private readonly GeneradorMapa _generador = new();
+    private readonly GeneradorMapa _generador;
     private IReadOnlyList<PlantillaEstructura> _catalogoEstructuras;
     private DecoracionesMapa _decoraciones;
     private readonly List<EstructuraSolida> _estructuras = new();
@@ -24,8 +24,11 @@ public partial class Partida
     {
         Texture2D ladrillos = Content.Load<Texture2D>("Textures/LadrillosTextura");
         _catalogoEstructuras = CatalogoEstructuras.Crear(Content);
+        int lado = _generador.ChunksPorLado;
+        int baseLado = _1.Progression.EstadoExpansion.ChunksIniciales;
+        int intentos = 1500 * lado * lado / (baseLado * baseLado);
         MapaGenerado mapa = _generador.Generar(_sinner.Position, ladrillos,
-            _catalogoEstructuras, Random.Shared.Next());
+            _catalogoEstructuras, Random.Shared.Next(), intentos: intentos);
         _limitesExteriores = mapa.Limites;
         _limitesExteriores.Inflate(_generador.TamanoChunk, _generador.TamanoChunk);
         _estructuras.Clear();
@@ -33,10 +36,10 @@ public partial class Partida
         _estructuras.AddRange(mapa.Estructuras);
         _obstaculos.AddRange(mapa.Obstaculos);
         _decoraciones.Generar(mapa);
-        GenerarOrbes(mapa.Limites);
         // JarJar solo se teletransporta a lugares sin paredes y conectados con el inicio.
         _posicionesLibres = GeneradorOrbes.PosicionesAccesibles(mapa.Limites,
             _sinner.Colision.Centro, _obstaculos);
+        GenerarOrbes();
         _delusion?.Ubicar(_sinner.Colision.Centro, _posicionesLibres);
         PrepararFellDoor(mapa.Limites);
         _tintaAntigua.Parameters["TamanoTexel"].SetValue(

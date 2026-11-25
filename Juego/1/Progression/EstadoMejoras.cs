@@ -24,8 +24,21 @@ public sealed class EstadoMejoras
         new("Caliz", "Caliz", "+20% de velocidad. Al correr en una misma direccion,\ngana +10% cada 3 s, hasta +50% adicional.\nEl aumento se reinicia al cambiar de direccion.", 16, 1, true)
     };
     private readonly Dictionary<string, int> _acumulaciones = new();
+    public bool FastTrack { get; }
+    public EstadoMejoras(bool fastTrack = false) => FastTrack = fastTrack;
+    public int SiguienteNivel(int nivel) => FastTrack && nivel < 16
+        ? (nivel == 1 ? 4 : Math.Min(16, nivel + 4)) : nivel + 1;
+    public bool NivelAcelerado(int nivel) => FastTrack && (nivel == 4 || nivel == 8 || nivel == 12);
+    public int OrbesNivel(int nivel) => NivelAcelerado(nivel)
+        ? Math.Min(EstadoExpansion.OrbesMaximos, (int)Math.Ceiling(Expansion.ObjetivoOrbes * 1.25))
+        : Expansion.ObjetivoOrbes;
+    public int ChunksNivel(int nivel) => NivelAcelerado(nivel)
+        ? 2 * (int)Math.Round((Expansion.ChunksPorLado * 1.10 - 1) / 2) + 1
+        : Expansion.ChunksPorLado;
     public EstadoDominio Dominio { get; } = new();
     public EstadoPuntaje Puntaje { get; } = new();
+    public EstadoModificadores Modificadores { get; } = new();
+    public EstadoExpansion Expansion { get; } = new();
     public HashSet<string> DescripcionesVistas { get; } = new();
     public int Cantidad(string id) => _acumulaciones.TryGetValue(id, out int valor) ? valor : 0;
     public float MultiplicadorVelocidad => 1f + Cantidad("PiezAgiles") * 0.3f

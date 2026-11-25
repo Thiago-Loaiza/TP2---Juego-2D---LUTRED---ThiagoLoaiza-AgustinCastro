@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGameGum;
 using _1.Scenes;
 using System.Linq;
+using System.Diagnostics;
 
 namespace _1;
 
@@ -15,7 +16,8 @@ public class Game1 : Core
 {
     // true = ON: habilita H (correr), J (dash), B (volver), N (borrar) y Enter (pausa).
     // false = OFF: conserva solamente los controles habituales del teclado.
-    public static bool Arcade = false;
+    public static bool Arcade = true;
+    public static bool FastTrack { get; set; }
 
     // true = ON: Jugar abre la eleccion. false = OFF: entra directamente a la partida.
     public static bool EmpezarConEleccion = false;
@@ -32,6 +34,10 @@ public class Game1 : Core
     private bool _salirPresionadoAnterior;
     private _1.UI.ConfiguracionPausa _configuracionPausa;
     private readonly _1.UI.MusicaMenu _musicaMenu = new();
+    private SpriteFont _fuenteFps;
+    private readonly Stopwatch _relojFps = new();
+    private int _fotogramasFps;
+    private int _fps;
 
     public Game1() : base("LUTRED", 1280, 720, false)
     {
@@ -41,6 +47,9 @@ public class Game1 : Core
     {
         base.Initialize();
         OpcionesJuego.Cargar();
+        AplicarPantallaCompleta();
+        _fuenteFps = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        _relojFps.Start();
 
         GumService.Default.Initialize(this, DefaultVisualsVersion.V3);
         GumService.Default.ContentLoader.XnaContentManager = Content;
@@ -59,6 +68,18 @@ public class Game1 : Core
 
         CambiarEscena(new Inicio(CambiarEscena));
         AplicarCambioDeEscena();
+    }
+
+    private void AplicarPantallaCompleta()
+    {
+        if (Graphics.IsFullScreen == OpcionesJuego.PantallaCompleta) return;
+        bool completa = OpcionesJuego.PantallaCompleta;
+        var pantalla = GraphicsDevice.Adapter.CurrentDisplayMode;
+        Graphics.HardwareModeSwitch = false;
+        Graphics.PreferredBackBufferWidth = completa ? pantalla.Width : 1280;
+        Graphics.PreferredBackBufferHeight = completa ? pantalla.Height : 720;
+        Graphics.IsFullScreen = completa;
+        Graphics.ApplyChanges();
     }
 
     public void CambiarEscena(Escena escena)
@@ -142,6 +163,12 @@ public class Game1 : Core
             }
         }
         AplicarCambioDeEscena();
+        if (Graphics.IsFullScreen != OpcionesJuego.PantallaCompleta)
+        {
+            AplicarPantallaCompleta();
+            GumService.Default.CanvasWidth = GraphicsDevice.Viewport.Width;
+            GumService.Default.CanvasHeight = GraphicsDevice.Viewport.Height;
+        }
         base.Update(gameTime);
     }
 
@@ -178,6 +205,27 @@ public class Game1 : Core
             SpriteBatch.Draw(_pantallaDupe, new Rectangle(0, 0, viewportAnterior.Width, viewportAnterior.Height), Color.White);
             SpriteBatch.End();
         }
+        DibujarFps();
+    }
+
+    private void DibujarFps()
+    {
+        _fotogramasFps++;
+        double segundos = _relojFps.Elapsed.TotalSeconds;
+        if (segundos >= 0.5)
+        {
+            _fps = (int)System.Math.Round(_fotogramasFps / segundos);
+            _fotogramasFps = 0;
+            _relojFps.Restart();
+        }
+        if (!OpcionesJuego.MostrarFps) return;
+        var vista = GraphicsDevice.Viewport;
+        float escala = System.Math.Min(vista.Width / 1280f, vista.Height / 720f);
+        string texto = $"FPS: {_fps}";
+        Vector2 posicion = new(vista.Width - 24f * escala - _fuenteFps.MeasureString(texto).X * escala, 24f * escala);
+        SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+        _1.UI.MarcadorPuntaje.DibujarTexto(_fuenteFps, texto, posicion, escala);
+        SpriteBatch.End();
     }
 
     protected override void UnloadContent()

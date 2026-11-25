@@ -109,9 +109,9 @@ public static class CatalogoEstructuras
             }, peso: 1, subdivisiones: 2),
 
             // ESTRUCTURAS RARAS DE IMAGEN
-            PlantillaEstructura.DesdeImagen("Doge", 3, 3, content.Load<Texture2D>("Sprites/Misc/Structures/Doge"), peso: 1, probabilidadAparicion: 0.25f),
-            PlantillaEstructura.DesdeImagen("SUS", 3, 3, content.Load<Texture2D>("Sprites/Misc/Structures/Sus"), peso: 1, probabilidadAparicion: 0.25f),
-            PlantillaEstructura.DesdeImagen("Creeper", 2, 2, content.Load<Texture2D>("Sprites/Misc/Structures/Creeper"), peso: 1, probabilidadAparicion: 0.25f)
+            PlantillaEstructura.DesdeImagen("Doge", 3, 3, content.Load<Texture2D>("Sprites/Misc/Structures/Doge"), peso: 1, probabilidadAparicion: 0.0005f),
+            PlantillaEstructura.DesdeImagen("SUS", 3, 3, content.Load<Texture2D>("Sprites/Misc/Structures/Sus"), peso: 1, probabilidadAparicion: 0.0005f),
+            PlantillaEstructura.DesdeImagen("Creeper", 2, 2, content.Load<Texture2D>("Sprites/Misc/Structures/Creeper"), peso: 1, probabilidadAparicion: 0.0005f)
         };
     }
 }
