@@ -50,6 +50,8 @@ public class JarJar
     private float _temporizador;
 
     public Vector2 Position { get; set; }
+    public bool PeligroInminente => _estado == Estado.Atacando ||
+        (_estado == Estado.Cargando && _sprite.Region.Bounds.X / TamanoFrame >= 4);
 
     public void LoadContent(ContentManager content)
     {
@@ -96,12 +98,21 @@ public class JarJar
 
     public ResultadoJarJar Update(GameTime gameTime, Vector2 centroSinner, Vector2 velocidadSinner,
         bool sinnerHaciendoParry, Rectangle areaVisible, IReadOnlyList<Vector2> posicionesLibres,
-        bool sinnerInvulnerable = false)
+        bool sinnerInvulnerable = false, GranJabalina jabalina = null)
     {
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
         bool sinnerEnRango = Vector2.DistanceSquared(centroSinner, Position)
             <= RadioDeteccion * RadioDeteccion;
 
+        if (_estado != Estado.Recargando && jabalina?.Toca(new _1.Colisiones.CirculoColision(Position, 35f), Position, this) == true)
+        {
+            Core.Audio.PlaySoundEffect(_sonidoParry, restart: true);
+            _sprite.IsLooping = true;
+            _sprite.Animation = _recarga;
+            _temporizador = DuracionRecarga;
+            _estado = Estado.Recargando;
+            return ResultadoJarJar.Parreado;
+        }
         switch (_estado)
         {
             case Estado.Esperando:

@@ -4,3 +4,8 @@
 
 # Demo para distribuir
 /LUTRED_DEMO/
+/Juego/LUTRED_DEMO/
+
+# Lanzamientos comprimidos se distribuyen como assets de Releases.
+/Lanzamientos/
+/Juego/Lanzamientos/

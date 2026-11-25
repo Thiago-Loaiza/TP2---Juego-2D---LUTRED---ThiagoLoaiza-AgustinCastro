@@ -146,8 +146,9 @@ public sealed class Delusion
             bola.PosicionAnterior = bola.Posicion;
             bola.Posicion += bola.Direccion * VelocidadBola * dt;
             CirculoColision colision = new(bola.Posicion, RadioBola);
-            if (sinner.PuedeParrear
-                && sinner.ColisionParry.SeCruzan(centroAnterior, colision, bola.PosicionAnterior))
+            sinner.PredecirColision(colision, bola.PosicionAnterior, dt);
+            if (sinner.Jabalina?.Toca(colision, bola.PosicionAnterior) == true || (sinner.PuedeParrear
+                && sinner.ColisionParry.SeCruzan(centroAnterior, colision, bola.PosicionAnterior)))
             {
                 Romper(bola);
                 parreado = true;

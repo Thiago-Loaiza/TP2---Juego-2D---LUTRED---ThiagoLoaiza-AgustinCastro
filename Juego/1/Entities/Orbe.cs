@@ -11,7 +11,8 @@ public sealed class Orbe
 {
     public const float Radio = 24f;
     private readonly AnimatedSprite _sprite;
-    public CirculoColision Colision => new(_sprite.Position, Radio);
+    private readonly float _escala;
+    public CirculoColision Colision => new(_sprite.Position, Radio * _escala);
 
     public static Animation CrearAnimacion(Texture2D hoja)
     {
@@ -23,12 +24,13 @@ public sealed class Orbe
         return new Animation(cuadros, TimeSpan.FromSeconds(0.12));
     }
 
-    public Orbe(Animation animacion, Vector2 posicion)
+    public Orbe(Animation animacion, Vector2 posicion, float escala = 1f)
     {
+        _escala = escala;
         _sprite = new AnimatedSprite(animacion)
         {
             Position = posicion,
-            Origin = new Vector2(25f)
+            Origin = new Vector2(25f), Scale = new Vector2(escala)
         };
     }
 

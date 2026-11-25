@@ -13,7 +13,7 @@ public sealed class ListaOpciones : IDisposable
     private readonly bool _incluirFun;
     private int CantidadOpciones => _incluirFun ? 10 : 9;
     private static readonly (int Fila, string Titulo)[] Categorias =
-    { (0, "JUGABILIDAD"), (1, "AUDIO"), (5, "RANGOS"), (7, "VISUAL"), (9, "\"FUN\"") };
+    { (0, "JUGABILIDAD"), (1, "AUDIO"), (4, "RANGOS"), (7, "VISUAL"), (9, "\"FUN\"") };
     private float AltoContenido => InicioFila(CantidadOpciones - 1) + 120;
     private static float InicioFila(int fila)
     {
@@ -26,7 +26,7 @@ public sealed class ListaOpciones : IDisposable
     private readonly Texture2D _pixel;
     private readonly SpriteFont _fuente;
     private readonly RasterizerState _recorte = new() { ScissorTestEnable = true };
-    private MouseState _ratonAnterior = Mouse.GetState();
+    private MouseState _ratonAnterior = Game1.RatonVirtual();
     private KeyboardState _tecladoAnterior = Keyboard.GetState();
     private float _scroll;
     private int _seleccion = -1;
@@ -35,9 +35,9 @@ public sealed class ListaOpciones : IDisposable
     private Rectangle _area;
     public bool ReanudarSeleccionado => _seleccion == CantidadOpciones;
     public bool SalirSeleccionado => _seleccion == CantidadOpciones + 1;
-    public bool AyudaVisible => _area.Contains(Mouse.GetState().Position) || (_seleccion >= 0 && _seleccion < CantidadOpciones);
-    private float Escala => Math.Min(Core.GraphicsDevice.Viewport.Width / 1280f,
-        Core.GraphicsDevice.Viewport.Height / 720f);
+    public bool AyudaVisible => _area.Contains(Game1.RatonVirtual().Position) || (_seleccion >= 0 && _seleccion < CantidadOpciones);
+    private float Escala => Math.Min(Game1.VistaPartida.Width / 1280f,
+        Game1.VistaPartida.Height / 720f);
     private float MaxScroll => Math.Max(0, AltoContenido - _area.Height / Escala);
 
     public ListaOpciones(bool incluirFun = false)
@@ -84,7 +84,7 @@ public sealed class ListaOpciones : IDisposable
 
     public void SincronizarEntrada()
     {
-        _ratonAnterior = Mouse.GetState();
+        _ratonAnterior = Game1.RatonVirtual();
         _tecladoAnterior = Keyboard.GetState();
         _arrastrando = -1;
     }
@@ -99,7 +99,7 @@ public sealed class ListaOpciones : IDisposable
             control.Boton.Update(tiempo);
             control.Boton.CambiarEstado(control.Leer());
         }
-        var raton = Mouse.GetState();
+        var raton = Game1.RatonVirtual();
         var teclado = Keyboard.GetState();
         bool pulsado(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         bool clic = raton.LeftButton == ButtonState.Pressed && _ratonAnterior.LeftButton == ButtonState.Released;
@@ -319,7 +319,7 @@ public sealed class ListaOpciones : IDisposable
         get
         {
             if (OpcionesJuego.ErrorGuardado != null) return OpcionesJuego.ErrorGuardado;
-            var raton = Mouse.GetState();
+            var raton = Game1.RatonVirtual();
             int fila = _seleccion;
             if (_area.Contains(raton.Position))
             {
@@ -339,7 +339,7 @@ public sealed class ListaOpciones : IDisposable
                 5 => "Ajusta la visibilidad del sistema de rangos entre 25% y 100%.",
                 6 => "Muestra el multiplicador total de la run: multiplicador del rango por el de los modificadores.",
                 7 => "Muestra los fotogramas por segundo en la esquina superior derecha.",
-                8 => "Alterna entre pantalla completa y ventana.",
+                8 => "Alterna entre pantalla completa y ventana. Atajo: F11.",
                 9 when _incluirFun => DescripcionFastTrack,
                 _ => "Rueda para bajar. Flechas para elegir y ajustar."
             };

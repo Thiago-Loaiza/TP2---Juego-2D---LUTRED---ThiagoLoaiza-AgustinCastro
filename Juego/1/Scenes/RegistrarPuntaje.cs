@@ -31,7 +31,7 @@ public sealed class RegistrarPuntaje : Escena
     private AnimatedSprite _confirmar, _negar;
     private SoundEffectInstance _musica;
     private KeyboardState _tecladoAnterior = Keyboard.GetState();
-    private MouseState _ratonAnterior = Mouse.GetState();
+    private MouseState _ratonAnterior = Game1.RatonVirtual();
     private float _tiempo, _tiempoSalida, _tiempoConfirmacion, _repeticion;
     private bool _saliendo, _confirmando;
     private int _seleccion, _filaConfirmar = 2, _opcionConfirmacion = 1;
@@ -39,8 +39,8 @@ public sealed class RegistrarPuntaje : Escena
     private string _error;
     private float Opacidad => _saliendo ? 1f - Math.Clamp(_tiempoSalida / DuracionTransicion, 0f, 1f)
         : Math.Clamp(_tiempo / DuracionTransicion, 0f, 1f);
-    private float Escala => Math.Min(Core.GraphicsDevice.Viewport.Width / 1280f, Core.GraphicsDevice.Viewport.Height / 720f);
-    private Vector2 Centro => new(Core.GraphicsDevice.Viewport.Width * 0.5f, Core.GraphicsDevice.Viewport.Height * 0.5f);
+    private float Escala => Math.Min(Game1.VistaPartida.Width / 1280f, Game1.VistaPartida.Height / 720f);
+    private Vector2 Centro => new(Game1.VistaPartida.Width * 0.5f, Game1.VistaPartida.Height * 0.5f);
 
     public RegistrarPuntaje(Action<Escena> cambiarEscena, int puntaje, DateTimeOffset fecha, int? nivelLlegado = null)
     {
@@ -135,6 +135,8 @@ public sealed class RegistrarPuntaje : Escena
         if (_seleccion == Teclas.Length)
         {
             if (string.IsNullOrWhiteSpace(_nombre.ToString())) { _error = "ELIGE UN NOMBRE PARA ESTA ALMA"; return; }
+            if (FiltroNombreRecord.ContieneMalasPalabras(_nombre.ToString()))
+            { _error = "SIN MALAS PALABRAS"; return; }
             _confirmando = true;
             _opcionConfirmacion = 1;
             _tiempoConfirmacion = 0f;
@@ -149,7 +151,14 @@ public sealed class RegistrarPuntaje : Escena
 
     private void Guardar()
     {
-        if (_historial.Guardar(_puntaje, _nombre.ToString(), _fecha, _nivelLlegado) == ResultadoRegistro.Error)
+        ResultadoRegistro resultado = _historial.Guardar(_puntaje, _nombre.ToString(), _fecha, _nivelLlegado);
+        if (resultado == ResultadoRegistro.NombreOfensivo)
+        {
+            _confirmando = false;
+            _error = "SIN MALAS PALABRAS";
+            return;
+        }
+        if (resultado == ResultadoRegistro.Error)
         {
             _error = "NO SE PUDO GUARDAR. INTENTÁ OTRA VEZ.";
             return;
@@ -173,7 +182,7 @@ public sealed class RegistrarPuntaje : Escena
             return;
         }
         var teclado = Keyboard.GetState();
-        var raton = Mouse.GetState();
+        var raton = Game1.RatonVirtual();
         bool Pulsada(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         if (_tiempo >= DuracionTransicion && Core.Instance.IsActive)
         {
@@ -294,7 +303,7 @@ public sealed class RegistrarPuntaje : Escena
     {
         float entrada = Math.Clamp(_tiempoConfirmacion / 0.25f, 0f, 1f);
         float suave = entrada * entrada * (3f - 2f * entrada);
-        Core.SpriteBatch.Draw(_pixel, Core.GraphicsDevice.Viewport.Bounds, Color.Black * (0.9f * Opacidad * suave));
+        Core.SpriteBatch.Draw(_pixel, Game1.VistaPartida.Bounds, Color.Black * (0.9f * Opacidad * suave));
         Recuadro(Area(-500, -190, 1000, 420), new Color(180, 180, 180), Color.Black, suave);
         Texto(_nombre.ToString().Trim(), Centro + new Vector2(0, -30) * Escala, 1.5f + 1.5f * suave, 900, opacidad: suave);
         Boton(_confirmar, AreaRespuesta(0), _opcionConfirmacion == 0, suave);

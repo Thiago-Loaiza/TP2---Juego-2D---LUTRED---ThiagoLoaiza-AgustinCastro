@@ -85,7 +85,7 @@ public sealed class Misc : Escena
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(Color.Black);
-        var vista = Core.GraphicsDevice.Viewport;
+        var vista = Game1.VistaPartida;
         float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
         var area = new Rectangle((int)(vista.Width * 0.5f - 550 * escala),
             (int)(vista.Height * 0.5f - 285 * escala + _desplazamiento),

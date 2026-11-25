@@ -1,4 +1,5 @@
 using _1.Progression;
+using _1.UI;
 using System;
 using System.Collections.Generic;
 using LutredLibrary;
@@ -17,7 +18,13 @@ public sealed class Mejoras : Escena
     public void SincronizarEntrada()
     {
         _tecladoAnterior = Keyboard.GetState();
-        _ratonAnterior = Mouse.GetState();
+        _ratonAnterior = Game1.RatonVirtual();
+    }
+
+    public void AbandonarRun(Action<Escena> cambiarEscena)
+    {
+        _mejoras.Puntaje.Perder();
+        cambiarEscena(new Inicio(cambiarEscena, animarEntrada: true));
     }
     private static readonly DefinicionMejora[] Catalogo = EstadoMejoras.Catalogo;
     private readonly EstadoMejoras _mejoras;
@@ -45,6 +52,7 @@ public sealed class Mejoras : Escena
     private readonly int _cantidadOpciones;
     private readonly Texture2D[] _iconos = new Texture2D[3];
     private Texture2D _pixel;
+    private MarcoNinePatchAnimado _marcoDescripcion;
     private SpriteFont _fuente;
     private KeyboardState _tecladoAnterior;
     private MouseState _ratonAnterior;
@@ -67,6 +75,7 @@ public sealed class Mejoras : Escena
     protected override void LoadContent()
     {
         _fuente = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        _marcoDescripcion = new MarcoNinePatchAnimado(Content.Load<Texture2D>("Sprites/UI/CuadroMejora-Sheet"), 9);
         // Una frase por visita; sus nueve cuadros se repiten sin cambiar de variante.
         int variante = Random.Shared.Next(1, 4);
         Texture2D hojaFrase = Content.Load<Texture2D>($"Pharses/Upgrades/MejorasFrase{variante}-Sheet");
@@ -106,12 +115,12 @@ public sealed class Mejoras : Escena
         // El sonido pertenece al contenido global para que termine tras el cambio de escena.
         _aceptarMejora = Core.Content.Load<SoundEffect>("SFX/Misc/MejoraAdquirida");
         _tecladoAnterior = Keyboard.GetState();
-        _ratonAnterior = Mouse.GetState();
+        _ratonAnterior = Game1.RatonVirtual();
     }
 
     private Rectangle AreaOpcion(int indice)
     {
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
         int ancho = (int)(280 * escala);
         int alto = (int)(260 * escala);
@@ -121,7 +130,7 @@ public sealed class Mejoras : Escena
 
     private static Rectangle AreaContinuar()
     {
-        var vista = Core.GraphicsDevice.Viewport;
+        var vista = Game1.VistaPartida;
         float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
         return new Rectangle((int)(vista.Width / 2f - 160 * escala),
             (int)(vista.Height / 2f + 20 * escala), (int)(320 * escala), (int)(65 * escala));
@@ -159,7 +168,7 @@ public sealed class Mejoras : Escena
             return;
         }
         var teclado = Keyboard.GetState();
-        var raton = Mouse.GetState();
+        var raton = Game1.RatonVirtual();
         bool Pulsado(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         if (_tiempo >= FinAparicion && Core.Instance.IsActive)
         {
@@ -221,7 +230,7 @@ public sealed class Mejoras : Escena
         {
             return;
         }
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
         // Capa de fondo: humo suavizado por un velo blanco antes de dibujar la interfaz.
@@ -270,7 +279,7 @@ public sealed class Mejoras : Escena
             DibujarTexto("No hay mejoras disponibles", new Vector2(viewport.Width / 2f,
                 viewport.Height / 2f - 45 * escala), escala, alfaInterfaz);
             Rectangle continuar = AreaContinuar();
-            bool hover = continuar.Contains(Mouse.GetState().Position);
+            bool hover = continuar.Contains(Game1.RatonVirtual().Position);
             Core.SpriteBatch.Draw(_pixel, continuar, Color.Black * ((hover ? 0.16f : 0.08f) * alfaInterfaz));
             DibujarTexto("Continuar", new Vector2(continuar.Center.X, continuar.Center.Y), escala, alfaInterfaz);
         }
@@ -290,7 +299,7 @@ public sealed class Mejoras : Escena
         float anchoIzquierda = _fuente.MeasureString(izquierda).X * fuente;
         float anchoDerecha = _fuente.MeasureString(derecha).X * fuente;
         float anchoFlechas = 42f * escala;
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         float x = (viewport.Width - anchoIzquierda - anchoFlechas - anchoDerecha) * 0.5f;
         float y = viewport.Height / 2f + 306 * escala - _fuente.MeasureString(izquierda).Y * fuente * 0.5f;
         Color color = Color.Black * alfa;
@@ -333,7 +342,7 @@ public sealed class Mejoras : Escena
 
     private void DibujarDescripcion(float escala, float alfa)
     {
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         Rectangle opcion = AreaOpcion(_indiceDescripcion);
         int ancho = (int)(430 * escala);
         int x = Math.Clamp(opcion.Center.X - ancho / 2, (int)(18 * escala), viewport.Width - ancho - (int)(18 * escala));
@@ -349,15 +358,7 @@ public sealed class Mejoras : Escena
             altoTexto = _fuente.MeasureString(envuelto).Y * escalaTexto;
         }
         var area = new Rectangle(x, y, ancho, (int)Math.Max(132 * escala, altoTexto + 52 * escala));
-        float brillo = 0.85f + MathF.Sin(_tiempo * 2f) * 0.15f;
-        for (int i = 5; i >= 1; i--)
-        {
-            Rectangle halo = area;
-            halo.Inflate((int)(i * 2 * escala), (int)(i * 2 * escala));
-            DibujarBorde(halo, Math.Max(1, (int)(2 * escala)), Color.Red * (0.045f * brillo * alfa));
-        }
-        Core.SpriteBatch.Draw(_pixel, area, Color.Black * (0.96f * alfa));
-        DibujarBorde(area, Math.Max(1, (int)(2 * escala)), new Color(255, 35, 45) * (brillo * alfa));
+        _marcoDescripcion.Draw(Core.SpriteBatch, area, _tiempo, escala, alfa);
         var mejora = Catalogo[_opciones[_indiceDescripcion]];
         Core.SpriteBatch.DrawString(_fuente, mejora.Nombre,
             new Vector2(area.Center.X, area.Y + 10 * escala), new Color(255, 70, 80) * alfa,
@@ -413,13 +414,6 @@ public sealed class Mejoras : Escena
         }
         return string.Join("\n", lineas);
     }
-    private void DibujarBorde(Rectangle area, int grosor, Color color)
-    {
-        Core.SpriteBatch.Draw(_pixel, new Rectangle(area.X, area.Y, area.Width, grosor), color);
-        Core.SpriteBatch.Draw(_pixel, new Rectangle(area.X, area.Bottom - grosor, area.Width, grosor), color);
-        Core.SpriteBatch.Draw(_pixel, new Rectangle(area.X, area.Y, grosor, area.Height), color);
-        Core.SpriteBatch.Draw(_pixel, new Rectangle(area.Right - grosor, area.Y, grosor, area.Height), color);
-    }
     private float Aparicion(float retraso)
     {
         float progreso = Math.Clamp((_tiempo - DuracionFundido - PausaBlanca - retraso) / DuracionAparicion, 0f, 1f);
@@ -439,7 +433,7 @@ public sealed class Mejoras : Escena
 
     private void DibujarHumo(float escala, float alfa)
     {
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         for (int i = 0; i < _particulasHumo.Length; i++)
         {
             var particula = _particulasHumo[i];

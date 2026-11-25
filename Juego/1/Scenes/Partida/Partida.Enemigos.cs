@@ -58,6 +58,7 @@ public partial class Partida
         if (resultadoZorak == ResultadoZorak.Parreado)
             RegistrarParry(TipoParry.Zorak, _zorak, !_sinner.ParryIniciadoEsteFrame,
                 _zorak.ParryUltimoInstante);
+        if (_zorak?.PeligroInminente == true) _sinner.AvisarPrecipitacion();
         if (_zorak?.BloqueandoJugador == true)
         {
             _sinner.DetenerSonidos();
@@ -70,9 +71,16 @@ public partial class Partida
             Vector2 posicionAnterior = duke.Position;
             bool estabaRebotando = duke.Rebotando;
             duke.Update(gameTime, _sinner.Colision.Centro);
+            _sinner.PredecirColision(duke.Colision, posicionAnterior, (float)gameTime.ElapsedGameTime.TotalSeconds);
 
             // Resolver cada parry antes del contacto, conservando el recorrido de cada Duke.
-            if (_sinner.PuedeParrear
+            bool jabalina = !estabaRebotando && _sinner.Jabalina?.Toca(duke.Colision, posicionAnterior, duke) == true;
+            if (jabalina)
+            {
+                duke.Rebotar(_sinner.Jabalina.Colision.Centro, _sinner.Jabalina.Colision.Radio, posicionAnterior);
+                RegistrarParry(TipoParry.Duck, duke, true);
+            }
+            else if (_sinner.PuedeParrear
                 && _sinner.ColisionParry.SeCruzan(centroAnteriorSinner,
                     duke.Colision, posicionAnterior))
             {
@@ -91,7 +99,7 @@ public partial class Partida
         }
 
         ResultadoErosionBird resultadoBird = _erosionBird?.Update(gameTime, _sinner,
-            centroAnteriorSinner, Core.GraphicsDevice.Viewport, _zorak?.AreaOcupada ?? Rectangle.Empty)
+            centroAnteriorSinner, Game1.VistaPartida, _zorak?.AreaOcupada ?? Rectangle.Empty)
             ?? ResultadoErosionBird.Nada;
         if (_erosionBird != null && _tandaLanzas != _erosionBird.TandaActual)
         {
@@ -114,7 +122,8 @@ public partial class Partida
         {
             ResultadoJarJar resultadoJarJar = _jarJars[i].Update(gameTime,
                 _sinner.Colision.Centro, _sinner.VelocidadActual, _sinner.PuedeParrear,
-                areaVisible, _posicionesLibres, _sinner.DashActivo);
+                areaVisible, _posicionesLibres, _sinner.DashActivo, _sinner.Jabalina);
+            if (_jarJars[i].PeligroInminente) _sinner.AvisarPrecipitacion();
             if (resultadoJarJar == ResultadoJarJar.Parreado)
             {
                 RegistrarParry(TipoParry.JarJar, _jarJars[i], !_sinner.HaciendoParry);
@@ -185,9 +194,16 @@ public partial class Partida
         bool estabaRebotando = _shame.Rebotando;
         _shame.Update(gameTime, _sinner.Colision.Centro);
         if (!_shame.PuedeMatar) { return; }
+        _sinner.PredecirColision(_shame.Colision, posicionAnterior, (float)gameTime.ElapsedGameTime.TotalSeconds);
         // Si la espera termino este frame, ignorar el recorrido de Sinner durante la gracia.
         Vector2 inicioSinner = podiaMatar ? centroAnteriorSinner : _sinner.Colision.Centro;
-        if (_sinner.PuedeParrear && _sinner.ColisionParry.SeCruzan(inicioSinner,
+        bool jabalina = !estabaRebotando && _sinner.Jabalina?.Toca(_shame.Colision, posicionAnterior, _shame) == true;
+        if (jabalina)
+        {
+            _shame.Parrear(_sinner.Jabalina.Colision.Centro, _sinner.Jabalina.Colision.Radio, posicionAnterior);
+            RegistrarParry(TipoParry.Shame, _shame, true);
+        }
+        else if (_sinner.PuedeParrear && _sinner.ColisionParry.SeCruzan(inicioSinner,
             _shame.Colision, posicionAnterior))
         {
             if (!_shameParreadoEsteParry && !estabaRebotando)
@@ -216,7 +232,7 @@ public partial class Partida
         bool activo = _tooManyParries?.Activo == true;
         _sinner.ParryBloqueado = _tooManyParries?.BloqueandoParrys == true;
         _sinner.MultiplicadorVelocidadExterno = (activo ? TooManyParries.MultiplicadorVelocidad : 1f)
-            * (_recompensaFellDoor ? 1.2f : 1f);
+            * (_recompensaFellDoor ? 1.2f : 1f) * MultiplicadorOrbes;
     }
 
     private bool EsParryShameUltimoInstante(Vector2 inicioSinner, Vector2 inicioShame)

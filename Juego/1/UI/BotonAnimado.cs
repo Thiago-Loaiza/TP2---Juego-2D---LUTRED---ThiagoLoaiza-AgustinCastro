@@ -83,7 +83,7 @@ public sealed class BotonAnimado : Button, IDisposable
         BotonesConTexto.Add(this);
         Width = area.Width;
         Height = area.Height;
-        _mouseAnterior = Mouse.GetState();
+        _mouseAnterior = Game1.RatonVirtual();
         Visual.RollOn += Entrar;
         Visual.RollOff += Salir;
         ActualizarVisual();
@@ -102,7 +102,7 @@ public sealed class BotonAnimado : Button, IDisposable
         if (_disposed) return;
         if (!IsVisible) { _cursorEncima = false; return; }
 
-        var mouse = Mouse.GetState();
+        var mouse = Game1.RatonVirtual();
         var teclado = Keyboard.GetState();
         var mando = GamePad.GetState(PlayerIndex.One);
         if (teclado.IsKeyDown(Keys.Tab) || teclado.IsKeyDown(Keys.Up)

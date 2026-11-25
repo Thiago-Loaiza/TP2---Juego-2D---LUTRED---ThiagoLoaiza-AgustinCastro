@@ -84,7 +84,7 @@ public sealed class Salvacion : Escena
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(_tiempo < InicioFrase ? Color.White : Color.Black);
-        var vista = Core.GraphicsDevice.Viewport;
+        var vista = Game1.VistaPartida;
         Vector2 centro = new(vista.Width * 0.5f, vista.Height * 0.5f);
         float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
         var batch = Core.SpriteBatch;

@@ -46,16 +46,16 @@ public sealed class ConfiguracionPausa : IDisposable
         _listaOpciones = new ListaOpciones();
         _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
-        _ratonAnterior = Mouse.GetState();
+        _ratonAnterior = Game1.RatonVirtual();
         _tecladoAnterior = Keyboard.GetState();
     }
 
-    private float Escala => Math.Min(Core.GraphicsDevice.Viewport.Width / 1280f,
-        Core.GraphicsDevice.Viewport.Height / 720f);
+    private float Escala => Math.Min(Game1.VistaPartida.Width / 1280f,
+        Game1.VistaPartida.Height / 720f);
 
     private Rectangle Area(float x, float y, float ancho, float alto)
     {
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         return new Rectangle((int)(viewport.Width * 0.5f + x * Escala),
             (int)(viewport.Height * 0.5f + y * Escala),
             (int)(ancho * Escala), (int)(alto * Escala));
@@ -73,21 +73,21 @@ public sealed class ConfiguracionPausa : IDisposable
     public bool Update(GameTime gameTime, bool escapePulsado)
     {
         KeyboardState teclado = Keyboard.GetState();
-        bool pausaArcade = Game1.Arcade && Pulsada(teclado, Keys.Enter) && !_confirmandoSalida;
+        bool pausaEnter = Game1.Arcade && Pulsada(teclado, Keys.Enter) && !_confirmandoSalida;
         _tiempo += gameTime.ElapsedGameTime.TotalSeconds;
-        _listaOpciones.Update(gameTime, AreaLista, Abierto && !_confirmandoSalida && !pausaArcade,
+        _listaOpciones.Update(gameTime, AreaLista, Abierto && !_confirmandoSalida && !pausaEnter,
             usarTab: true, incluirSalir: _salir != null);
         _confirmar?.Update(gameTime);
         _negar?.Update(gameTime);
         if (_confirmandoSalida) _tiempoConfirmacion += (float)gameTime.ElapsedGameTime.TotalSeconds;
-        MouseState raton = Mouse.GetState();
+        MouseState raton = Game1.RatonVirtual();
         bool clic = raton.LeftButton == ButtonState.Pressed && _ratonAnterior.LeftButton == ButtonState.Released;
         bool bloquear = Abierto;
         if (Core.Instance.IsActive)
         {
             if (!Abierto)
             {
-                if (pausaArcade || (escapePulsado && (!Game1.Arcade || !teclado.IsKeyDown(Keys.B)))
+                if (pausaEnter || (escapePulsado && (!Game1.Arcade || !teclado.IsKeyDown(Keys.B)))
                     || (clic && AreaBoton.Contains(raton.Position)))
                 {
                     Abierto = true;
@@ -101,7 +101,7 @@ public sealed class ConfiguracionPausa : IDisposable
             {
                 ActualizarConfirmacion(teclado, raton, clic, escapePulsado);
             }
-            else if (pausaArcade)
+            else if (pausaEnter)
             {
                 Cerrar();
             }
@@ -176,7 +176,7 @@ public sealed class ConfiguracionPausa : IDisposable
     public void Draw()
     {
         var batch = Core.SpriteBatch;
-        var raton = Mouse.GetState();
+        var raton = Game1.RatonVirtual();
         int cuadro = (int)(_tiempo / 0.12) % 9;
         batch.Begin(samplerState: SamplerState.PointClamp);
         if (!Abierto)
@@ -186,7 +186,7 @@ public sealed class ConfiguracionPausa : IDisposable
             batch.End();
             return;
         }
-        batch.Draw(_pixel, Core.GraphicsDevice.Viewport.Bounds, Color.Black * 0.7f);
+        batch.Draw(_pixel, Game1.VistaPartida.Bounds, Color.Black * 0.7f);
         Rectangle modal = Area(-600, -265, 720, 530);
         batch.Draw(_pixel, modal, Color.Black);
         DibujarMarco(modal, cuadro);
@@ -214,7 +214,7 @@ public sealed class ConfiguracionPausa : IDisposable
         float opacidad = t * t * (3f - 2f * t);
         var batch = Core.SpriteBatch;
         batch.Begin(samplerState: SamplerState.PointClamp);
-        batch.Draw(_pixel, Core.GraphicsDevice.Viewport.Bounds, Color.Black * (0.9f * opacidad));
+        batch.Draw(_pixel, Game1.VistaPartida.Bounds, Color.Black * (0.9f * opacidad));
         Rectangle modal = Area(-500, -190, 1000, 420);
         int borde = Math.Max(1, (int)(2 * Escala));
         batch.Draw(_pixel, modal, new Color(180, 180, 180) * opacidad);

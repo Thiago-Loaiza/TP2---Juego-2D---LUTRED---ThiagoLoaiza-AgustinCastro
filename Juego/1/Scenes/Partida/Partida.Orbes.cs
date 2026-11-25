@@ -14,6 +14,26 @@ public partial class Partida
     private readonly List<Orbe> _orbes = new();
     private Animation _animacionOrbe;
     private int _orbesRecogidos;
+    private readonly List<float> _impulsosOrbes = new();
+    private bool OrbesEfectivos => _mejoras.Cantidad("OrbesEfectivos") > 0;
+    private float MultiplicadorOrbes
+    {
+        get
+        {
+            float extra = 0f;
+            foreach (float restante in _impulsosOrbes) extra += restante * 0.04f;
+            return 1f + Math.Min(0.6f, extra);
+        }
+    }
+
+    private void ActualizarImpulsosOrbes(float segundos)
+    {
+        for (int i = _impulsosOrbes.Count - 1; i >= 0; i--)
+        {
+            _impulsosOrbes[i] -= segundos;
+            if (_impulsosOrbes[i] <= 0f) _impulsosOrbes.RemoveAt(i);
+        }
+    }
     private bool PocosOrbes => _orbes.Count > 0 && _orbes.Count * 4 <= TotalOrbes;
 
     private void GenerarOrbes()
@@ -23,7 +43,7 @@ public partial class Partida
         _orbes.Clear();
         for (int i = 0; i < posicionesOrbes.Count; i++)
         {
-            _orbes.Add(new Orbe(_animacionOrbe, posicionesOrbes[i]));
+            _orbes.Add(new Orbe(_animacionOrbe, posicionesOrbes[i], OrbesEfectivos ? 1.2f : 1f));
         }
     }
 
@@ -37,6 +57,7 @@ public partial class Partida
             {
                 _orbes.RemoveAt(i);
                 _orbesRecogidos++;
+                if (OrbesEfectivos) _impulsosOrbes.Add(5f);
                 Puntaje.Sumar("BEACON", 200);
                 _temblorContadorRestante = DuracionTemblorContador;
             }

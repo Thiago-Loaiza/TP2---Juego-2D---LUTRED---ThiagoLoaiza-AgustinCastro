@@ -61,6 +61,8 @@ public class Zorak
 
     // La derrota se entrega al terminar la animacion para que el ataque sea visible.
     public bool BloqueandoJugador => _estado == Estado.Atacando;
+    public bool PeligroInminente => _estado == Estado.Mirando && _movimientoDetectado
+        && _ventanaParry - _tiempoMirada <= Sinner.HorizontePrecipitacion;
 
     // Cada cuadro del ataque oscurece un paso mas, hasta negro en el ultimo.
     public float OpacidadOscurecimiento => !BloqueandoJugador ? 0f : MathHelper.Clamp(
@@ -117,7 +119,7 @@ public class Zorak
             case Estado.Oculto:
                 if (_hastaAparicion <= 0f)
                 {
-                    if (!ElegirPosicion(Core.GraphicsDevice.Viewport, ocupado)) { break; }
+                    if (!ElegirPosicion(Game1.VistaPartida, ocupado)) { break; }
                     _hastaAparicion = IntervaloAtaque;
                     CambiarEstado(Estado.Avisando, _aviso);
                     Core.Audio.PlaySoundEffect(_tick, restart: true);

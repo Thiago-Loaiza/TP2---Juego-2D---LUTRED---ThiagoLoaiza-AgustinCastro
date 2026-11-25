@@ -447,3 +447,17 @@ C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCa
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Upgrades\Efectos\FellDoor\Felldoor-Sheet.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Upgrades\Efectos\JabalinaV2-Sheet.xnb
 C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Upgrades\Efectos\Precipitacion-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Backgrounds\Sprite-Fondo1-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Decorations\Sprite-cruz-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Decorations\Sprite-flor-1.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Decorations\Sprite-flor-2.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Decorations\Sprite-Pasto-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Decorations\Sprite-roca-1.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Decorations\Sprite-roca-2.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Structures\Creeper.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Structures\Doge.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Misc\Structures\Sus.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\UI\ARCADE-AYUDA-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\UI\CuadroMejora-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\UI\INDICADOR-Sheet.xnb
+C:\Users\juanl\OneDrive\Desktop\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\Juego\1\bin\Release\net9.0\win-x64\Content\Sprites\Upgrades\Efectos\PuntoEfectivo-Sheet.xnb

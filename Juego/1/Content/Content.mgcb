@@ -33,6 +33,15 @@
 /processorParam:Version=3.8.5.1
 /build:Backgrounds/LUTRED_ESCAPE.png
 
+#begin Backgrounds/Sprite-Fondo1-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Backgrounds/Sprite-Fondo1-Sheet.png
+
 #begin Backgrounds/Selection/Atlas/ContinuarV2-0.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1735,6 +1744,15 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/UI/Cuadro-Sheet.png
 
+#begin Sprites/UI/CuadroMejora-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/UI/CuadroMejora-Sheet.png
+
 #begin Sprites/UI/DeatchScreen/DeathScreen-Eye-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1888,6 +1906,15 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
 /build:Sprites/Upgrades/Efectos/JabalinaV2-Sheet.png
+
+#begin Sprites/Upgrades/Efectos/PuntoEfectivo-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Upgrades/Efectos/PuntoEfectivo-Sheet.png
 
 #begin Sprites/Upgrades/Efectos/Paz-Sheet.png
 /importer:TextureImporter

@@ -63,8 +63,8 @@ public partial class Partida : Escena
     {
         base.Initialize();
         _sinner.Position = new Vector2(
-            Core.GraphicsDevice.Viewport.Width,
-            Core.GraphicsDevice.Viewport.Height
+            Game1.AnchoPartida,
+            Game1.AltoPartida
         ) * 0.5f;
         _relojNivel = new RelojNivel(_sinner.Colision.Centro, _duracionNivel);
         _camara.Seguir(_sinner.Position);
@@ -130,6 +130,7 @@ public partial class Partida : Escena
         else
         {
             _sinner.ActualizarEscudo(gameTime);
+            ActualizarImpulsosOrbes(segundos);
             _efectoDupe.Actualizar(segundos);
             _sinner.ControlesInvertidos = _efectoDupe.Activo;
             if (_enFellDoor)

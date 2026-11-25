@@ -161,7 +161,7 @@ public sealed class Seleccion : Escena
         {
             Origin = new Vector2(50, 0)
         };
-        _ratonDecisionAnterior = Mouse.GetState();
+        _ratonDecisionAnterior = Game1.RatonVirtual();
         string[] frases = { "Elejir_Frase1", "Elejir_Frase2", "Duda_Frase" };
         for (int i = 0; i < frases.Length; i++)
         {
@@ -472,7 +472,7 @@ public sealed class Seleccion : Escena
         {
             _frases[_estado == Estado.Escapar ? 2 : _varianteEleccion].Update(gameTime);
             _indicadorDecision.Update(gameTime);
-            var raton = Mouse.GetState();
+            var raton = Game1.RatonVirtual();
             var teclado = Keyboard.GetState();
             var mando = GamePad.GetState(PlayerIndex.One);
             if (raton.Position != _ratonDecisionAnterior.Position || raton.LeftButton == ButtonState.Pressed)
@@ -506,7 +506,7 @@ public sealed class Seleccion : Escena
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(_fondo);
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         var area = new Rectangle(0, 0, viewport.Width, viewport.Height);
         int estado = (int)_estado;
         double fps = estado == 0 ? 8 : 24;
@@ -555,7 +555,7 @@ public sealed class Seleccion : Escena
         if (_entrando || _estado == Estado.Continuar) return;
         int comienzo = _estado == Estado.Neutral ? 0 : 2;
         Button seleccionado = null;
-        Point raton = Mouse.GetState().Position;
+        Point raton = Game1.RatonVirtual().Position;
         for (int i = comienzo; i < comienzo + 2; i++)
         {
             Button boton = _botones[i].boton;
@@ -743,7 +743,7 @@ public sealed class Seleccion : Escena
     {
         Vector2 origen = _fuenteRivales.MeasureString(texto) * 0.5f;
         float escala = EscalaOpciones * (1f + brillo * 0.025f);
-        escala = Math.Min(escala, (Core.GraphicsDevice.Viewport.Width - 48f) / Math.Max(1f, origen.X * 2f));
+        escala = Math.Min(escala, (Game1.VistaPartida.Width - 48f) / Math.Max(1f, origen.X * 2f));
         if (brillo > 0.01f)
         {
             for (int i = 0; i < 12; i++)

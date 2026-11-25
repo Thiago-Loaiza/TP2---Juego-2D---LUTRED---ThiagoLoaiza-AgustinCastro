@@ -41,7 +41,7 @@ public partial class Partida
         if (intensidad == 0f) return;
 
         float latido = (MathF.Sin(_faseLatidoFondo) + 1f) * 0.5f;
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         // Incluso en el pico del latido, el fondo oscuro no supera la mitad inferior.
         int altura = Math.Max(1, (int)(viewport.Height * MathHelper.Lerp(0.44f, 0.5f, latido)));
         Color color = _enFellDoor ? new Color(8, 0, 2) : Color.Black;
@@ -69,7 +69,7 @@ public partial class Partida
 
         Core.GraphicsDevice.Clear(_derrotado ? Color.Black : _enFellDoor ? new Color(48, 3, 8) : Color.White);
         if (!_derrotado) DibujarDegradadoFondo();
-        Matrix transformacion = _camara.ObtenerTransformacion(Core.GraphicsDevice.Viewport);
+        Matrix transformacion = _camara.ObtenerTransformacion(Game1.VistaPartida);
 
         if (!_derrotado)
         {
@@ -112,7 +112,7 @@ public partial class Partida
 
         if (_derrotado)
         {
-            _pantallaDerrota.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+            _pantallaDerrota.Draw(Core.SpriteBatch, Game1.VistaPartida);
         }
         else
         {
@@ -155,11 +155,12 @@ public partial class Partida
             }
         }
 
+        if (!_derrotado) _sinner.Jabalina?.Draw(Core.SpriteBatch);
         Core.SpriteBatch.End();
 
         if (_faseEntrada == FaseEntrada.Aparicion)
         {
-            var viewport = Core.GraphicsDevice.Viewport;
+            var viewport = Game1.VistaPartida;
             Core.SpriteBatch.Begin(blendState: BlendState.AlphaBlend);
             Core.SpriteBatch.Draw(_pixelTransicion,
                 new Rectangle(0, 0, viewport.Width, viewport.Height), Color.White * _opacidadBlanca);
@@ -175,7 +176,12 @@ public partial class Partida
             DibujarContadorOrbes();
             DibujarTemporizador();
             DibujarAyudaPrimerLayer();
-            _marcador.Draw(Core.GraphicsDevice.Viewport);
+            if (_sinner.Jabalina != null)
+            {
+                string estado = _sinner.Jabalina.Recarga > 0 ? $"JABALINA: {Math.Ceiling(_sinner.Jabalina.Recarga)}s" : "JABALINA: LISTA";
+                Core.SpriteBatch.DrawString(_fuenteContador, estado, new Vector2(Game1.VistaPartida.Width - _fuenteContador.MeasureString(estado).X - 20, 70), Color.Gold);
+            }
+            _marcador.Draw(Game1.VistaPartida);
             Core.SpriteBatch.End();
 
             // La capa negra cubre tambien el borde y Zorak queda encima de todo.
@@ -184,8 +190,8 @@ public partial class Partida
             if (!_enFellDoor)
             {
                 _erosionBird?.Draw(Core.SpriteBatch);
-                _tooManyParries?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
-                _zorak?.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+                _tooManyParries?.Draw(Core.SpriteBatch, Game1.VistaPartida);
+                _zorak?.Draw(Core.SpriteBatch, Game1.VistaPartida);
             }
             Core.SpriteBatch.End();
         }

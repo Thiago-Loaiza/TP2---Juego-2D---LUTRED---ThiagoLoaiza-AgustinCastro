@@ -26,7 +26,7 @@ public partial class Partida
         _decoraciones = new DecoracionesMapa(Content);
         _indicadorOrbes = Content.Load<Texture2D>("Sprites/Misc/Orbs/IndicadorPuntos");
         _animacionOrbe = Orbe.CrearAnimacion(
-            Content.Load<Texture2D>("Sprites/Misc/Orbs/Punto-Sheet"));
+            Content.Load<Texture2D>(OrbesEfectivos ? "Sprites/Upgrades/Efectos/PuntoEfectivo-Sheet" : "Sprites/Misc/Orbs/Punto-Sheet"));
         _tintaAntigua = Content.Load<Effect>("Effects/TintaAntigua");
         _coloresInvertidos = Content.Load<Effect>("Effects/ColoresInvertidos");
         // aumentar el umbral produce mas negro, aumentar el contraste reduce los grises.
@@ -53,6 +53,7 @@ public partial class Partida
 
         _sinner = new Sinner { Mejoras = _mejoras };
         _sinner.LoadContent(Content);
+        if (_sinner.Jabalina != null) _sinner.Jabalina.ParryRealizado += RegistrarEstiloJabalina;
         for (int i = 0; i < _cantidadDupe; i++)
         {
             var dupe = new Dupe(i);
@@ -104,6 +105,7 @@ public partial class Partida
 
     protected override void UnloadContent()
     {
+        if (_sinner?.Jabalina != null) _sinner.Jabalina.ParryRealizado -= RegistrarEstiloJabalina;
         _marcador?.Dispose();
         _sinner?.UnloadContent();
         foreach (Dupe dupe in _dupes) dupe.UnloadContent();
@@ -136,4 +138,6 @@ public partial class Partida
         _degradadoFondo?.Dispose();
         base.UnloadContent();
     }
+
+    private void RegistrarEstiloJabalina() => Puntaje.Sumar("GRAN JABALINA", 200);
 }

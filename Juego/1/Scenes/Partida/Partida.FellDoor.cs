@@ -78,7 +78,7 @@ public partial class Partida
     {
         _puertaConsumida = true;
         _regresoFellDoor = _sinner.Position;
-        _centroFellDoor = new Vector2(Core.GraphicsDevice.Viewport.Width, Core.GraphicsDevice.Viewport.Height) * 0.5f;
+        _centroFellDoor = new Vector2(Game1.AnchoPartida, Game1.AltoPartida) * 0.5f;
         _estructurasOriginales.AddRange(_estructuras);
         _obstaculosOriginales.AddRange(_obstaculos);
         _limitesOriginales = _limitesExteriores;
@@ -100,6 +100,7 @@ public partial class Partida
                 _spawnsFellDoor.Add(posicion);
         }
         DetenerSonidosEnemigos();
+        _sinner.Jabalina?.Cancelar();
         _enFellDoor = true;
         Core.Audio.PlaySoundEffect(_musicaFellDoor);
         _supervivenciaFellDoor = 10f;
@@ -161,7 +162,7 @@ public partial class Partida
         float segundos = (float)tiempo.ElapsedGameTime.TotalSeconds;
         Vector2 anterior = _sinner.Colision.Centro;
         _sinner.ParryBloqueado = false;
-        _sinner.MultiplicadorVelocidadExterno = _recompensaFellDoor ? 1.2f : 1f;
+        _sinner.MultiplicadorVelocidadExterno = (_recompensaFellDoor ? 1.2f : 1f) * MultiplicadorOrbes;
         _sinner.Update(tiempo, _obstaculos);
         _camara.Seguir(_sinner.Position);
         ActualizarShame(tiempo, anterior);
@@ -181,7 +182,8 @@ public partial class Partida
                 && _caminoFellDoor.TryGetValue(celda, out Point paso) && paso != celda)
                 objetivo = _celdasFellDoor[paso];
             demonio.Update(segundos, objetivo, Sinner.VelocidadCaminata, _obstaculos);
-            if (_sinner.PuedeParrear && _sinner.ColisionParry.SeCruzan(anterior, demonio.Colision, antes))
+            _sinner.PredecirColision(demonio.Colision, antes, segundos);
+            if (_sinner.Jabalina?.Toca(demonio.Colision, antes) == true || (_sinner.PuedeParrear && _sinner.ColisionParry.SeCruzan(anterior, demonio.Colision, antes)))
             {
                 RegistrarParry(TipoParry.Demonio, demonio, !_sinner.HaciendoParry);
                 _demoniosFellDoor.RemoveAt(i);
@@ -209,6 +211,7 @@ public partial class Partida
         _sinner.Teletransportar(_regresoFellDoor);
         _relojNivel.ReiniciarHistorial(_sinner.Colision.Centro);
         _camara.Seguir(_sinner.Position);
+        _sinner.Jabalina?.Cancelar();
         _enFellDoor = false;
         _recompensaFellDoor = true;
         _sinner.AuraFellDoorActiva = true;

@@ -108,7 +108,7 @@ public sealed class Creditos : Escena
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(Color.Black);
-        var vista = Core.GraphicsDevice.Viewport;
+        var vista = Game1.VistaPartida;
         float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
         Rectangle Area(float x, float y, float ancho, float alto) => new(
             (int)(vista.Width * 0.5f + x * escala), (int)(vista.Height * 0.5f + (y + OffsetY) * escala),
@@ -132,7 +132,7 @@ public sealed class Creditos : Escena
     {
         int ancho = hoja.Width / CuadrosNombres;
         float factor = Math.Min(430f / ancho, 100f / hoja.Height) * escala;
-        var vista = Core.GraphicsDevice.Viewport;
+        var vista = Game1.VistaPartida;
         Core.SpriteBatch.Draw(hoja, new Vector2(vista.Width * 0.5f + x * escala,
             vista.Height * 0.5f + (y + OffsetY) * escala), new Rectangle(cuadro * ancho, 0, ancho, hoja.Height),
             Color.White * _opacidad, 0, new Vector2(ancho, hoja.Height) * 0.5f, factor, SpriteEffects.None, 0);
@@ -142,7 +142,7 @@ public sealed class Creditos : Escena
     {
         Vector2 medida = _fuente.MeasureString(texto);
         float factor = Math.Min(tamano, anchoMaximo / Math.Max(1, medida.X)) * escala;
-        var vista = Core.GraphicsDevice.Viewport;
+        var vista = Game1.VistaPartida;
         Core.SpriteBatch.DrawString(_fuente, texto,
             new Vector2(vista.Width * 0.5f, vista.Height * 0.5f + (y + OffsetY) * escala),
             Color.White * _opacidad, 0, medida * 0.5f, factor, SpriteEffects.None, 0);

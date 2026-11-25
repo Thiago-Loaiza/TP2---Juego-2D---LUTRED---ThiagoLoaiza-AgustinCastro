@@ -8,7 +8,7 @@ namespace _1.Progression;
 
 public sealed record RegistroRecord(DateTimeOffset Fecha, int Puntaje, string Nombre = "ANÓNIMO",
     int? NivelLlegado = null);
-public enum ResultadoRegistro { Guardado, Error }
+public enum ResultadoRegistro { Guardado, Error, NombreOfensivo }
 
 public sealed class HistorialRecords
 {
@@ -71,6 +71,11 @@ public sealed class HistorialRecords
 
     public ResultadoRegistro Guardar(int puntaje, string nombre, DateTimeOffset? fecha = null, int? nivelLlegado = null)
     {
+        if (FiltroNombreRecord.ContieneMalasPalabras(NormalizarNombre(nombre)))
+        {
+            Error = "SIN MALAS PALABRAS";
+            return ResultadoRegistro.NombreOfensivo;
+        }
         if (puntaje < 0 || puntaje > EstadoPuntaje.PuntajeMaximo)
         {
             Error = "El puntaje no es valido.";

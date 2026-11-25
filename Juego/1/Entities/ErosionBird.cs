@@ -188,6 +188,7 @@ public sealed class ErosionBird
         bool parreado = false;
         bool golpe = false;
         bool cerrar = false;
+        PredecirPeligro(sinner);
         for (int i = _lanzas.Count - 1; i >= 0; i--)
         {
             Lanza lanza = _lanzas[i];
@@ -198,13 +199,16 @@ public sealed class ErosionBird
             if (lanza.Estado == EstadoLanza.Ataque)
             {
                 int actual = Frame(lanza);
-                if (sinner.PuedeParrear && Toca(lanza, anterior, actual, sinner.ColisionParry, centroAnterior))
+                bool parryJabalina = sinner.Jabalina?.Activa == true && Toca(lanza, anterior, actual, sinner.Jabalina.Colision, sinner.Jabalina.Anterior);
+                if (parryJabalina ||
+                    (sinner.PuedeParrear && Toca(lanza, anterior, actual, sinner.ColisionParry, centroAnterior)))
                 {
                     lanza.Estado = EstadoLanza.Rota;
                     lanza.Tiempo = 0f;
                     parreado = true;
                     ParrysEsteFrame++;
                     _lanzasParreadasTanda++;
+                    if (parryJabalina) sinner.Jabalina.RegistrarParry();
                     if (_lanzasParreadasTanda == _totalLanzasTanda)
                         TandaParreadaEsteFrame = true;
                 }
@@ -260,6 +264,38 @@ public sealed class ErosionBird
         }
         _lanzasParreadasTanda = 0;
         _totalLanzasTanda = _lanzas.Count;
+    }
+
+    private void PredecirPeligro(Sinner sinner)
+    {
+        if (!sinner.PuedeAvisarPrecipitacion) return;
+        foreach (Lanza lanza in _lanzas)
+        {
+            float espera = lanza.Estado == EstadoLanza.Portal && _estado == Estado.Cargando
+                ? Math.Max(0f, DuracionPreparacion - _tiempo) : 0f;
+            if (lanza.Estado != EstadoLanza.Ataque && !(lanza.Estado == EstadoLanza.Portal && _estado == Estado.Cargando)) continue;
+            for (float t = espera; t <= Sinner.HorizontePrecipitacion; t += 0.03f)
+            {
+                float tiempoAtaque = lanza.Estado == EstadoLanza.Ataque ? lanza.Tiempo + t : t - espera;
+                if (tiempoAtaque >= DuracionAtaque) break;
+                int frame = 4 + Math.Min(7, (int)(tiempoAtaque / (DuracionAtaque / 8f)));
+                if (_inicioLanza[frame] > _finLanza[frame]) continue;
+                float seguimiento = lanza.Estado == EstadoLanza.Portal ? espera + SeguimientoTrasAtaque : _seguimientoRestante;
+                Vector2 centro = _centroPortales + sinner.VelocidadActual * Math.Min(t, seguimiento);
+                float avance = MathHelper.Clamp((tiempoAtaque - InicioEstocada) / (DuracionAtaque - InicioEstocada), 0f, 1f);
+                Vector2 posicion = centro - lanza.Direccion * (RadioPortales - RecorridoEstocada * avance * avance);
+                Vector2 lateral = new Vector2(-lanza.Direccion.Y, lanza.Direccion.X) * (4f * EscalaLanza);
+                Vector2 inicio = posicion + lateral + lanza.Direccion * ((_inicioLanza[frame] - 50f) * EscalaLanza);
+                Vector2 fin = posicion + lateral + lanza.Direccion * ((_finLanza[frame] - 50f) * EscalaLanza);
+                Vector2 futuro = sinner.Colision.Centro + sinner.VelocidadActual * t;
+                var colision = new CirculoColision(futuro, sinner.Colision.Radio);
+                if (new CirculoColision(fin, 7f).SeCruzan(inicio, colision, futuro))
+                {
+                    sinner.AvisarPrecipitacion();
+                    return;
+                }
+            }
+        }
     }
 
     private void MoverLanza(Lanza lanza)

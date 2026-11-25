@@ -48,7 +48,7 @@ public partial class Partida
 
     private Rectangle AreaVisible()
     {
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         return new Rectangle(
             (int)MathF.Floor(_camara.Posicion.X - viewport.Width * 0.5f),
             (int)MathF.Floor(_camara.Posicion.Y - viewport.Height * 0.5f),

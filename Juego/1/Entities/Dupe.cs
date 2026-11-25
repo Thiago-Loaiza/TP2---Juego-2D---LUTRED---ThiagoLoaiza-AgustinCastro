@@ -100,7 +100,8 @@ public sealed class Dupe
         }
         else Core.Audio.StopSoundEffect(_movimiento);
         if (!_estado.PuedeTocar || sinner.DashActivo) return ResultadoDupe.Nada;
-        if (sinner.PuedeParrear && sinner.ColisionParry.SeCruzan(inicioSinner, Colision, anterior + new Vector2(0, 15)))
+        if (sinner.Jabalina?.Toca(Colision, anterior + new Vector2(0, 15), this) == true ||
+            (sinner.PuedeParrear && sinner.ColisionParry.SeCruzan(inicioSinner, Colision, anterior + new Vector2(0, 15))))
         {
             _estado.Parrear();
             Core.Audio.PlaySoundEffect(_parry, restart: true);

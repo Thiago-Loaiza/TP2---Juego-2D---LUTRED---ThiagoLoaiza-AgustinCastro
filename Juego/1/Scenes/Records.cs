@@ -25,7 +25,7 @@ public sealed class Records : Escena
     private Texture2D _pixel;
     private BotonAnimado _volver;
     private KeyboardState _tecladoAnterior = Keyboard.GetState();
-    private int _ruedaAnterior = Mouse.GetState().ScrollWheelValue;
+    private int _ruedaAnterior = Game1.RatonVirtual().ScrollWheelValue;
     private int _primeraFila;
     private bool _saliendo;
     private float _tiempoTransicion;
@@ -92,7 +92,7 @@ public sealed class Records : Escena
             if (!_volver.IsEnabled) { _volver.IsEnabled = true; _volver.IsFocused = true; }
         }
         var teclado = Keyboard.GetState();
-        var raton = Mouse.GetState();
+        var raton = Game1.RatonVirtual();
         bool Pulsada(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         if (!_saliendo && _volver.IsEnabled && Core.Instance.IsActive)
         {
@@ -113,7 +113,7 @@ public sealed class Records : Escena
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(Color.Black);
-        var vista = Core.GraphicsDevice.Viewport;
+        var vista = Game1.VistaPartida;
         float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
         Vector2 centro = new(vista.Width * 0.5f, vista.Height * 0.5f + _desplazamiento);
         Rectangle Area(float x, float y, float ancho, float alto) => new(

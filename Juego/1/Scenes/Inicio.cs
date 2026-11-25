@@ -31,6 +31,9 @@ public class Inicio : Escena
     private Panel _panelInicio;
     private Panel _panelOpciones;
     private SpriteFont _fuenteOpciones;
+    private MarcoNinePatchAnimado _marcoAvisoArcade;
+    private AnimatedSprite _iconoAvisoArcade;
+    private float _tiempoAvisoArcade;
     private const float DuracionFase = 0.28f;
     private const float DesplazamientoTransicion = 90f;
     private bool _enTransicion;
@@ -45,6 +48,7 @@ public class Inicio : Escena
     public bool OpcionesAbiertas => _panelOpciones?.IsVisible == true;
     public bool EnTransicion => _enTransicion;
     private AnimatedSprite _titulo;
+    private AnimatedSprite _fondoInicio;
     private Texture2D _hojaBoton;
     private Texture2D _hojaCreditos;
     private Texture2D _hojaMusica;
@@ -67,7 +71,22 @@ public class Inicio : Escena
 
     protected override void LoadContent()
     {
+        Texture2D hojaFondo = Content.Load<Texture2D>("Backgrounds/Sprite-Fondo1-Sheet");
+        var cuadrosFondo = new List<TextureRegion>();
+        for (int x = 0; x < hojaFondo.Width; x += 1280)
+            cuadrosFondo.Add(new TextureRegion(hojaFondo, x, 0, 1280, 720));
+        _fondoInicio = new AnimatedSprite(new Animation(cuadrosFondo, TimeSpan.FromSeconds(0.12)));
         _fuenteOpciones = Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
+        if (Game1.Arcade)
+        {
+            _marcoAvisoArcade = new MarcoNinePatchAnimado(Content.Load<Texture2D>("Sprites/UI/Cuadro-Sheet"), 9);
+            Texture2D hoja = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/ButtonQUE-Sheet");
+            var cuadros = new List<TextureRegion>();
+            for (int x = 0; x < hoja.Width; x += 50)
+                cuadros.Add(new TextureRegion(hoja, x, 0, 50, 50));
+            _iconoAvisoArcade = new AnimatedSprite(new Animation(cuadros, TimeSpan.FromSeconds(0.12)))
+            { Origin = new Vector2(25f), Scale = new Vector2(0.8f) };
+        }
         _hojaBoton = Content.Load<Texture2D>("Sprites/UI/Buttons/Button-Sheet");
         _hojaCreditos = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Credits-Sheet");
         _hojaMusica = Content.Load<Texture2D>("Sprites/UI/Buttons/Buttons_50x50/Button-Music-Sheet");
@@ -252,6 +271,10 @@ public class Inicio : Escena
 
     public override void Update(GameTime gameTime)
     {
+        _fondoInicio.Update(gameTime);
+        if (OpcionesAbiertas || ControlesAbiertos) _tiempoAvisoArcade = 0f;
+        else _tiempoAvisoArcade += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _iconoAvisoArcade?.Update(gameTime);
         _titulo.Update(gameTime);
         if (ControlesAbiertos)
         {
@@ -313,8 +336,8 @@ public class Inicio : Escena
         (_panelOpciones.IsVisible ? _panelOpciones : _panelInicio).Y = _desplazamientoInterfaz;
         foreach (BotonAnimado boton in _botones) boton.Opacidad = _opacidadInterfaz;
         foreach (BotonAnimado boton in _botones) boton.Update(gameTime);
-        bool ratonEnLista = AreaListaOpciones.Contains(Mouse.GetState().Position);
-        if (OpcionesAbiertas && ratonEnLista && Mouse.GetState().LeftButton == ButtonState.Pressed)
+        bool ratonEnLista = AreaListaOpciones.Contains(Game1.RatonVirtual().Position);
+        if (OpcionesAbiertas && ratonEnLista && Game1.RatonVirtual().LeftButton == ButtonState.Pressed)
             _volver.IsFocused = false;
         _listaOpciones.Update(gameTime, AreaListaOpciones,
             OpcionesAbiertas && !_enTransicion, usarTab: true);
@@ -335,7 +358,7 @@ public class Inicio : Escena
     {
         get
         {
-            var vista = Core.GraphicsDevice.Viewport;
+            var vista = Game1.VistaPartida;
             float escala = Math.Min(vista.Width / 1280f, vista.Height / 720f);
             return new Rectangle((int)(vista.Width * 0.5f - 580 * escala),
                 (int)(vista.Height * 0.5f - 175 * escala + _desplazamientoInterfaz),
@@ -346,13 +369,18 @@ public class Inicio : Escena
     public override void Draw(GameTime gameTime)
     {
         Core.GraphicsDevice.Clear(Color.Black);
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
         _titulo.Position = new Vector2(viewport.Width * 0.5f, viewport.Height * 0.5f - 210f * escala + _desplazamientoInterfaz);
         _titulo.Scale = new Vector2(0.85f * escala);
         _titulo.Color = Color.White * _opacidadInterfaz;
         // La fuente se genera grande y se reduce con filtrado lineal para suavizar sus bordes.
         Core.SpriteBatch.Begin(samplerState: OpcionesAbiertas ? SamplerState.LinearClamp : SamplerState.PointClamp);
+        if (!OpcionesAbiertas)
+        {
+            _fondoInicio.Color = Color.White * _opacidadInterfaz;
+            _fondoInicio.Draw(Core.SpriteBatch);
+        }
         if (OpcionesAbiertas)
         {
             DibujarTextoOpciones("OPCIONES", -240f, 0.625f, 2f, escala);
@@ -362,6 +390,8 @@ public class Inicio : Escena
             _titulo.Draw(Core.SpriteBatch);
         }
         Core.SpriteBatch.End();
+        if (Game1.Arcade && !OpcionesAbiertas && !ControlesAbiertos && _marcoAvisoArcade != null)
+            DibujarAvisoArcade();
         if (OpcionesAbiertas)
         {
             _listaOpciones.Draw(AreaListaOpciones, _opacidadInterfaz);
@@ -371,9 +401,47 @@ public class Inicio : Escena
         }
     }
 
+    private void DibujarAvisoArcade()
+    {
+        const string mensaje = "Si eres nuevo checa el";
+        const int ancho = 340, alto = 82, margen = 8, margenInferior = 100;
+        const float entrada = 0.65f, demora = 0.25f, duracion = 25f;
+        float salida = demora + entrada + duracion;
+        if (_tiempoAvisoArcade >= salida + entrada) return;
+        float progreso = MathHelper.SmoothStep(0f, 1f, Math.Clamp((_tiempoAvisoArcade - demora) / entrada, 0f, 1f))
+            * (1f - MathHelper.SmoothStep(0f, 1f, Math.Clamp((_tiempoAvisoArcade - salida) / entrada, 0f, 1f)));
+        var area = new Rectangle(Game1.VistaPartida.Width - (int)((ancho + margen) * progreso),
+            Game1.VistaPartida.Height - alto - margenInferior, ancho, alto);
+        var batch = Core.SpriteBatch;
+        batch.Begin(samplerState: SamplerState.PointClamp);
+        float pulso = (1f + MathF.Sin(_tiempoAvisoArcade * MathHelper.TwoPi / 2.2f)) * 0.5f;
+        for (int i = 3; i >= 1; i--)
+        {
+            Rectangle halo = area;
+            halo.Inflate(i * 2, i * 2);
+            _marcoAvisoArcade.Draw(batch, halo, _tiempoAvisoArcade, 0.65f,
+                _opacidadInterfaz * pulso * 0.14f / i);
+        }
+        _marcoAvisoArcade.Draw(batch, area, _tiempoAvisoArcade, 0.65f, _opacidadInterfaz);
+        batch.End();
+        Vector2 medida = _fuenteOpciones.MeasureString(mensaje);
+        const float espacioIcono = 48f;
+        float escala = Math.Min(0.32f, (area.Width - 36f - espacioIcono) / medida.X);
+        float inicioX = area.Center.X - (medida.X * escala + espacioIcono) * 0.5f;
+        batch.Begin(samplerState: SamplerState.LinearClamp);
+        batch.DrawString(_fuenteOpciones, mensaje, new Vector2(inicioX, area.Center.Y), Color.White * _opacidadInterfaz,
+            0f, new Vector2(0f, medida.Y * 0.5f), escala, SpriteEffects.None, 0f);
+        batch.End();
+        batch.Begin(samplerState: SamplerState.PointClamp);
+        _iconoAvisoArcade.Position = new Vector2(inicioX + medida.X * escala + espacioIcono * 0.5f, area.Center.Y);
+        _iconoAvisoArcade.Color = Color.White * _opacidadInterfaz;
+        _iconoAvisoArcade.Draw(batch);
+        batch.End();
+    }
+
     private void DibujarTextoOpciones(string texto, float y, float escalaFuente, float borde, float escalaPantalla)
     {
-        var viewport = Core.GraphicsDevice.Viewport;
+        var viewport = Game1.VistaPartida;
         Vector2 posicion = new(viewport.Width * 0.5f,
             viewport.Height * 0.5f + y * escalaPantalla + _desplazamientoInterfaz);
         Vector2 origen = _fuenteOpciones.MeasureString(texto) * 0.5f;

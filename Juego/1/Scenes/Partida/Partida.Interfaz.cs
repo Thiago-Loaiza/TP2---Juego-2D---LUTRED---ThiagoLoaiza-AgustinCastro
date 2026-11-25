@@ -50,7 +50,7 @@ public partial class Partida
     {
         if (_numeroNivel != 1 || _enFellDoor || _faseEntrada != FaseEntrada.Jugando) return;
 
-        Viewport viewport = Core.GraphicsDevice.Viewport;
+        Viewport viewport = Game1.VistaPartida;
         string controles = Game1.Arcade
             ? "PALANCA - MOVERSE | Boton 1 PARRY | Boton 2 CORRER"
             : "AWSD - MOVERSE | Space PARRY | Shift CORRER";
@@ -76,7 +76,7 @@ public partial class Partida
     private void DibujarBorde()
     {
         Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend);
-        _bordePantalla.Draw(Core.SpriteBatch, Core.GraphicsDevice.Viewport);
+        _bordePantalla.Draw(Core.SpriteBatch, Game1.VistaPartida);
         Core.SpriteBatch.End();
     }
 
@@ -86,7 +86,7 @@ public partial class Partida
             ? _shame.TiempoHastaContacto(_sinner.Colision) : _relojNivel.Restante;
         string texto = RelojNivel.Formatear(tiempo);
         Vector2 posicion = new(
-            MathF.Round((Core.GraphicsDevice.Viewport.Width - _fuenteContador.MeasureString(texto).X) * 0.5f),
+            MathF.Round((Game1.VistaPartida.Width - _fuenteContador.MeasureString(texto).X) * 0.5f),
             24f);
         Color color = _shame.Activo || _relojNivel.Rojo ? Color.Red : Color.White;
         for (int y = -1; y <= 1; y++)
@@ -108,7 +108,7 @@ public partial class Partida
         string texto = _enFellDoor ? $"{(int)Math.Ceiling(_supervivenciaFellDoor)}" : $"{_orbesRecogidos}/{TotalOrbes}";
         Vector2 tamano = _fuenteContador.MeasureString(texto);
         Vector2 origen = tamano * 0.5f;
-        Vector2 posicion = new(Core.GraphicsDevice.Viewport.Width * 0.5f, 24f + _fuenteContador.LineSpacing + 8f + origen.Y);
+        Vector2 posicion = new(Game1.VistaPartida.Width * 0.5f, 24f + _fuenteContador.LineSpacing + 8f + origen.Y);
 
         float intensidad = _temblorContadorRestante / DuracionTemblorContador;
         float amplitud = (PocosOrbes ? 3f : 2f) * intensidad * intensidad;
@@ -176,7 +176,7 @@ public partial class Partida
             }
         }
 
-        Viewport viewport = Core.GraphicsDevice.Viewport;
+        Viewport viewport = Game1.VistaPartida;
         Vector2 origen = Vector2.Transform(centroSinner, transformacion);
         Vector2 objetivoPantalla = Vector2.Transform(objetivo, transformacion);
         Vector2 direccion = objetivoPantalla - origen;

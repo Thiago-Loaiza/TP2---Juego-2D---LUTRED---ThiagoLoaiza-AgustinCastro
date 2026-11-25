@@ -34,6 +34,7 @@ public class Sinner
     private AnimatedSprite _efectoPaz;
     private AnimatedSprite _spriteDash;
     private Vector2 _ultimaDireccion = Vector2.UnitY;
+    public GranJabalina Jabalina { get; private set; }
     private Vector2 _direccionDash;
     private float _dashRestante;
     private float _recargaDash;
@@ -62,6 +63,30 @@ public class Sinner
     public _1.Progression.EstadoMejoras Mejoras { get; set; } = new();
     private Vector2 _direccionCaliz;
     private float _tiempoCaliz;
+    private int EtapaCaliz => Mejoras.Cantidad("Caliz") > 0 ? Math.Min(5, (int)(_tiempoCaliz / 2f)) : 0;
+    private Vector2 _sombraCaliz;
+    private bool _sombraCalizPreparada;
+    private AnimatedSprite _avisoPrecipitacion;
+    private float _recargaPrecipitacion;
+    public bool PuedeAvisarPrecipitacion => _avisoPrecipitacion != null && _recargaPrecipitacion <= 0f
+        && !DashActivo && !_estadoEscudo.Invulnerable && !PuedeParrear;
+    public const float HorizontePrecipitacion = 0.45f;
+
+    public void AvisarPrecipitacion()
+    {
+        if (!PuedeAvisarPrecipitacion) return;
+        _recargaPrecipitacion = 10f;
+        _avisoPrecipitacion.Animation = _avisoPrecipitacion.Animation;
+    }
+
+    public void PredecirColision(CirculoColision peligro, Vector2 anterior, float segundos)
+    {
+        if (!PuedeAvisarPrecipitacion || segundos <= 0f) return;
+        Vector2 futuroPeligro = peligro.Centro + (peligro.Centro - anterior) / segundos * HorizontePrecipitacion;
+        var futuroSinner = new CirculoColision(Colision.Centro + VelocidadActual * HorizontePrecipitacion, Colision.Radio);
+        if (futuroSinner.SeCruzan(Colision.Centro, new CirculoColision(futuroPeligro, peligro.Radio), peligro.Centro))
+            AvisarPrecipitacion();
+    }
 
     public bool UsarInercia { get; set; } = true;
     public bool ControlesInvertidos { get; set; }
@@ -95,6 +120,14 @@ public class Sinner
 
     public void LoadContent(ContentManager content)
     {
+        if (Mejoras.Cantidad("Precipitacion") > 0)
+        {
+            _avisoPrecipitacion = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/Precipitacion-Sheet", 6, 0.15, 50, 50))
+            { Origin = new Vector2(25f), Scale = new Vector2(0.65f), IsLooping = false };
+        }
+        if (Mejoras.Cantidad("GranJabalina") > 0)
+            Jabalina = new GranJabalina(content.Load<Texture2D>("Sprites/Upgrades/Efectos/JabalinaV2-Sheet"));
         if (Mejoras.Cantidad("Paz") > 0)
         {
             _efectoPaz = new AnimatedSprite(CrearAnimacion(content,
@@ -232,7 +265,7 @@ public class Sinner
         _efectoParry.Origin = new Vector2(25, 25);
         _efectoParry.Scale = new Vector2(0.93f, 0.93f);
         _tecladoAnterior = Keyboard.GetState();
-        if (Mejoras.Cantidad("FellDoor") > 0)
+        if (Mejoras.Cantidad("FellDoor") > 0 || Mejoras.Cantidad("Caliz") > 0)
         {
             foreach (Animation animacion in _animaciones.Values) PrepararSiluetas(animacion);
             foreach (Animation animacion in _parryMovimiento.Values) PrepararSiluetas(animacion);
@@ -309,6 +342,8 @@ public class Sinner
             _auraDominio?.Update(gameTime);
         }
         KeyboardState teclado = Keyboard.GetState();
+        bool lanzarJabalina = (teclado.IsKeyDown(Keys.E) && _tecladoAnterior.IsKeyUp(Keys.E))
+            || (Game1.Arcade && teclado.IsKeyDown(Keys.M) && _tecladoAnterior.IsKeyUp(Keys.M));
         bool dashPresionado = (teclado.IsKeyDown(Keys.Q) && _tecladoAnterior.IsKeyUp(Keys.Q))
             || (Game1.Arcade && teclado.IsKeyDown(Keys.J) && _tecladoAnterior.IsKeyUp(Keys.J));
         ParryIniciadoEsteFrame = false;
@@ -372,11 +407,11 @@ public class Sinner
         }
         else if (Mejoras.Cantidad("Caliz") > 0)
         {
-            _tiempoCaliz = Math.Min(15f, _tiempoCaliz + segundos);
+            _tiempoCaliz = Math.Min(10f, _tiempoCaliz + segundos);
         }
         _direccionCaliz = direccion;
         float velocidadCaminata = Velocidad * Mejoras.MultiplicadorVelocidad;
-        float bonusCaliz = Mejoras.Cantidad("Caliz") > 0 ? Math.Min(0.5f, MathF.Floor(_tiempoCaliz / 3f) * 0.1f) : 0f;
+        float bonusCaliz = EtapaCaliz * 0.1f;
         Vector2 velocidadObjetivo = direccion * Velocidad * (Mejoras.MultiplicadorVelocidad + bonusCaliz)
             * (corriendo ? MultiplicadorSprint : 1f) * MultiplicadorVelocidadExterno;
 
@@ -424,6 +459,7 @@ public class Sinner
             movimiento = permitido;
         }
         Position += movimiento;
+        Jabalina?.Update(segundos, lanzarJabalina && !ParryBloqueado, Colision.Centro, _ultimaDireccion);
 
         if (_velocidadActual != Vector2.Zero)
         {
@@ -463,6 +499,16 @@ public class Sinner
         if (_haciendoParry)
             _efectoParry.Update(gameTime);
         ActualizarSombrasFellDoor(segundos);
+        ActualizarSombraCaliz(segundos);
+    }
+
+    private void ActualizarSombraCaliz(float segundos)
+    {
+        if (EtapaCaliz == 0) { _sombraCalizPreparada = false; return; }
+        Vector2 objetivo = Position - _ultimaDireccion * 18f;
+        _sombraCaliz = _sombraCalizPreparada
+            ? Vector2.Lerp(_sombraCaliz, objetivo, 1f - MathF.Exp(-18f * segundos)) : objetivo;
+        _sombraCalizPreparada = true;
     }
 
     private void ActualizarSombrasFellDoor(float segundos)
@@ -483,8 +529,8 @@ public class Sinner
 
     private void DibujarSombrasFellDoor(SpriteBatch spriteBatch)
     {
-        if (!AuraFellDoorActiva) return;
-        if (!_sombrasPreparadas) ActualizarSombrasFellDoor(0f);
+        if (!AuraFellDoorActiva && EtapaCaliz == 0) return;
+        if (AuraFellDoorActiva && !_sombrasPreparadas) ActualizarSombrasFellDoor(0f);
         AnimatedSprite sprite = DashActivo && _spriteDash != null ? _spriteDash : _sprite;
         TextureRegion cuadro = sprite.Region;
         if (!DashActivo && _haciendoParry && _parryMovimiento.TryGetValue(_animacionActual, out Animation parry))
@@ -495,11 +541,18 @@ public class Sinner
         }
         if (!_siluetasFellDoor.TryGetValue(cuadro.Texture, out Texture2D textura)) return;
         // De atras hacia adelante: rojo oscuro, medio y claro junto a Sinner.
-        for (int i = 2; i >= 0; i--)
+        for (int i = 2; AuraFellDoorActiva && i >= 0; i--)
         {
             Color rojo = i == 0 ? new Color(255, 90, 90)
                 : i == 1 ? new Color(190, 20, 30) : new Color(90, 0, 12);
             spriteBatch.Draw(textura, _sombrasFellDoor[i], cuadro.Bounds, rojo * (0.65f - i * 0.12f),
+                sprite.Rotation, sprite.Origin, sprite.Scale, _sprite.Effects, sprite.LayerDepth);
+        }
+        if (EtapaCaliz > 0)
+        {
+            if (!_sombraCalizPreparada) ActualizarSombraCaliz(0f);
+            Color color = Color.Lerp(new Color(255, 210, 0), new Color(255, 255, 220), (EtapaCaliz - 1) / 4f);
+            spriteBatch.Draw(textura, _sombraCaliz, cuadro.Bounds, color * 0.85f,
                 sprite.Rotation, sprite.Origin, sprite.Scale, _sprite.Effects, sprite.LayerDepth);
         }
     }
@@ -572,11 +625,21 @@ public class Sinner
             _aureolaDivina.Position = Position - new Vector2(0f, 30f);
             _aureolaDivina.Draw(spriteBatch);
         }
+        if (_avisoPrecipitacion != null && _recargaPrecipitacion > 0f && !_avisoPrecipitacion.IsFinished)
+        {
+            _avisoPrecipitacion.Position = Position + new Vector2(34f, -45f);
+            _avisoPrecipitacion.Draw(spriteBatch);
+        }
 
     }
 
     public void ActualizarEscudo(GameTime gameTime)
     {
+        if (_recargaPrecipitacion > 0f)
+        {
+            _recargaPrecipitacion = Math.Max(0f, _recargaPrecipitacion - (float)gameTime.ElapsedGameTime.TotalSeconds);
+            _avisoPrecipitacion?.Update(gameTime);
+        }
         _estadoEscudo.Actualizar(gameTime.ElapsedGameTime.TotalSeconds);
         if (_estadoEscudo.Disponible) _escudo?.Update(gameTime);
         else if (_estadoEscudo.Invulnerable) _rupturaEscudo?.Update(gameTime);
@@ -624,6 +687,7 @@ public class Sinner
         DashActivo = false;
         _dashRestante = 0f;
         _tiempoCaliz = 0f;
+        _sombraCalizPreparada = false;
         DetenerSonidos();
         SincronizarEntrada();
     }

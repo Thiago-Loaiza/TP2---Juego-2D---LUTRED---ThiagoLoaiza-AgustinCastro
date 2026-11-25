@@ -31,8 +31,8 @@ public sealed class ModalControles : IDisposable
     private bool _cerrando;
     public bool Abierto { get; private set; }
     private float Suave => _progreso * _progreso * (3f - 2f * _progreso);
-    private float Escala => Math.Min(Core.GraphicsDevice.Viewport.Width / 1280f,
-        Core.GraphicsDevice.Viewport.Height / 720f);
+    private float Escala => Math.Min(Game1.VistaPartida.Width / 1280f,
+        Game1.VistaPartida.Height / 720f);
 
     public ModalControles()
     {
@@ -49,7 +49,7 @@ public sealed class ModalControles : IDisposable
         _progreso = 0f;
         _tiempoArcade = 0f;
         _tecladoAnterior = Keyboard.GetState();
-        _ratonAnterior = Mouse.GetState();
+        _ratonAnterior = Game1.RatonVirtual();
     }
 
     public void Cerrar()
@@ -59,7 +59,7 @@ public sealed class ModalControles : IDisposable
 
     private Rectangle Area(float x, float y, float ancho, float alto)
     {
-        var vista = Core.GraphicsDevice.Viewport;
+        var vista = Game1.VistaPartida;
         float desplazamiento = (1f - Suave) * 60f;
         return new Rectangle((int)(vista.Width * 0.5f + x * Escala),
             (int)(vista.Height * 0.5f + (y + desplazamiento) * Escala),
@@ -78,7 +78,7 @@ public sealed class ModalControles : IDisposable
         _progreso = Math.Clamp(_progreso + (_cerrando ? -paso : paso), 0f, 1f);
         if (_cerrando && _progreso == 0f) { Abierto = false; return; }
         var teclado = Keyboard.GetState();
-        var raton = Mouse.GetState();
+        var raton = Game1.RatonVirtual();
         bool Pulsada(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         bool clic = raton.LeftButton == ButtonState.Pressed && _ratonAnterior.LeftButton == ButtonState.Released;
         if (Core.Instance.IsActive && !_cerrando && _progreso == 1f
@@ -94,7 +94,7 @@ public sealed class ModalControles : IDisposable
         if (!Abierto) return;
         var batch = Core.SpriteBatch;
         batch.Begin(samplerState: SamplerState.LinearClamp);
-        batch.Draw(_pixel, Core.GraphicsDevice.Viewport.Bounds, Color.Black * (0.85f * Suave));
+        batch.Draw(_pixel, Game1.VistaPartida.Bounds, Color.Black * (0.85f * Suave));
         Rectangle marco = Area(-530, -326, 1060, 652);
         int borde = Math.Max(1, (int)(2 * Escala));
         batch.Draw(_pixel, marco, Color.White * Suave);
@@ -116,7 +116,7 @@ public sealed class ModalControles : IDisposable
             Texto("PC", -450, -259, 900, 32, centrado: true);
             DibujarControles(Teclado, -208);
         }
-        bool hover = AreaCerrar.Contains(Mouse.GetState().Position);
+        bool hover = AreaCerrar.Contains(Game1.RatonVirtual().Position);
         batch.Draw(_pixel, AreaCerrar, (hover ? Color.White : new Color(170, 170, 170)) * Suave);
         Rectangle interior = AreaCerrar;
         interior.Inflate(-borde, -borde);
