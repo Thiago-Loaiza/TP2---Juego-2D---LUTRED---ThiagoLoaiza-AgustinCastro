@@ -173,6 +173,9 @@ public sealed class ListaOpciones : IDisposable
 
     private void Alternar(int fila)
     {
+        if(Game1.Arcade && fila == 8)
+        return;
+
         if (_interruptores.TryGetValue(fila, out var control) && !control.Boton.Animando)
         {
             control.Escribir(!control.Leer());
@@ -232,7 +235,7 @@ public sealed class ListaOpciones : IDisposable
                 Texto(categoria.Titulo, Area(20, InicioFila(categoria.Fila) - 45, 320, 45), 0.32f, Color.White * opacidad);
         for (int fila = 0; fila < CantidadOpciones; fila++)
         {
-            bool desactivado = fila == 2 && OpcionesJuego.SilenciarMusica;
+            bool desactivado = (fila == 2 && OpcionesJuego.SilenciarMusica) || (fila == 8 && Game1.Arcade);
             Color color = (desactivado ? Color.Gray : Color.White) * opacidad;
             Texto(nombres[fila], Area(20, InicioFila(fila) + 32, 320, 45), 0.32f, color);
             if (!EsInterruptor(fila))
@@ -339,7 +342,7 @@ public sealed class ListaOpciones : IDisposable
                 5 => "Ajusta la visibilidad del sistema de rangos entre 25% y 100%.",
                 6 => "Muestra el multiplicador total de la run: multiplicador del rango por el de los modificadores.",
                 7 => "Muestra los fotogramas por segundo en la esquina superior derecha.",
-                8 => "Alterna entre pantalla completa y ventana. Atajo: F11.",
+                8 => Game1.Arcade ? "La pantalla se queda completa cuando el juego esta en version para el Arcade." : "Alterna entre pantalla completa y ventana, tambien lo puedes hacer con F11",
                 9 when _incluirFun => DescripcionFastTrack,
                 _ => "Rueda para bajar. Flechas para elegir y ajustar."
             };

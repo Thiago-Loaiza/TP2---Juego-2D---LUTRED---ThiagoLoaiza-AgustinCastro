@@ -84,6 +84,10 @@ public class Game1 : Core
     {
         base.Initialize();
         OpcionesJuego.Cargar();
+        if (Arcade)
+        {
+            OpcionesJuego.PantallaCompleta = true;
+        }
         AplicarPantallaCompleta();
         _fuenteFps = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
         _relojFps.Start();
@@ -164,7 +168,7 @@ public class Game1 : Core
         OpcionesJuego.ActualizarGuardado((float)gameTime.ElapsedGameTime.TotalSeconds);
         _musicaMenu.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
         KeyboardState teclado = Keyboard.GetState();
-        bool enterPresionado = teclado.IsKeyDown(Keys.Enter);
+        bool enterPresionado = teclado.IsKeyDown(Keys.O);
         bool enterPulsado = enterPresionado && !_enterPresionadoAnterior;
         _enterPresionadoAnterior = enterPresionado;
         bool retroceso = GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed

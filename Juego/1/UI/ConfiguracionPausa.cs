@@ -73,7 +73,7 @@ public sealed class ConfiguracionPausa : IDisposable
     public bool Update(GameTime gameTime, bool escapePulsado)
     {
         KeyboardState teclado = Keyboard.GetState();
-        bool pausaEnter = Game1.Arcade && Pulsada(teclado, Keys.Enter) && !_confirmandoSalida;
+        bool pausaEnter = Game1.Arcade && Pulsada(teclado, Keys.O) && !_confirmandoSalida;
         _tiempo += gameTime.ElapsedGameTime.TotalSeconds;
         _listaOpciones.Update(gameTime, AreaLista, Abierto && !_confirmandoSalida && !pausaEnter,
             usarTab: true, incluirSalir: _salir != null);
