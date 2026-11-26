@@ -66,10 +66,14 @@ public partial class Partida
         Core.Audio.PlaySoundEffect(_sonidoSalida, restart: true);
     }
 
-    private bool Perder()
+    private bool Perder(string enemigo)
     {
         if (_sinner.DashActivo) return false;
-        if (_sinner.AbsorberGolpe()) return false;
+        if (_sinner.AbsorberGolpe(out bool escudoRoto))
+        {
+            if (escudoRoto) MostrarAvisoEscudoRoto(enemigo);
+            return false;
+        }
         Puntaje.Perder();
         _derrotado = true;
         Core.Audio.StopSong();

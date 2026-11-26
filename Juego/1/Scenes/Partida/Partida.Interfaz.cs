@@ -5,6 +5,7 @@ using Gum.Forms.Controls;
 using Gum.Wireframe;
 using LutredLibrary;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGameGum;
 
@@ -24,6 +25,53 @@ public partial class Partida
     private const double EsperaBotonDerrota = 3.0;
     private double _tiempoDesdeDerrota;
     private BordeAnimado _bordePantalla;
+    private MarcoNinePatchAnimado _marcoAvisoEscudo;
+    private SoundEffectInstance _sonidoEscudoRoto;
+    private const float DuracionAvisoEscudo = 5f;
+    private const float FundidoAvisoEscudo = 0.35f;
+    private float _avisoEscudoRestante;
+    private string _enemigoEscudoRoto;
+
+    private void MostrarAvisoEscudoRoto(string enemigo)
+    {
+        _enemigoEscudoRoto = enemigo;
+        _avisoEscudoRestante = DuracionAvisoEscudo;
+        Core.Audio.PlaySoundEffect(_sonidoEscudoRoto, restart: true);
+    }
+
+    private void DibujarAvisoEscudoRoto()
+    {
+        if (_avisoEscudoRestante <= 0f) return;
+        Viewport viewport = Game1.VistaPartida;
+        float escala = Math.Min(viewport.Width / 1280f, viewport.Height / 720f);
+        float edad = DuracionAvisoEscudo - _avisoEscudoRestante;
+        float entrada = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(edad / FundidoAvisoEscudo, 0f, 1f));
+        float salida = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(_avisoEscudoRestante / FundidoAvisoEscudo, 0f, 1f));
+        float transicion = entrada * salida;
+        float alfa = 0.8f * transicion;
+        const string aviso = "Tu escudo se rompió";
+        const string causa = "Por: ";
+        float escalaTexto = escala * 0.85f;
+        Vector2 tamAviso = _fuenteContador.MeasureString(aviso) * escalaTexto;
+        Vector2 tamCausa = _fuenteContador.MeasureString(causa + _enemigoEscudoRoto) * escalaTexto;
+        float ancho = Math.Max(tamAviso.X, tamCausa.X) + 64f * escala;
+        float alto = (_fuenteContador.LineSpacing * 2f + 8f) * escalaTexto + 28f * escala;
+        float y = viewport.Height - 110f * escala - alto + (1f - transicion) * 22f * escala;
+        var area = new Rectangle((int)((viewport.Width - ancho) / 2f), (int)y, (int)ancho, (int)alto);
+        _marcoAvisoEscudo.Draw(Core.SpriteBatch, area, edad, escala * 0.65f, alfa);
+        Vector2 centro = new(area.Center.X, area.Center.Y);
+        float x = centro.X - tamAviso.X / 2f;
+        float primeraY = centro.Y - (_fuenteContador.LineSpacing + 4f) * escalaTexto;
+        Core.SpriteBatch.DrawString(_fuenteContador, aviso, new Vector2(x, primeraY), Color.White * alfa,
+            0f, Vector2.Zero, escalaTexto, SpriteEffects.None, 0f);
+        float segundaY = centro.Y + 4f * escalaTexto;
+        float xCausa = centro.X - tamCausa.X / 2f;
+        Core.SpriteBatch.DrawString(_fuenteContador, causa, new Vector2(xCausa, segundaY), Color.White * alfa,
+            0f, Vector2.Zero, escalaTexto, SpriteEffects.None, 0f);
+        Core.SpriteBatch.DrawString(_fuenteContador, _enemigoEscudoRoto,
+            new Vector2(xCausa + _fuenteContador.MeasureString(causa).X * escalaTexto, segundaY),
+            Color.Red * alfa, 0f, Vector2.Zero, escalaTexto, SpriteEffects.None, 0f);
+    }
 
     private void CrearInterfazDerrota()
     {

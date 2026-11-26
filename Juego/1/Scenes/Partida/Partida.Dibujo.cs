@@ -204,6 +204,7 @@ public partial class Partida
                 _tooManyParries?.Draw(Core.SpriteBatch, Game1.VistaPartida);
                 _zorak?.Draw(Core.SpriteBatch, Game1.VistaPartida);
             }
+            DibujarAvisoEscudoRoto();
             Core.SpriteBatch.End();
         }
     }

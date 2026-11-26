@@ -85,6 +85,7 @@ public partial class Partida : Escena
             return;
         }
         float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _avisoEscudoRestante = Math.Max(0f, _avisoEscudoRestante - segundos);
         if (!_derrotado && !_enFellDoor) _decoraciones.Update(segundos);
         if (!_derrotado)
             _faseLatidoFondo = (_faseLatidoFondo + segundos * MathHelper.TwoPi / 2.4f) % MathHelper.TwoPi;
@@ -141,7 +142,7 @@ public partial class Partida : Escena
             if (_zorak?.BloqueandoJugador == true)
             {
                 if (_zorak.Update(gameTime, false, false) == ResultadoZorak.Golpe)
-                    Perder();
+                    Perder("Zorak");
                 return;
             }
             Vector2 centroAnteriorSinner = _sinner.Colision.Centro;

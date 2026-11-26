@@ -94,7 +94,7 @@ public partial class Partida
             else if (_sinner.Colision.SeCruzan(centroAnteriorSinner,
                 duke.Colision, posicionAnterior))
             {
-                if (Perder()) return;
+                if (Perder("Duck")) return;
             }
         }
 
@@ -115,7 +115,7 @@ public partial class Partida
         }
         else if (resultadoBird == ResultadoErosionBird.Golpe)
         {
-            if (Perder()) return;
+            if (Perder("Erosion Bird")) return;
         }
         Rectangle areaVisible = AreaVisible();
         for (int i = 0; i < _jarJars.Count; i++)
@@ -130,7 +130,7 @@ public partial class Partida
             }
             else if (resultadoJarJar == ResultadoJarJar.Golpe)
             {
-                if (Perder()) return;
+                if (Perder("Jar Jar")) return;
             }
         }
 
@@ -146,7 +146,7 @@ public partial class Partida
             }
             else if (resultadoDelusion == ResultadoDelusion.Golpe)
             {
-                if (Perder()) return;
+                if (Perder("Delusion")) return;
             }
         }
 
@@ -220,7 +220,7 @@ public partial class Partida
         }
         else if (_sinner.Colision.SeCruzan(inicioSinner, _shame.Colision, posicionAnterior))
         {
-            Perder();
+            Perder("SHAME");
         }
     }
 

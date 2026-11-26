@@ -39,13 +39,16 @@ public sealed class Mejoras : Escena
     private const float PausaBlanca = 0.45f;
     private const float RetrasoEntreIconos = 0.35f;
     private const float FinAparicion = DuracionFundido + PausaBlanca + DuracionAparicion + 2 * RetrasoEntreIconos;
-    private Texture2D _humo;
+    private readonly Texture2D[] _nubesHumo = new Texture2D[3];
+    private const int CuadrosNube = 9;
+    private const float SegundosPorCuadroNube = 0.12f;
     private AnimatedSprite _fraseInicial;
     private SoundEffectInstance _musicaMejoras;
     private SoundEffect _aceptarMejora;
     private sealed class ParticulaHumo
     {
         public float X, Altura, Radio, Deriva, Fase, Duracion, Edad;
+        public int Variante, CuadroInicial;
     }
     private readonly ParticulaHumo[] _particulasHumo = new ParticulaHumo[100];
     private readonly Action _continuar;
@@ -98,7 +101,9 @@ public sealed class Mejoras : Escena
                 _iconos[i] = Content.Load<Texture2D>($"Sprites/Upgrades/Icons/{Catalogo[_opciones[i]].Id}");
             }
         }
-        _humo = _1.Entities.Shame.CrearTexturaHumo();
+        _nubesHumo[0] = Content.Load<Texture2D>("Misc/Nubes/NubePequena-Sheet");
+        _nubesHumo[1] = Content.Load<Texture2D>("Misc/Nubes/NubeMediana-Sheet");
+        _nubesHumo[2] = Content.Load<Texture2D>("Misc/Nubes/NubeGrande-Sheet");
         for (int i = 0; i < _particulasHumo.Length; i++)
         {
             var particula = new ParticulaHumo();
@@ -431,6 +436,8 @@ public sealed class Mejoras : Escena
         particula.X = Random.Shared.NextSingle();
         particula.Altura = MathHelper.Lerp(0.18f, 0.52f, Random.Shared.NextSingle());
         particula.Radio = MathHelper.Lerp(16f, 72f, MathF.Pow(Random.Shared.NextSingle(), 1.5f));
+        particula.Variante = particula.Radio < 32f ? 0 : particula.Radio < 52f ? 1 : 2;
+        particula.CuadroInicial = Random.Shared.Next(CuadrosNube);
         particula.Deriva = MathHelper.Lerp(-75f, 75f, Random.Shared.NextSingle());
         particula.Fase = Random.Shared.NextSingle() * MathHelper.TwoPi;
         particula.Duracion = MathHelper.Lerp(4f, 8f, Random.Shared.NextSingle());
@@ -455,9 +462,12 @@ public sealed class Mejoras : Escena
             float y = MathHelper.Lerp(viewport.Height + (particula.Radio + 12f) * escala,
                 viewport.Height * (1f - particula.Altura), progreso);
             float opacidad = Math.Min(1f, progreso / 0.1f) * (1f - desvanecer) * alfa * 0.95f;
-            Core.SpriteBatch.Draw(_humo, new Vector2(x, y), null, Color.White * opacidad,
-                0f, new Vector2(_humo.Width, _humo.Height) * 0.5f,
-                radio * 2f / _humo.Width, SpriteEffects.None, 0f);
+            Texture2D nube = _nubesHumo[particula.Variante];
+            int ancho = nube.Width / CuadrosNube;
+            int cuadro = (particula.CuadroInicial + (int)(particula.Edad / SegundosPorCuadroNube)) % CuadrosNube;
+            Core.SpriteBatch.Draw(nube, new Vector2(x, y), new Rectangle(cuadro * ancho, 0, ancho, nube.Height),
+                Color.White * opacidad, 0f, new Vector2(ancho, nube.Height) * 0.5f,
+                radio * 2f / ancho, SpriteEffects.None, 0f);
         }
     }
     private void DibujarTexto(string texto, Vector2 posicion, float escala, float alfa)
@@ -470,6 +480,5 @@ public sealed class Mejoras : Escena
     {
         Core.Audio.ReleaseSoundEffect(_musicaMejoras);
         _pixel?.Dispose();
-        _humo?.Dispose();
     }
 }

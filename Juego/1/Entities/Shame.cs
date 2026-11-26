@@ -15,11 +15,13 @@ public sealed class Shame
     public const float RadioColision = 38f;
     public const double VelocidadBase = Duck.VelocidadPersecucion * 2.0;
     private AnimatedSprite _sprite;
-    private Texture2D _circuloEstela;
+    private Texture2D _nubeEstela;
+    private const int CuadrosNube = 9;
+    private const float SegundosPorCuadroNube = 0.12f;
     private const double IntervaloEstela = 0.06;
     private const float DuracionEstela = 0.9f;
     private readonly Random _azar = new();
-    private readonly List<(Vector2 Posicion, float Edad, float Radio, Vector2 Deriva)> _particulas = new();
+    private readonly List<(Vector2 Posicion, float Edad, float Radio, Vector2 Deriva, int CuadroInicial)> _particulas = new();
     private Vector2 _direccionRebote;
     private double _rapidezRebote;
     private double _tiempoEstela;
@@ -49,7 +51,7 @@ public sealed class Shame
             Origin = new Vector2(175f),
             Scale = Vector2.One
         };
-        _circuloEstela = CrearTexturaHumo();
+        _nubeEstela = content.Load<Texture2D>("Misc/Nubes/NubeGrande-Sheet");
         _ambiente = Core.Audio.CreateSoundEffectInstance(
             content.Load<SoundEffect>("SFX/Entities/SHAME/ShameAmbience"), volume: 0.5f, isLooped: true);
         _risa = Core.Audio.CreateSoundEffectInstance(
@@ -167,7 +169,7 @@ public sealed class Shame
             }
             else
             {
-                _particulas[i] = (particula.Posicion, edad, particula.Radio, particula.Deriva);
+                _particulas[i] = (particula.Posicion, edad, particula.Radio, particula.Deriva, particula.CuadroInicial);
             }
         }
         double emision = IntervaloEstela - _tiempoEstela;
@@ -192,14 +194,16 @@ public sealed class Shame
         Vector2 posicion = centro + direccion * (25f + _azar.NextSingle() * 40f);
         float radio = 92f + _azar.NextSingle() * 24f;
         Vector2 deriva = direccion * (20f + _azar.NextSingle() * 30f) - new Vector2(0, 18f);
-        _particulas.Add((posicion, edad, radio, deriva));
+        _particulas.Add((posicion, edad, radio, deriva, _azar.Next(CuadrosNube)));
     }
 
-    private void DibujarCirculo(SpriteBatch spriteBatch, Vector2 posicion, float radio, float opacidad)
+    private void DibujarNube(SpriteBatch spriteBatch, Vector2 posicion, float radio, float opacidad, float edad, int cuadroInicial)
     {
-        spriteBatch.Draw(_circuloEstela, posicion, null, Color.White * opacidad,
-            0f, new Vector2(_circuloEstela.Width * 0.5f),
-            radio * 2f / _circuloEstela.Width, SpriteEffects.None, 0f);
+        int ancho = _nubeEstela.Width / CuadrosNube;
+        int cuadro = (cuadroInicial + (int)(edad / SegundosPorCuadroNube)) % CuadrosNube;
+        spriteBatch.Draw(_nubeEstela, posicion, new Rectangle(cuadro * ancho, 0, ancho, _nubeEstela.Height),
+            Color.White * opacidad, 0f, new Vector2(ancho, _nubeEstela.Height) * 0.5f,
+            radio * 2f / ancho, SpriteEffects.None, 0f);
     }
 
     public void Parrear(Vector2 centroParry, float radioParry, Vector2 posicionAnterior)
@@ -237,8 +241,8 @@ public sealed class Shame
             var particula = _particulas[i];
             float progreso = particula.Edad / DuracionEstela;
             float opacidad = MathHelper.Clamp((1f - progreso) / 0.45f, 0f, 1f);
-            DibujarCirculo(spriteBatch, particula.Posicion + particula.Deriva * particula.Edad,
-                particula.Radio + progreso * 20f, opacidad);
+            DibujarNube(spriteBatch, particula.Posicion + particula.Deriva * particula.Edad,
+                particula.Radio + progreso * 20f, opacidad, particula.Edad, particula.CuadroInicial);
         }
         _sprite.Position = Position;
         _sprite.Draw(spriteBatch);
@@ -254,7 +258,6 @@ public sealed class Shame
     public void UnloadContent()
     {
         _particulas.Clear();
-        _circuloEstela?.Dispose();
         Core.Audio.ReleaseSoundEffect(_ambiente);
         Core.Audio.ReleaseSoundEffect(_risa);
         Core.Audio.ReleaseSoundEffect(_parry);

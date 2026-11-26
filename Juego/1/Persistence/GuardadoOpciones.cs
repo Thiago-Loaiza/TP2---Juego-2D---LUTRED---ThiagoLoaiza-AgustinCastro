@@ -7,7 +7,7 @@ namespace _1.Persistence;
 public sealed record DatosOpciones(bool AlternarCorrer = false, bool SilenciarMusica = false,
     int VolumenMusica = 50, int VolumenSfx = 50, bool SilenciarLocutor = false,
     int VisibilidadRangos = 100, bool MultiplicadorTotal = false, bool MostrarFps = false,
-    bool PantallaCompleta = false);
+    bool PantallaCompleta = false, bool SaltarPrologo = false);
 
 public sealed class GuardadoOpciones
 {

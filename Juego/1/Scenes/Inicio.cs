@@ -42,6 +42,9 @@ public class Inicio : Escena
     private bool _abrirCreditos;
     private bool _abrirRecords;
     private bool _abrirMisc;
+    private bool _iniciarPrevia;
+    private const float DuracionOscurecimiento = 0.85f;
+    private Texture2D _pixelFundido;
     private float _tiempoTransicion;
     private float _opacidadInterfaz = 1f;
     private float _desplazamientoInterfaz;
@@ -71,6 +74,8 @@ public class Inicio : Escena
 
     protected override void LoadContent()
     {
+        _pixelFundido = new Texture2D(Core.GraphicsDevice, 1, 1);
+        _pixelFundido.SetData(new[] { Color.White });
         Texture2D hojaFondo = Content.Load<Texture2D>("Backgrounds/Sprite-Fondo1-Sheet");
         var cuadrosFondo = new List<TextureRegion>();
         for (int x = 0; x < hojaFondo.Width; x += 1280)
@@ -253,20 +258,10 @@ public class Inicio : Escena
     private void Jugar(object sender, EventArgs args)
     {
         if (_enTransicion) return;
-        var mejoras = new _1.Progression.EstadoMejoras(Game1.FastTrack);
-        if (mejoras.FastTrack)
-        {
-            _cambiarEscena(new Partida(_cambiarEscena, mejoras: mejoras));
-            return;
-        }
-        if (Game1.EmpezarConMejoras)
-        {
-            _cambiarEscena(new Mejoras(() => _cambiarEscena(new Seleccion(_cambiarEscena, mejoras: mejoras)), mejoras));
-            return;
-        }
-        _cambiarEscena(Game1.EmpezarConEleccion
-            ? new Seleccion(_cambiarEscena, mejoras: mejoras)
-            : new Partida(_cambiarEscena, mejoras: mejoras));
+        _iniciarPrevia = true;
+        _enTransicion = true;
+        _tiempoTransicion = 0f;
+        foreach (BotonAnimado boton in _botones) boton.IsEnabled = false;
     }
 
     public override void Update(GameTime gameTime)
@@ -276,6 +271,17 @@ public class Inicio : Escena
         else _tiempoAvisoArcade += (float)gameTime.ElapsedGameTime.TotalSeconds;
         _iconoAvisoArcade?.Update(gameTime);
         _titulo.Update(gameTime);
+        if (_iniciarPrevia)
+        {
+            _tiempoTransicion += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (_tiempoTransicion >= DuracionOscurecimiento)
+            {
+                var mejoras = new _1.Progression.EstadoMejoras(Game1.FastTrack);
+                if (OpcionesJuego.SaltarPrologo) Previa.IniciarRun(_cambiarEscena, mejoras);
+                else _cambiarEscena(new Previa(_cambiarEscena, mejoras));
+            }
+            return;
+        }
         if (ControlesAbiertos)
         {
             _controles.Update(gameTime);
@@ -401,6 +407,15 @@ public class Inicio : Escena
         }
     }
 
+    public void DibujarFundidoPrevia()
+    {
+        if (!_iniciarPrevia) return;
+        float alfa = MathHelper.SmoothStep(0f, 1f, Math.Clamp(_tiempoTransicion / DuracionOscurecimiento, 0f, 1f));
+        Core.SpriteBatch.Begin(blendState: BlendState.AlphaBlend);
+        Core.SpriteBatch.Draw(_pixelFundido, Game1.VistaPartida.Bounds, Color.Black * alfa);
+        Core.SpriteBatch.End();
+    }
+
     private void DibujarAvisoArcade()
     {
         const string mensaje = "Si eres nuevo checa el";
@@ -463,6 +478,7 @@ public class Inicio : Escena
 
     protected override void UnloadContent()
     {
+        _pixelFundido?.Dispose();
         if (_jugar != null)
             _jugar.Click -= Jugar;
         if (_opciones != null) _opciones.Click -= AbrirOpciones;

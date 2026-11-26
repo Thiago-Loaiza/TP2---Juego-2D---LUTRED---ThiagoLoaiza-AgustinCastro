@@ -188,7 +188,7 @@ public partial class Partida
                 RegistrarParry(TipoParry.Demonio, demonio, !_sinner.HaciendoParry);
                 _demoniosFellDoor.RemoveAt(i);
             }
-            else if (_sinner.Colision.SeCruzan(anterior, demonio.Colision, antes) && Perder()) return;
+            else if (_sinner.Colision.SeCruzan(anterior, demonio.Colision, antes) && Perder("Demonio de FellDoor")) return;
         }
         if (_supervivenciaFellDoor <= 0) SalirFellDoor();
     }

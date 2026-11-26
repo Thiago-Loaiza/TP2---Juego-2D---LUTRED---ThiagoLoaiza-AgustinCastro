@@ -13,13 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin And the rest was silence - Grace OST.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/processorParam:Version=3.8.5.1
-/build:And the rest was silence - Grace OST.mp3
-
 #begin Backgrounds/LUTRED_ESCAPE.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -119,6 +112,11 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Backgrounds/Selection/Atlas/ElegirV2-1.png
+
+#begin Effects/TextoLinterna.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/TextoLinterna.fx
 
 #begin Effects/ColoresInvertidos.fx
 /importer:EffectImporter
@@ -422,7 +420,7 @@
 
 #begin Music/Prologo.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:Music/Prologo.mp3
@@ -793,6 +791,12 @@
 /processorParam:Quality=Best
 /processorParam:Version=3.8.5.1
 /build:SFX/Misc/MejoraAdquirida.mp3
+
+#begin SFX/Upgrades/Shield/Shield_Break.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:SFX/Upgrades/Shield/Shield_Break.ogg
 
 #begin SFX/Puerta/Acercamiento1.MP3
 /importer:Mp3Importer
@@ -1269,6 +1273,15 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/UI/ARCADE-AYUDA-Sheet.png
 
+#begin Sprites/Misc/Puerta-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Sprites/Misc/Puerta-Sheet.png
+
 #begin Sprites/Misc/Orbs/IndicadorPuntos.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1412,7 +1425,7 @@
 /processorParam:Version=3.8.5.1
 /build:Sprites/Ranks/SuperSantoSuperior.png
 
-#begin Sprites/Sinner/PantallaEleccion/Atlas/Continuar.png
+#begin Sprites/Characters/Sinner/PantallaEleccion/Atlas/Continuar.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1423,9 +1436,9 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:Sprites/Sinner/PantallaEleccion/Atlas/Continuar.png
+/build:Sprites/Characters/Sinner/PantallaEleccion/Atlas/Continuar.png
 
-#begin Sprites/Sinner/PantallaEleccion/Atlas/Escapar.png
+#begin Sprites/Characters/Sinner/PantallaEleccion/Atlas/Escapar.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1436,9 +1449,9 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:Sprites/Sinner/PantallaEleccion/Atlas/Escapar.png
+/build:Sprites/Characters/Sinner/PantallaEleccion/Atlas/Escapar.png
 
-#begin Sprites/Sinner/PantallaEleccion/Atlas/Neutral.png
+#begin Sprites/Characters/Sinner/PantallaEleccion/Atlas/Neutral.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1449,90 +1462,90 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:Sprites/Sinner/PantallaEleccion/Atlas/Neutral.png
+/build:Sprites/Characters/Sinner/PantallaEleccion/Atlas/Neutral.png
 
-#begin Sprites/Sinner/Sinner-Sheet.png
+#begin Sprites/Characters/Sinner/Sinner-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/Sinner-Sheet.png
+/build:Sprites/Characters/Sinner/Sinner-Sheet.png
 
-#begin Sprites/Sinner/SinnerDASH-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerDASH-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerDASH-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerDASH-Sheet.png
 
-#begin Sprites/Sinner/SinnerLANZA-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerLANZA-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerLANZA-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerLANZA-Sheet.png
 
-#begin Sprites/Sinner/SinnerParryFront-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerParryFront-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerParryFront-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerParryFront-Sheet.png
 
-#begin Sprites/Sinner/SinnerRUN_DOWN-PARRY-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerRUN_DOWN-PARRY-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerRUN_DOWN-PARRY-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerRUN_DOWN-PARRY-Sheet.png
 
-#begin Sprites/Sinner/SinnerRUN_DOWN-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerRUN_DOWN-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerRUN_DOWN-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerRUN_DOWN-Sheet.png
 
-#begin Sprites/Sinner/SinnerRUN_UP-PARRY-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerRUN_UP-PARRY-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerRUN_UP-PARRY-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerRUN_UP-PARRY-Sheet.png
 
-#begin Sprites/Sinner/SinnerRUN_UP-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerRUN_UP-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerRUN_UP-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerRUN_UP-Sheet.png
 
-#begin Sprites/Sinner/SinnerRUN-PARRY-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerRUN-PARRY-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerRUN-PARRY-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerRUN-PARRY-Sheet.png
 
-#begin Sprites/Sinner/SinnerRUN-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerRUN-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1543,25 +1556,25 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
-/build:Sprites/Sinner/SinnerRUN-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerRUN-Sheet.png
 
-#begin Sprites/Sinner/SinnerWalk-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerWalk-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerWalk-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerWalk-Sheet.png
 
-#begin Sprites/Sinner/SinnerWalkUP-Sheet.png
+#begin Sprites/Characters/Sinner/SinnerWalkUP-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyEnabled=False
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Sprites/Sinner/SinnerWalkUP-Sheet.png
+/build:Sprites/Characters/Sinner/SinnerWalkUP-Sheet.png
 
 #begin Sprites/Enemies/TooManyParries/Chain.png
 /importer:TextureImporter
@@ -2307,6 +2320,33 @@
 /processorParam:TextureFormat=Color
 /processorParam:Version=3.8.5.1
 /build:Textures/Tela.png
+
+#begin Misc/Nubes/NubePequena-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Misc/Nubes/NubePequena-Sheet.png
+
+#begin Misc/Nubes/NubeMediana-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Misc/Nubes/NubeMediana-Sheet.png
+
+#begin Misc/Nubes/NubeGrande-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyEnabled=False
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Misc/Nubes/NubeGrande-Sheet.png
 
 #begin Textures/Vidrio.png
 /importer:TextureImporter

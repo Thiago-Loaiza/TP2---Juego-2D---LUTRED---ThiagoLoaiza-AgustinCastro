@@ -21,6 +21,9 @@ public partial class Partida
             coloresFondo[y] = Color.White * (y / 255f);
         _degradadoFondo.SetData(coloresFondo);
         _fuenteContador = Content.Load<SpriteFont>("Fonts/BoldPixels/BoldPixels");
+        _marcoAvisoEscudo = new MarcoNinePatchAnimado(Content.Load<Texture2D>("Sprites/UI/Cuadro-Sheet"), 9);
+        _sonidoEscudoRoto = Core.Audio.CreateSoundEffectInstance(
+            Content.Load<SoundEffect>("SFX/Upgrades/Shield/Shield_Break"), volume: 0.8f);
         Puntaje.ComenzarNivel();
         _marcador = new MarcadorPuntaje(Content, Puntaje);
         _decoraciones = new DecoracionesMapa(Content);
@@ -113,6 +116,7 @@ public partial class Partida
         _dupes.Clear();
         _shame?.UnloadContent();
         Core.Audio.ReleaseSoundEffect(_avisoShame);
+        Core.Audio.ReleaseSoundEffect(_sonidoEscudoRoto);
         for (int i = 0; i < _dukes.Count; i++)
         {
             _dukes[i].UnloadContent();

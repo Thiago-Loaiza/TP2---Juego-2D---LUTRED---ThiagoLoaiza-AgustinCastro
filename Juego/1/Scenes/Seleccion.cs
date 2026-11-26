@@ -186,7 +186,7 @@ public sealed class Seleccion : Escena
             for (int pagina = 0; pagina < 2; pagina++)
                 _fondosAnimados[i, pagina] = Content.Load<Texture2D>(
                     $"Backgrounds/Selection/Atlas/{fondos[i]}-{pagina}");
-            _animaciones[i] = Content.Load<Texture2D>($"Sprites/Sinner/PantallaEleccion/Atlas/{arte[i]}");
+            _animaciones[i] = Content.Load<Texture2D>($"Sprites/Characters/Sinner/PantallaEleccion/Atlas/{arte[i]}");
             // la base blanca premultiplicada permite aplicar un tono uniforme sin depender del negro original.
             var pixeles = new Color[_animaciones[i].Width * _animaciones[i].Height];
             _animaciones[i].GetData(pixeles);

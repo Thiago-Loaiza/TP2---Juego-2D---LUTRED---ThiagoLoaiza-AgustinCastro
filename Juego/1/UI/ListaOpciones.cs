@@ -11,9 +11,9 @@ namespace _1.UI;
 public sealed class ListaOpciones : IDisposable
 {
     private readonly bool _incluirFun;
-    private int CantidadOpciones => _incluirFun ? 10 : 9;
+    private int CantidadOpciones => _incluirFun ? 11 : 10;
     private static readonly (int Fila, string Titulo)[] Categorias =
-    { (0, "JUGABILIDAD"), (1, "AUDIO"), (4, "RANGOS"), (7, "VISUAL"), (9, "\"FUN\"") };
+    { (0, "JUGABILIDAD"), (2, "AUDIO"), (5, "RANGOS"), (8, "VISUAL"), (10, "\"FUN\"") };
     private float AltoContenido => InicioFila(CantidadOpciones - 1) + 120;
     private static float InicioFila(int fila)
     {
@@ -49,12 +49,13 @@ public sealed class ListaOpciones : IDisposable
         void Agregar(int fila, Func<bool> leer, Action<bool> escribir)
             => _interruptores.Add(fila, (new BotonInterruptor(hoja, leer()), leer, escribir));
         Agregar(0, () => OpcionesJuego.AlternarCorrer, v => OpcionesJuego.AlternarCorrer = v);
-        Agregar(1, () => OpcionesJuego.SilenciarMusica, v => OpcionesJuego.SilenciarMusica = v);
-        Agregar(4, () => OpcionesJuego.SilenciarLocutor, v => OpcionesJuego.SilenciarLocutor = v);
-        Agregar(6, () => OpcionesJuego.MultiplicadorTotal, v => OpcionesJuego.MultiplicadorTotal = v);
-        Agregar(7, () => OpcionesJuego.MostrarFps, v => OpcionesJuego.MostrarFps = v);
-        Agregar(8, () => OpcionesJuego.PantallaCompleta, v => OpcionesJuego.PantallaCompleta = v);
-        if (_incluirFun) Agregar(9, () => Game1.FastTrack, v => Game1.FastTrack = v);
+        Agregar(1, () => OpcionesJuego.SaltarPrologo, v => OpcionesJuego.SaltarPrologo = v);
+        Agregar(2, () => OpcionesJuego.SilenciarMusica, v => OpcionesJuego.SilenciarMusica = v);
+        Agregar(5, () => OpcionesJuego.SilenciarLocutor, v => OpcionesJuego.SilenciarLocutor = v);
+        Agregar(7, () => OpcionesJuego.MultiplicadorTotal, v => OpcionesJuego.MultiplicadorTotal = v);
+        Agregar(8, () => OpcionesJuego.MostrarFps, v => OpcionesJuego.MostrarFps = v);
+        Agregar(9, () => OpcionesJuego.PantallaCompleta, v => OpcionesJuego.PantallaCompleta = v);
+        if (_incluirFun) Agregar(10, () => Game1.FastTrack, v => Game1.FastTrack = v);
         _fuente = Core.Content.Load<SpriteFont>("Fonts/PMingLiU Regular/Opciones");
         _pixel = new Texture2D(Core.GraphicsDevice, 1, 1);
         _pixel.SetData(new[] { Color.White });
@@ -65,10 +66,10 @@ public sealed class ListaOpciones : IDisposable
         (int)(ancho * Escala), (int)(alto * Escala));
     private Rectangle Interruptor(int fila) => Area(390, InicioFila(fila) + 10, 180, 90);
     private bool EsInterruptor(int fila) => _interruptores.ContainsKey(fila);
-    private static bool EsSlider(int fila) => fila == 2 || fila == 3 || fila == 5;
-    private static int MinimoSlider(int fila) => fila == 5 ? 25 : 0;
-    private static int ValorSlider(int fila) => fila == 2 ? OpcionesJuego.VolumenMusica
-        : fila == 3 ? OpcionesJuego.VolumenSfx : OpcionesJuego.VisibilidadRangos;
+    private static bool EsSlider(int fila) => fila == 3 || fila == 4 || fila == 6;
+    private static int MinimoSlider(int fila) => fila == 6 ? 25 : 0;
+    private static int ValorSlider(int fila) => fila == 3 ? OpcionesJuego.VolumenMusica
+        : fila == 4 ? OpcionesJuego.VolumenSfx : OpcionesJuego.VisibilidadRangos;
     private Rectangle Pista(int fila) => Area(350, InicioFila(fila) + 48, 190, 10);
     private Rectangle Carril => new(_area.Right - (int)(12 * Escala), _area.Top,
         Math.Max(4, (int)(6 * Escala)), _area.Height);
@@ -130,7 +131,7 @@ public sealed class ListaOpciones : IDisposable
                         if (!control.Contains(raton.Position)) continue;
                         _seleccion = fila;
                         if (EsInterruptor(fila)) Alternar(fila);
-                        else if (fila != 2 || !OpcionesJuego.SilenciarMusica) _arrastrando = fila;
+                        else if (fila != 3 || !OpcionesJuego.SilenciarMusica) _arrastrando = fila;
                     }
             }
             if (_arrastrando == CantidadOpciones)
@@ -180,7 +181,7 @@ public sealed class ListaOpciones : IDisposable
 
     private void Alternar(int fila)
     {
-        if(Game1.Arcade && fila == 8)
+        if(Game1.Arcade && fila == 9)
         return;
 
         if (_interruptores.TryGetValue(fila, out var control) && !control.Boton.Animando)
@@ -193,9 +194,9 @@ public sealed class ListaOpciones : IDisposable
     private static void EstablecerSlider(int fila, int valor)
     {
         valor = Math.Clamp(valor, 0, 100);
-        if (fila == 2 && !OpcionesJuego.SilenciarMusica) OpcionesJuego.VolumenMusica = valor;
-        if (fila == 3) OpcionesJuego.VolumenSfx = valor;
-        if (fila == 5) OpcionesJuego.VisibilidadRangos = valor;
+        if (fila == 3 && !OpcionesJuego.SilenciarMusica) OpcionesJuego.VolumenMusica = valor;
+        if (fila == 4) OpcionesJuego.VolumenSfx = valor;
+        if (fila == 6) OpcionesJuego.VisibilidadRangos = valor;
     }
 
     public void Draw(Rectangle area, float opacidad = 1)
@@ -218,7 +219,7 @@ public sealed class ListaOpciones : IDisposable
         {
             batch.Draw(_pixel, Area(10, InicioFila(fila) + 118, 570, 1), Color.DarkRed * opacidad);
             if (EsInterruptor(fila)) continue;
-            bool habilitado = fila != 2 || !OpcionesJuego.SilenciarMusica;
+            bool habilitado = fila != 3 || !OpcionesJuego.SilenciarMusica;
             Color color = (habilitado ? Color.Red : Color.DimGray) * opacidad;
             var pista = Pista(fila);
             int minimo = MinimoSlider(fila);
@@ -235,19 +236,19 @@ public sealed class ListaOpciones : IDisposable
         }
         batch.End();
         batch.Begin(samplerState: SamplerState.LinearClamp, rasterizerState: _recorte);
-        string[] nombres = { "Alternar correr", "Silenciar musica", "Volumen musica", "Volumen SFX", "Silenciar locutor",
+        string[] nombres = { "Alternar correr", "Saltar prólogo", "Silenciar musica", "Volumen musica", "Volumen SFX", "Silenciar locutor",
             "Visibilidad rangos", "Multiplicador total", "Mostrar FPS", "Pantalla completa", "Fast Track" };
         foreach (var categoria in Categorias)
             if (categoria.Fila < CantidadOpciones)
                 Texto(categoria.Titulo, Area(20, InicioFila(categoria.Fila) - 45, 320, 45), 0.32f, Color.White * opacidad);
         for (int fila = 0; fila < CantidadOpciones; fila++)
         {
-            bool desactivado = (fila == 2 && OpcionesJuego.SilenciarMusica) || (fila == 8 && Game1.Arcade);
+            bool desactivado = (fila == 3 && OpcionesJuego.SilenciarMusica) || (fila == 9 && Game1.Arcade);
             Color color = (desactivado ? Color.Gray : Color.White) * opacidad;
             Texto(nombres[fila], Area(20, InicioFila(fila) + 32, 320, 45), 0.32f, color);
             if (!EsInterruptor(fila))
-                Texto($"{ValorSlider(fila)}{(fila == 5 ? "%" : "")}",
-                    Area(550, InicioFila(fila) + 32, 40, 45), fila == 5 ? 0.22f : 0.27f, color);
+                Texto($"{ValorSlider(fila)}{(fila == 6 ? "%" : "")}",
+                    Area(550, InicioFila(fila) + 32, 40, 45), fila == 6 ? 0.22f : 0.27f, color);
             if (_seleccion == fila)
                 Texto(">", Area(0, InicioFila(fila) + 32, 15, 45), 0.25f, Color.Red * opacidad);
         }
@@ -341,16 +342,17 @@ public sealed class ListaOpciones : IDisposable
             {
                 0 => Game1.Arcade ? "OFF: manten Boton 2. ON: pulsa Boton 2 para alternar."
                     : "OFF: manten Shift. ON: pulsa Shift para alternar.",
-                1 => "Silencia la musica y conserva su volumen.",
-                2 when OpcionesJuego.SilenciarMusica => "Desactiva Silenciar musica para ajustar el volumen.",
-                2 => "Arrastra para ajustar la musica de 0 a 100.",
-                3 => "Arrastra para ajustar los efectos de 0 a 100.",
-                4 => "Silencia los anuncios del locutor al alcanzar un nuevo rango.",
-                5 => "Ajusta la visibilidad del sistema de rangos entre 25% y 100%.",
-                6 => "Muestra el multiplicador total de la run: multiplicador del rango por el de los modificadores.",
-                7 => "Muestra los fotogramas por segundo en la esquina superior derecha.",
-                8 => Game1.Arcade ? "La pantalla se queda completa cuando el juego esta en version para el Arcade." : "Alterna entre pantalla completa y ventana, tambien lo puedes hacer con F11",
-                9 when _incluirFun => DescripcionFastTrack,
+                1 => "Omite la escena del prólogo e inicia directamente una nueva run.",
+                2 => "Silencia la musica y conserva su volumen.",
+                3 when OpcionesJuego.SilenciarMusica => "Desactiva Silenciar musica para ajustar el volumen.",
+                3 => "Arrastra para ajustar la musica de 0 a 100.",
+                4 => "Arrastra para ajustar los efectos de 0 a 100.",
+                5 => "Silencia los anuncios del locutor al alcanzar un nuevo rango.",
+                6 => "Ajusta la visibilidad del sistema de rangos entre 25% y 100%.",
+                7 => "Muestra el multiplicador total de la run: multiplicador del rango por el de los modificadores.",
+                8 => "Muestra los fotogramas por segundo en la esquina superior derecha.",
+                9 => Game1.Arcade ? "La pantalla se queda completa cuando el juego esta en version para el Arcade." : "Alterna entre pantalla completa y ventana, tambien lo puedes hacer con F11",
+                10 when _incluirFun => DescripcionFastTrack,
                 _ => "Rueda para bajar. Flechas para elegir y ajustar."
             };
         }

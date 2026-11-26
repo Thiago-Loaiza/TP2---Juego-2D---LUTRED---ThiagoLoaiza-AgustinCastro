@@ -1,0 +1,713 @@
+using LutredLibrary;
+using System;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using LutredLibrary.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
+using _1.Colisiones;
+
+namespace _1.Entities;
+
+public enum SinnerAnimation
+{
+    Reposo,
+    Caminata,
+    CaminataArriba,
+    Parry,
+    Correr,
+    CorrerArriba,
+    CaminataAbajo,
+    CorrerAbajo
+}
+
+public class Sinner
+{
+    private SoundEffectInstance _sonidoCaminata;
+    private SoundEffectInstance _sonidoParry;
+    private SoundEffectInstance _sonidoParryExitoso;
+    private AnimatedSprite _efectoParry;
+    private AnimatedSprite _auraDominio;
+    private AnimatedSprite _aureolaDivina;
+    private AnimatedSprite _efectoPaz;
+    private AnimatedSprite _spriteDash;
+    private Vector2 _ultimaDireccion = Vector2.UnitY;
+    public GranJabalina Jabalina { get; private set; }
+    private Vector2 _direccionDash;
+    private float _dashRestante;
+    private float _recargaDash;
+    private float _velocidadDash;
+    public bool DashActivo { get; private set; }
+    private AnimatedSprite _escudo;
+    private AnimatedSprite _rupturaEscudo;
+    private _1.Progression.EstadoEscudo _estadoEscudo;
+    private KeyboardState _tecladoAnterior;
+    private bool _correrAlternado;
+    private bool _haciendoParry;
+    private double _parryRestante;
+    private const double SegundosPorFrameParry = 0.05;
+    private const float Velocidad = 220f;
+    public const float VelocidadCaminata = Velocidad;
+    private const float MultiplicadorSprint = 2.5f;
+    private const float Aceleracion = 1800f;
+    private const float Frenado = 2200f;
+    private Vector2 _velocidadActual;
+    private AnimatedSprite _sprite;
+    public bool AuraFellDoorActiva { get; set; }
+    private readonly Vector2[] _sombrasFellDoor = new Vector2[3];
+    private readonly Dictionary<Texture2D, Texture2D> _siluetasFellDoor = new();
+    private bool _sombrasPreparadas;
+
+    public _1.Progression.EstadoMejoras Mejoras { get; set; } = new();
+    private Vector2 _direccionCaliz;
+    private float _tiempoCaliz;
+    private int EtapaCaliz => Mejoras.Cantidad("Caliz") > 0 ? Math.Min(5, (int)(_tiempoCaliz / 2f)) : 0;
+    private Vector2 _sombraCaliz;
+    private bool _sombraCalizPreparada;
+    private AnimatedSprite _avisoPrecipitacion;
+    private float _recargaPrecipitacion;
+    public bool PuedeAvisarPrecipitacion => _avisoPrecipitacion != null && _recargaPrecipitacion <= 0f
+        && !DashActivo && !_estadoEscudo.Invulnerable && !PuedeParrear;
+    public const float HorizontePrecipitacion = 0.45f;
+
+    public void AvisarPrecipitacion()
+    {
+        if (!PuedeAvisarPrecipitacion) return;
+        _recargaPrecipitacion = 10f;
+        _avisoPrecipitacion.Animation = _avisoPrecipitacion.Animation;
+    }
+
+    public void PredecirColision(CirculoColision peligro, Vector2 anterior, float segundos)
+    {
+        if (!PuedeAvisarPrecipitacion || segundos <= 0f) return;
+        Vector2 futuroPeligro = peligro.Centro + (peligro.Centro - anterior) / segundos * HorizontePrecipitacion;
+        var futuroSinner = new CirculoColision(Colision.Centro + VelocidadActual * HorizontePrecipitacion, Colision.Radio);
+        if (futuroSinner.SeCruzan(Colision.Centro, new CirculoColision(futuroPeligro, peligro.Radio), peligro.Centro))
+            AvisarPrecipitacion();
+    }
+
+    public bool UsarInercia { get; set; } = true;
+    public bool ControlesInvertidos { get; set; }
+    public SinnerAnimation AnimacionMovimiento => _animacionActual == SinnerAnimation.Parry
+        ? SinnerAnimation.Reposo : _animacionActual;
+    public SpriteEffects Orientacion => _sprite.Effects;
+    public bool HaciendoParry => _haciendoParry;
+    // TooManyParries anula el parry manual y el autoparry mientras esta en pantalla.
+    public bool ParryBloqueado { get; set; }
+    public float MultiplicadorVelocidadExterno { get; set; } = 1f;
+    public bool AutoparryActivo => Mejoras.Dominio.Activo && !ParryBloqueado;
+    public bool PuedeParrear => !DashActivo && !ParryBloqueado && (HaciendoParry || AutoparryActivo);
+    public bool ParryIniciadoEsteFrame { get; private set; }
+    // Cada pulsacion de la tecla, aunque no llegue a iniciar un parry.
+    public bool ParryPresionadoEsteFrame { get; private set; }
+    public Vector2 VelocidadActual => _velocidadActual;
+    public CirculoColision Colision => new(Position + new Vector2(0f, 15f), 24f);
+    public CirculoColision ColisionParry => new(Colision.Centro, 35f * Mejoras.MultiplicadorRadioParry);
+
+    private readonly Dictionary<SinnerAnimation, Animation>
+        _animaciones = new();
+    private readonly Dictionary<SinnerAnimation, Animation> _parryMovimiento = new();
+
+    private SinnerAnimation _animacionActual;
+
+    public Vector2 Position
+    {
+        get => _sprite.Position;
+        set => _sprite.Position = value;
+    }
+
+    public void LoadContent(ContentManager content)
+    {
+        if (Mejoras.Cantidad("Precipitacion") > 0)
+        {
+            _avisoPrecipitacion = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/Precipitacion-Sheet", 6, 0.15, 50, 50))
+            { Origin = new Vector2(25f), Scale = new Vector2(0.65f), IsLooping = false };
+        }
+        if (Mejoras.Cantidad("GranJabalina") > 0)
+            Jabalina = new GranJabalina(content.Load<Texture2D>("Sprites/Upgrades/Efectos/JabalinaV2-Sheet"));
+        if (Mejoras.Cantidad("Paz") > 0)
+        {
+            _efectoPaz = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/Paz-Sheet", 19, 0.08))
+            {
+                Origin = new Vector2(150f), Scale = new Vector2(0.5f)
+            };
+        }
+        if (Mejoras.Cantidad("AureolaDivina") > 0)
+        {
+            _aureolaDivina = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/AureolaDivina-Sheet", 6, 0.1))
+            {
+                Origin = new Vector2(150f), Scale = new Vector2(0.5f)
+            };
+            _spriteDash = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Characters/Sinner/SinnerDASH-Sheet", 9, 0.2 / 9))
+            {
+                Origin = new Vector2(150f), Scale = new Vector2(0.5f), IsLooping = false
+            };
+        }
+        _estadoEscudo = new _1.Progression.EstadoEscudo(Mejoras.Cantidad("Escudo") > 0);
+        if (_estadoEscudo.Disponible)
+        {
+            _escudo = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/Shield/Shield-Sheet", 14, 0.08, 50, 50))
+            {
+                Origin = new Vector2(25f), Scale = new Vector2(0.75f)
+            };
+            _rupturaEscudo = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/Shield/ShieldBroken-Sheet", 9, 0.06, 50, 50))
+            {
+                Origin = new Vector2(25f), Scale = new Vector2(0.75f), IsLooping = false
+            };
+        }
+        _animaciones[SinnerAnimation.Reposo] = CrearAnimacion(
+            content,
+            "Sprites/Characters/Sinner/Sinner-Sheet",
+            3,
+            0.4
+        );
+
+        _animaciones[SinnerAnimation.Caminata] = CrearAnimacion(
+            content,
+            "Sprites/Characters/Sinner/SinnerWalk-Sheet",
+            5,
+            0.12
+        );
+
+        _animaciones[SinnerAnimation.CaminataArriba] = CrearAnimacion(
+            content,
+            "Sprites/Characters/Sinner/SinnerWalkUP-Sheet",
+            6,
+            0.12
+        );
+
+        _animaciones[SinnerAnimation.Parry] = CrearAnimacion(
+            content,
+            "Sprites/Characters/Sinner/SinnerParryFront-Sheet",
+            5,
+            SegundosPorFrameParry + Mejoras.ExtraParry / 5
+        );
+
+        _animaciones[SinnerAnimation.Correr] = CrearAnimacion(
+            content,
+            "Sprites/Characters/Sinner/SinnerRUN-Sheet",
+            8,
+            0.08
+        );
+
+        _animaciones[SinnerAnimation.CorrerArriba] = CrearAnimacion(
+            content,
+            "Sprites/Characters/Sinner/SinnerRUN_UP-Sheet",
+            7,
+            0.08
+        );
+
+        _animaciones[SinnerAnimation.CaminataAbajo] = _animaciones[SinnerAnimation.CaminataArriba];
+        _animaciones[SinnerAnimation.CorrerAbajo] = CrearAnimacion(
+            content, "Sprites/Characters/Sinner/SinnerRUN_DOWN-Sheet", 9, 0.08);
+
+        _parryMovimiento[SinnerAnimation.Caminata] = _animaciones[SinnerAnimation.Parry];
+        _parryMovimiento[SinnerAnimation.CaminataArriba] = _animaciones[SinnerAnimation.Parry];
+        _parryMovimiento[SinnerAnimation.CaminataAbajo] = _animaciones[SinnerAnimation.Parry];
+        _parryMovimiento[SinnerAnimation.Correr] = CrearAnimacion(
+            content, "Sprites/Characters/Sinner/SinnerRUN-PARRY-Sheet", 8, 0.08);
+        _parryMovimiento[SinnerAnimation.CorrerArriba] = CrearAnimacion(
+            content, "Sprites/Characters/Sinner/SinnerRUN_UP-PARRY-Sheet", 7, 0.08);
+        _parryMovimiento[SinnerAnimation.CorrerAbajo] = CrearAnimacion(
+            content, "Sprites/Characters/Sinner/SinnerRUN_DOWN-PARRY-Sheet", 9, 0.08);
+
+        _animacionActual = SinnerAnimation.Reposo;
+
+        _sprite = new AnimatedSprite(
+            _animaciones[_animacionActual]
+        );
+        _sprite.Origin = new Vector2(150,150);
+        _sprite.Scale = new Vector2(0.5f);
+        SoundEffect sonido = content.Load<SoundEffect>(
+            "SFX/Entities/Sinner/Caminata"
+        );
+
+        _sonidoCaminata = Core.Audio.CreateSoundEffectInstance(sonido, isLooped: true);
+        Core.Audio.SetVolume(_sonidoCaminata, 0.4f);
+
+        _sonidoParry = Core.Audio.CreateSoundEffectInstance(content.Load<SoundEffect>(
+            "SFX/Entities/Sinner/Parry"
+        ));
+        Core.Audio.SetVolume(_sonidoParry, 0.6f);
+
+        _sonidoParryExitoso = Core.Audio.CreateSoundEffectInstance(content.Load<SoundEffect>(
+            "SFX/Entities/Sinner/ParryExitoso"
+        ));
+        Core.Audio.SetVolume(_sonidoParryExitoso, 0.6f);
+
+        _efectoParry = new AnimatedSprite(CrearAnimacion(
+            content,
+            "Effects/EfectoParry-Sheet",
+            5,
+            (SegundosPorFrameParry * 5 + Mejoras.ExtraParry) / 5,
+            50,
+            50
+        ));
+        if (Mejoras.Cantidad("Dominio") > 0)
+        {
+            _auraDominio = new AnimatedSprite(CrearAnimacion(content,
+                "Sprites/Upgrades/Efectos/DominioV2-Sheet", 14, 0.07, 300, 300))
+            {
+                Origin = new Vector2(150f),
+                Scale = new Vector2(0.6f)
+            };
+        }
+        _efectoParry.Position = Position;
+        _efectoParry.IsLooping = false;
+        _efectoParry.Origin = new Vector2(25, 25);
+        _efectoParry.Scale = new Vector2(0.93f, 0.93f);
+        _tecladoAnterior = Keyboard.GetState();
+        if (Mejoras.Cantidad("FellDoor") > 0 || Mejoras.Cantidad("Caliz") > 0)
+        {
+            foreach (Animation animacion in _animaciones.Values) PrepararSiluetas(animacion);
+            foreach (Animation animacion in _parryMovimiento.Values) PrepararSiluetas(animacion);
+            if (_spriteDash != null) PrepararSiluetas(_spriteDash.Animation);
+        }
+    }
+
+    private void PrepararSiluetas(Animation animacion)
+    {
+        foreach (TextureRegion cuadro in animacion.Frames)
+        {
+            if (_siluetasFellDoor.ContainsKey(cuadro.Texture)) continue;
+            var pixeles = new Color[cuadro.Texture.Width * cuadro.Texture.Height];
+            cuadro.Texture.GetData(pixeles);
+            for (int i = 0; i < pixeles.Length; i++)
+            {
+                byte alfa = pixeles[i].A;
+                pixeles[i] = new Color(alfa, alfa, alfa, alfa);
+            }
+            var silueta = new Texture2D(Core.GraphicsDevice, cuadro.Texture.Width, cuadro.Texture.Height);
+            silueta.SetData(pixeles);
+            _siluetasFellDoor.Add(cuadro.Texture, silueta);
+        }
+    }
+
+    private static Animation CrearAnimacion(
+        ContentManager content,
+        string ruta,
+        int cantidadFrames,
+        double segundosPorFrame,
+        int anchoFrame = 300,
+        int altoFrame = 300)
+    {
+        Texture2D textura = content.Load<Texture2D>(ruta);
+
+        List<TextureRegion> frames = new();
+
+        for (int i = 0; i < cantidadFrames; i++)
+        {
+            frames.Add(new TextureRegion(
+                textura,
+                i * anchoFrame,
+                0,
+                anchoFrame,
+                altoFrame
+            ));
+        }
+
+        return new Animation(
+            frames,
+            TimeSpan.FromSeconds(segundosPorFrame)
+        );
+    }
+
+    public void CambiarAnimacion(SinnerAnimation animacion)
+    {
+        if (_animacionActual == animacion)
+            return;
+
+        _animacionActual = animacion;
+        _sprite.Animation = _animaciones[animacion];
+    }
+
+    public void Update(GameTime gameTime, IReadOnlyList<ColisionSolida> obstaculos = null)
+    {
+        float segundos = (float)gameTime.ElapsedGameTime.TotalSeconds;
+        _recargaDash = Math.Max(0f, _recargaDash - segundos);
+        DashActivo = _dashRestante > 0f;
+        _aureolaDivina?.Update(gameTime);
+        _efectoPaz?.Update(gameTime);
+        Mejoras.Dominio.Actualizar(gameTime.ElapsedGameTime.TotalSeconds);
+        if (AutoparryActivo)
+        {
+            _auraDominio?.Update(gameTime);
+        }
+        KeyboardState teclado = Keyboard.GetState();
+        bool lanzarJabalina = (teclado.IsKeyDown(Keys.E) && _tecladoAnterior.IsKeyUp(Keys.E))
+            || (Game1.Arcade && teclado.IsKeyDown(Keys.M) && _tecladoAnterior.IsKeyUp(Keys.M));
+        bool dashPresionado = (teclado.IsKeyDown(Keys.Q) && _tecladoAnterior.IsKeyUp(Keys.Q))
+            || (Game1.Arcade && teclado.IsKeyDown(Keys.J) && _tecladoAnterior.IsKeyUp(Keys.J));
+        ParryIniciadoEsteFrame = false;
+
+        bool parryPresionado = teclado.IsKeyDown(Keys.Space)
+            && _tecladoAnterior.IsKeyUp(Keys.Space);
+        ParryPresionadoEsteFrame = parryPresionado;
+        bool shiftPresionado = (teclado.IsKeyDown(Keys.LeftShift) && _tecladoAnterior.IsKeyUp(Keys.LeftShift))
+            || (teclado.IsKeyDown(Keys.RightShift) && _tecladoAnterior.IsKeyUp(Keys.RightShift))
+            || (Game1.Arcade && teclado.IsKeyDown(Keys.H) && _tecladoAnterior.IsKeyUp(Keys.H));
+        if (OpcionesJuego.AlternarCorrer && shiftPresionado)
+            _correrAlternado = !_correrAlternado;
+        if (!OpcionesJuego.AlternarCorrer)
+            _correrAlternado = false;
+        _tecladoAnterior = teclado;
+
+        // El parry conserva su duracion aunque cambie la animacion o la direccion.
+        if (_haciendoParry)
+        {
+            _parryRestante -= gameTime.ElapsedGameTime.TotalSeconds;
+            if (_parryRestante <= 0)
+            {
+                Mejoras.Dominio.FinalizarParryManual();
+                _haciendoParry = false;
+            }
+        }
+
+        if (parryPresionado && !_haciendoParry && !ParryBloqueado)
+        {
+            Mejoras.Dominio.ComenzarParryManual();
+            ParryIniciadoEsteFrame = true;
+            _haciendoParry = true;
+            _parryRestante = SegundosPorFrameParry * 5 + Mejoras.ExtraParry;
+            _efectoParry.Animation = _efectoParry.Animation;
+            Core.Audio.StopSoundEffect(_sonidoParry);
+            Core.Audio.PlaySoundEffect(_sonidoParry);
+        }
+
+        Vector2 direccion = Vector2.Zero;
+
+        if (teclado.IsKeyDown(Keys.A)) direccion.X -= 1;
+        if (teclado.IsKeyDown(Keys.D)) direccion.X += 1;
+        if (teclado.IsKeyDown(Keys.W)) direccion.Y -= 1;
+        if (teclado.IsKeyDown(Keys.S)) direccion.Y += 1;
+
+        if (ControlesInvertidos) direccion = -direccion;
+
+        if (direccion != Vector2.Zero)
+        {
+            direccion.Normalize();
+            _ultimaDireccion = direccion;
+        }
+
+        bool corriendo = OpcionesJuego.AlternarCorrer
+            ? _correrAlternado
+            : teclado.IsKeyDown(Keys.LeftShift) || teclado.IsKeyDown(Keys.RightShift)
+                || (Game1.Arcade && teclado.IsKeyDown(Keys.H));
+        if (direccion != _direccionCaliz || !corriendo || direccion == Vector2.Zero)
+        {
+            _tiempoCaliz = 0f;
+        }
+        else if (Mejoras.Cantidad("Caliz") > 0)
+        {
+            _tiempoCaliz = Math.Min(10f, _tiempoCaliz + segundos);
+        }
+        _direccionCaliz = direccion;
+        float velocidadCaminata = Velocidad * Mejoras.MultiplicadorVelocidad;
+        float bonusCaliz = EtapaCaliz * 0.1f;
+        Vector2 velocidadObjetivo = direccion * Velocidad * (Mejoras.MultiplicadorVelocidad + bonusCaliz)
+            * (corriendo ? MultiplicadorSprint : 1f) * MultiplicadorVelocidadExterno;
+
+        if (dashPresionado && _aureolaDivina != null && _recargaDash <= 0f && !DashActivo)
+        {
+            _direccionDash = _ultimaDireccion;
+            _dashRestante = 0.2f;
+            _recargaDash = 2f;
+            _velocidadDash = Velocidad * (Mejoras.MultiplicadorVelocidad + bonusCaliz)
+                * MultiplicadorSprint * MultiplicadorVelocidadExterno * 3f;
+            DashActivo = true;
+            _spriteDash.Animation = _spriteDash.Animation;
+        }
+
+        if (DashActivo)
+        {
+            _velocidadActual = _direccionDash * _velocidadDash;
+        }
+        else if (UsarInercia && Mejoras.Cantidad("TETUTRED") == 0)
+        {
+            bool reduciendoVelocidad = velocidadObjetivo.LengthSquared()
+                < _velocidadActual.LengthSquared();
+            float cambioPorSegundo = reduciendoVelocidad ? Frenado : Aceleracion;
+            _velocidadActual = AcercarVelocidad(
+                _velocidadActual, velocidadObjetivo, cambioPorSegundo * segundos);
+        }
+        else
+        {
+            _velocidadActual = velocidadObjetivo;
+        }
+
+        // Limitar el tramo rapido a 0,2 s, incluso si un cuadro tarda mas que el dash.
+        float segundosDash = DashActivo ? Math.Min(segundos, _dashRestante) : 0f;
+        Vector2 movimiento = DashActivo
+            ? _velocidadActual * segundosDash + velocidadObjetivo * (segundos - segundosDash)
+            : _velocidadActual * segundos;
+        if (obstaculos != null)
+        {
+            Vector2 permitido = ResolutorMovimiento.Limitar(Colision, movimiento, obstaculos);
+            // quitar la velocidad contra la pared evita acumular inercia.
+            if (permitido.X != movimiento.X)
+                _velocidadActual.X = 0f;
+            if (permitido.Y != movimiento.Y)
+                _velocidadActual.Y = 0f;
+            movimiento = permitido;
+        }
+        Position += movimiento;
+        Jabalina?.Update(segundos, lanzarJabalina && !ParryBloqueado, Colision.Centro, _ultimaDireccion);
+
+        if (_velocidadActual != Vector2.Zero)
+        {
+            Core.Audio.SetPitch(_sonidoCaminata,
+                _velocidadActual.LengthSquared() > velocidadCaminata * velocidadCaminata
+                ? 0.5f
+                : 0f);
+
+            if (_sonidoCaminata.State != SoundState.Playing)
+                Core.Audio.PlaySoundEffect(_sonidoCaminata);
+
+            _sprite.IsLooping = true;
+            bool vertical = Math.Abs(_velocidadActual.Y) > Math.Abs(_velocidadActual.X);
+            bool sprint = _velocidadActual.LengthSquared() > velocidadCaminata * velocidadCaminata;
+            CambiarAnimacion(vertical
+                ? (_velocidadActual.Y < 0
+                    ? (sprint ? SinnerAnimation.CorrerArriba : SinnerAnimation.CaminataArriba)
+                    : (sprint ? SinnerAnimation.CorrerAbajo : SinnerAnimation.CaminataAbajo))
+                : (sprint ? SinnerAnimation.Correr : SinnerAnimation.Caminata));
+            _sprite.Effects = !vertical && _velocidadActual.X < 0
+                ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+        }
+        else
+        {
+            Core.Audio.StopSoundEffect(_sonidoCaminata);
+            _sprite.IsLooping = !_haciendoParry;
+            CambiarAnimacion(_haciendoParry ? SinnerAnimation.Parry : SinnerAnimation.Reposo);
+        }
+
+        _sprite.Update(gameTime);
+        if (DashActivo)
+        {
+            _spriteDash.Update(gameTime);
+            _dashRestante = Math.Max(0f, _dashRestante - segundos);
+            if (_dashRestante <= 0f) _velocidadActual = velocidadObjetivo;
+        }
+        if (_haciendoParry)
+            _efectoParry.Update(gameTime);
+        ActualizarSombrasFellDoor(segundos);
+        ActualizarSombraCaliz(segundos);
+    }
+
+    private void ActualizarSombraCaliz(float segundos)
+    {
+        if (EtapaCaliz == 0) { _sombraCalizPreparada = false; return; }
+        Vector2 objetivo = Position - _ultimaDireccion * 18f;
+        _sombraCaliz = _sombraCalizPreparada
+            ? Vector2.Lerp(_sombraCaliz, objetivo, 1f - MathF.Exp(-18f * segundos)) : objetivo;
+        _sombraCalizPreparada = true;
+    }
+
+    private void ActualizarSombrasFellDoor(float segundos)
+    {
+        if (!AuraFellDoorActiva) { _sombrasPreparadas = false; return; }
+        float suavidad = 1f - MathF.Exp(-18f * segundos);
+        Vector2 direccion = _ultimaDireccion == Vector2.Zero ? Vector2.UnitY : Vector2.Normalize(_ultimaDireccion);
+        Vector2 objetivo = Position;
+        for (int i = 0; i < _sombrasFellDoor.Length; i++)
+        {
+            objetivo -= direccion * 10f;
+            _sombrasFellDoor[i] = _sombrasPreparadas
+                ? Vector2.Lerp(_sombrasFellDoor[i], objetivo, suavidad) : objetivo;
+            objetivo = _sombrasFellDoor[i];
+        }
+        _sombrasPreparadas = true;
+    }
+
+    private void DibujarSombrasFellDoor(SpriteBatch spriteBatch)
+    {
+        if (!AuraFellDoorActiva && EtapaCaliz == 0) return;
+        if (AuraFellDoorActiva && !_sombrasPreparadas) ActualizarSombrasFellDoor(0f);
+        AnimatedSprite sprite = DashActivo && _spriteDash != null ? _spriteDash : _sprite;
+        TextureRegion cuadro = sprite.Region;
+        if (!DashActivo && _haciendoParry && _parryMovimiento.TryGetValue(_animacionActual, out Animation parry))
+        {
+            double duracion = SegundosPorFrameParry * 5 + Mejoras.ExtraParry;
+            double progreso = Math.Clamp(1 - _parryRestante / duracion, 0, 1);
+            cuadro = parry.Frames[Math.Min(parry.Frames.Count - 1, (int)(progreso * parry.Frames.Count))];
+        }
+        if (!_siluetasFellDoor.TryGetValue(cuadro.Texture, out Texture2D textura)) return;
+        // De atras hacia adelante: rojo oscuro, medio y claro junto a Sinner.
+        for (int i = 2; AuraFellDoorActiva && i >= 0; i--)
+        {
+            Color rojo = i == 0 ? new Color(255, 90, 90)
+                : i == 1 ? new Color(190, 20, 30) : new Color(90, 0, 12);
+            spriteBatch.Draw(textura, _sombrasFellDoor[i], cuadro.Bounds, rojo * (0.65f - i * 0.12f),
+                sprite.Rotation, sprite.Origin, sprite.Scale, _sprite.Effects, sprite.LayerDepth);
+        }
+        if (EtapaCaliz > 0)
+        {
+            if (!_sombraCalizPreparada) ActualizarSombraCaliz(0f);
+            Color color = Color.Lerp(new Color(255, 210, 0), new Color(255, 255, 220), (EtapaCaliz - 1) / 4f);
+            spriteBatch.Draw(textura, _sombraCaliz, cuadro.Bounds, color * 0.85f,
+                sprite.Rotation, sprite.Origin, sprite.Scale, _sprite.Effects, sprite.LayerDepth);
+        }
+    }
+
+    private static Vector2 AcercarVelocidad(
+        Vector2 actual, Vector2 objetivo, float cambioMaximo)
+    {
+        Vector2 diferencia = objetivo - actual;
+        float distancia = diferencia.Length();
+
+        // llegar exactamente al objetivo evita oscilar o deslizarse indefinidamente.
+        if (distancia <= cambioMaximo || distancia == 0f)
+            return objetivo;
+
+        return actual + diferencia / distancia * cambioMaximo;
+    }
+
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        DibujarSombrasFellDoor(spriteBatch);
+        if (_efectoPaz != null)
+        {
+            _efectoPaz.Position = Position;
+            _efectoPaz.Draw(spriteBatch);
+        }
+        _sprite.Color = _estadoEscudo.Invulnerable
+            ? Color.White * (0.4f + 0.6f * (float)(0.5 + 0.5 * Math.Cos(
+                _estadoEscudo.InvulnerabilidadRestante * Math.PI * 12)))
+            : Color.White;
+        if (AutoparryActivo && _auraDominio != null)
+        {
+            _auraDominio.Position = Colision.Centro;
+            _auraDominio.Color = Color.White * Mejoras.Dominio.OpacidadAura;
+            _auraDominio.Draw(spriteBatch);
+        }
+        if (DashActivo && _spriteDash != null)
+        {
+            _spriteDash.Position = Position;
+            _spriteDash.Effects = _sprite.Effects;
+            _spriteDash.Draw(spriteBatch);
+        }
+        else if (_haciendoParry && _parryMovimiento.TryGetValue(_animacionActual, out Animation parry))
+        {
+            // Mostrar el gesto completo sin alargar la ventana de defensa.
+            double duracion = SegundosPorFrameParry * 5 + Mejoras.ExtraParry;
+            double progreso = Math.Clamp(1 - _parryRestante / duracion, 0, 1);
+            int indice = Math.Min(parry.Frames.Count - 1, (int)(progreso * parry.Frames.Count));
+            TextureRegion cuadro = parry.Frames[indice];
+            spriteBatch.Draw(cuadro.Texture, _sprite.Position, cuadro.Bounds, _sprite.Color,
+                _sprite.Rotation, _sprite.Origin, _sprite.Scale, _sprite.Effects, _sprite.LayerDepth);
+        }
+        else
+            _sprite.Draw(spriteBatch);
+        if (!DashActivo && _haciendoParry && !_efectoParry.IsFinished)
+        {
+            _efectoParry.Position = Position;
+            _efectoParry.Draw(spriteBatch);
+        }
+
+        AnimatedSprite proteccion = _estadoEscudo.Disponible ? _escudo
+            : _estadoEscudo.Invulnerable && _rupturaEscudo?.IsFinished == false ? _rupturaEscudo : null;
+        if (proteccion != null)
+        {
+            proteccion.Position = Position;
+            proteccion.Draw(spriteBatch);
+        }
+
+        if (_aureolaDivina != null)
+        {
+            _aureolaDivina.Position = Position - new Vector2(0f, 30f);
+            _aureolaDivina.Draw(spriteBatch);
+        }
+        if (_avisoPrecipitacion != null && _recargaPrecipitacion > 0f && !_avisoPrecipitacion.IsFinished)
+        {
+            _avisoPrecipitacion.Position = Position + new Vector2(34f, -45f);
+            _avisoPrecipitacion.Draw(spriteBatch);
+        }
+
+    }
+
+    public void ActualizarEscudo(GameTime gameTime)
+    {
+        if (_recargaPrecipitacion > 0f)
+        {
+            _recargaPrecipitacion = Math.Max(0f, _recargaPrecipitacion - (float)gameTime.ElapsedGameTime.TotalSeconds);
+            _avisoPrecipitacion?.Update(gameTime);
+        }
+        _estadoEscudo.Actualizar(gameTime.ElapsedGameTime.TotalSeconds);
+        if (_estadoEscudo.Disponible) _escudo?.Update(gameTime);
+        else if (_estadoEscudo.Invulnerable) _rupturaEscudo?.Update(gameTime);
+    }
+
+    public bool AbsorberGolpe(out bool escudoRoto)
+    {
+        bool disponible = _estadoEscudo.Disponible;
+        bool absorbido = _estadoEscudo.AbsorberGolpe();
+        escudoRoto = disponible && !_estadoEscudo.Disponible;
+        return absorbido;
+    }
+
+    public void UnloadContent()
+    {
+        foreach (Texture2D silueta in _siluetasFellDoor.Values) silueta.Dispose();
+        _siluetasFellDoor.Clear();
+        Mejoras.Dominio.FinalizarParryManual();
+        Core.Audio.ReleaseSoundEffect(_sonidoCaminata);
+        Core.Audio.ReleaseSoundEffect(_sonidoParry);
+        Core.Audio.ReleaseSoundEffect(_sonidoParryExitoso);
+    }
+
+    public void ConfirmarParry(bool automatico = false)
+    {
+        bool auraActiva = AutoparryActivo;
+        if (!automatico)
+        {
+            Mejoras.Dominio.RegistrarParryManualExitoso(Mejoras.Cantidad("Dominio"));
+        }
+        if (!auraActiva && AutoparryActivo && _auraDominio != null)
+        {
+            _auraDominio.Animation = _auraDominio.Animation;
+        }
+        Core.Audio.StopSoundEffect(_sonidoParryExitoso);
+        Core.Audio.PlaySoundEffect(_sonidoParryExitoso);
+    }
+
+    public void DetenerSonidos()
+    {
+        Core.Audio.StopSoundEffect(_sonidoCaminata);
+        Core.Audio.StopSoundEffect(_sonidoParry);
+        Core.Audio.StopSoundEffect(_sonidoParryExitoso);
+    }
+
+    public void Teletransportar(Vector2 posicion)
+    {
+        _sombrasPreparadas = false;
+        Position = posicion;
+        _velocidadActual = Vector2.Zero;
+        DashActivo = false;
+        _dashRestante = 0f;
+        _tiempoCaliz = 0f;
+        _sombraCalizPreparada = false;
+        DetenerSonidos();
+        SincronizarEntrada();
+    }
+
+    public void SincronizarEntrada() => _tecladoAnterior = Keyboard.GetState();
+
+    public void LimitarAreaCircular(Vector2 centro, float radio)
+    {
+        Vector2 diferencia = Colision.Centro - centro;
+        float limite = Math.Max(0f, radio - Colision.Radio);
+        if (diferencia.LengthSquared() <= limite * limite) return;
+        Vector2 normal = Vector2.Normalize(diferencia);
+        Position += centro + normal * limite - Colision.Centro;
+        float velocidadExterior = Vector2.Dot(_velocidadActual, normal);
+        if (velocidadExterior > 0f) _velocidadActual -= normal * velocidadExterior;
+    }
+}

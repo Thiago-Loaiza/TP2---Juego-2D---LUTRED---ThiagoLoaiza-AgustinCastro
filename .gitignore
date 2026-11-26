@@ -1,6 +1,10 @@
 # Archivos generados del juego al momento de apretar f5
 /Juego/1/bin/
 /Juego/1/obj/
+/Juego/1/Content/bin/
+/Juego/1/Content/obj/
+/LutredLibrary/bin/
+/LutredLibrary/obj/
 
 # Demo para distribuir
 /LUTRED_DEMO/

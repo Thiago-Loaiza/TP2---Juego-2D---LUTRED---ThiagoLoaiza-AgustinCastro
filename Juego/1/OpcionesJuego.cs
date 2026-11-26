@@ -8,6 +8,7 @@ public static class OpcionesJuego
 {
     private static readonly GuardadoOpciones Archivo = new();
     private static bool _alternarCorrer;
+    private static bool _saltarPrologo;
     private static bool _silenciarLocutor;
     private static int _visibilidadRangos = 100;
     private static bool _multiplicadorTotal, _mostrarFps, _pantallaCompleta;
@@ -63,6 +64,11 @@ public static class OpcionesJuego
         get => _alternarCorrer;
         set { if (_alternarCorrer == value) return; _alternarCorrer = value; SolicitarGuardado(); }
     }
+    public static bool SaltarPrologo
+    {
+        get => _saltarPrologo;
+        set { if (_saltarPrologo == value) return; _saltarPrologo = value; SolicitarGuardado(); }
+    }
     public static bool SilenciarMusica
     {
         get => LutredLibrary.Core.Audio.IsMusicMuted;
@@ -90,6 +96,7 @@ public static class OpcionesJuego
     {
         DatosOpciones datos = Archivo.Cargar();
         _alternarCorrer = datos.AlternarCorrer;
+        _saltarPrologo = datos.SaltarPrologo;
         _silenciarLocutor = datos.SilenciarLocutor;
         _visibilidadRangos = datos.VisibilidadRangos;
         _multiplicadorTotal = datos.MultiplicadorTotal;
@@ -115,6 +122,6 @@ public static class OpcionesJuego
         if (!_pendiente) return;
         _pendiente = false;
         Archivo.Guardar(new DatosOpciones(AlternarCorrer, SilenciarMusica, VolumenMusica, VolumenSfx, SilenciarLocutor,
-            VisibilidadRangos, MultiplicadorTotal, MostrarFps, PantallaCompleta));
+            VisibilidadRangos, MultiplicadorTotal, MostrarFps, PantallaCompleta, SaltarPrologo));
     }
 }

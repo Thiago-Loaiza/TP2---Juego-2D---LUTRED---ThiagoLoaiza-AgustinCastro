@@ -243,6 +243,7 @@ public class Game1 : Core
         _1.UI.BotonAnimado.DibujarTextosSuaves();
         (_escenaActual as Inicio)?.DibujarControles();
         _configuracionPausa?.Draw();
+        (_escenaActual as Inicio)?.DibujarFundidoPrevia();
         base.Draw(gameTime);
 
         RenderTarget2D imagenFinal = _pantallaVirtual;
