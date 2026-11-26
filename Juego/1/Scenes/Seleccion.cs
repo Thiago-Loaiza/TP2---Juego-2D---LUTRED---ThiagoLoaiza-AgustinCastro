@@ -1,4 +1,5 @@
 using _1.Progression;
+using _1.Entities;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -41,7 +42,7 @@ public sealed class Seleccion : Escena
     private int _cantidadDupe;
     private bool _sorakElegido;
     private bool _erosionBirdElegido;
-    private bool _delusionElegido;
+    private int _cantidadDelusion;
     private bool _tooManyParriesElegido;
     private double _duracionNivel;
     private enum Enemigo { Sorak, JarJar, Duke, ErosionBird, Delusion, TooManyParries, Dupe, LoMismo }
@@ -81,7 +82,7 @@ public sealed class Seleccion : Escena
     public Seleccion(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
         double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null,
-        bool delusionElegido = false, bool tooManyParriesElegido = false, int cantidadDupe = 0,
+        int cantidadDelusion = 0, bool tooManyParriesElegido = false, int cantidadDupe = 0,
         int? nivelDestino = null)
     {
         _cambiarEscena = cambiarEscena;
@@ -104,7 +105,7 @@ public sealed class Seleccion : Escena
         _cantidadDupe = cantidadDupe;
         _sorakElegido = sorakElegido;
         _erosionBirdElegido = erosionBirdElegido;
-        _delusionElegido = delusionElegido;
+        _cantidadDelusion = Math.Clamp(cantidadDelusion, 0, Delusion.MaximoInstancias);
         _tooManyParriesElegido = tooManyParriesElegido;
         if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
         {
@@ -128,7 +129,7 @@ public sealed class Seleccion : Escena
         {
             pool.Add(Enemigo.ErosionBird);
         }
-        if (!_delusionElegido)
+        if (_cantidadDelusion < Delusion.MaximoInstancias)
         {
             pool.Add(Enemigo.Delusion);
         }
@@ -365,7 +366,7 @@ public sealed class Seleccion : Escena
             || !_opcionesRivales.Contains(enemigo)
             || (enemigo == Enemigo.Sorak && _sorakElegido)
             || (enemigo == Enemigo.ErosionBird && _erosionBirdElegido)
-            || (enemigo == Enemigo.Delusion && _delusionElegido)
+            || (enemigo == Enemigo.Delusion && _cantidadDelusion >= Delusion.MaximoInstancias)
             || (enemigo == Enemigo.TooManyParries && _tooManyParriesElegido))
         {
             return;
@@ -392,7 +393,7 @@ public sealed class Seleccion : Escena
         if (_enemigoSeleccionado == Enemigo.Dupe) _cantidadDupe++;
         _sorakElegido |= _enemigoSeleccionado == Enemigo.Sorak;
         _erosionBirdElegido |= _enemigoSeleccionado == Enemigo.ErosionBird;
-        _delusionElegido |= _enemigoSeleccionado == Enemigo.Delusion;
+        if (_enemigoSeleccionado == Enemigo.Delusion) _cantidadDelusion++;
         _tooManyParriesElegido |= _enemigoSeleccionado == Enemigo.TooManyParries;
         if (menosTiempo) _duracionNivel = Math.Max(double.Epsilon, _duracionNivel * 0.67);
         if (_numeroNivel < _nivelDestino)
@@ -413,7 +414,7 @@ public sealed class Seleccion : Escena
             _cantidadDuke, _cantidadJarJar, _sorakElegido,
             duracionNivel: _duracionNivel,
             erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras,
-            delusionElegido: _delusionElegido,
+            cantidadDelusion: _cantidadDelusion,
             tooManyParriesElegido: _tooManyParriesElegido, cantidadDupe: _cantidadDupe));
     }
 
@@ -622,7 +623,7 @@ public sealed class Seleccion : Escena
         Enemigo.Sorak => "Zorak",
         Enemigo.JarJar => _cantidadJarJar > 0 ? "Otro Jarjar" : "Jarjar",
         Enemigo.ErosionBird => "Erosion Bird",
-        Enemigo.Delusion => "Delusion",
+        Enemigo.Delusion => _cantidadDelusion > 0 ? "Otro Delusion" : "Delusion",
         Enemigo.TooManyParries => "Too Many Parries",
         Enemigo.Dupe => _cantidadDupe > 0 ? "Otro Dupe" : "Dupe",
         _ => _cantidadDuke > 0 ? "Otro Duck" : "Duck"

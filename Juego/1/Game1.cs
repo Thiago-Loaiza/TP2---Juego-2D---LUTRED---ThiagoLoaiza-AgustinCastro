@@ -16,7 +16,7 @@ public class Game1 : Core
 {
     // true = ON: habilita H (correr), J (dash), B (volver), N (borrar) y Enter (pausa/salir del menu).
     // false = OFF: conserva solamente los controles habituales del teclado.
-    public static bool Arcade = true;
+    public static bool Arcade = false;
     public static bool FastTrack { get; set; }
 
     // true = ON: Jugar abre la eleccion. false = OFF: entra directamente a la partida.
@@ -94,12 +94,14 @@ public class Game1 : Core
         GumService.Default.CanvasHeight = AltoPartida;
         ActualizarCoordenadasRaton();
         FrameworkElement.KeyboardsForUiControl.Add(GumService.Default.Keyboard);
+        GumService.Default.Keyboard.RepeatDelay = System.TimeSpan.FromSeconds(_1.UI.RepeticionNavegacion.Demora);
+        GumService.Default.Keyboard.RepeatRate = System.TimeSpan.FromSeconds(_1.UI.RepeticionNavegacion.Intervalo);
         foreach (Keys tecla in new[] { Keys.S, Keys.D, Keys.Down, Keys.Right })
             if (!FrameworkElement.TabKeyCombos.Any(combo => combo.PushedKey == tecla))
-                FrameworkElement.TabKeyCombos.Add(new KeyCombo { PushedKey = tecla });
+                FrameworkElement.TabKeyCombos.Add(new KeyCombo { PushedKey = tecla, IsTriggeredOnRepeat = true });
         foreach (Keys tecla in new[] { Keys.W, Keys.A, Keys.Up, Keys.Left })
             if (!FrameworkElement.TabReverseKeyCombos.Any(combo => combo.PushedKey == tecla))
-                FrameworkElement.TabReverseKeyCombos.Add(new KeyCombo { PushedKey = tecla });
+                FrameworkElement.TabReverseKeyCombos.Add(new KeyCombo { PushedKey = tecla, IsTriggeredOnRepeat = true });
         if (!FrameworkElement.ClickCombos.Any(combo => combo.PushedKey == Keys.Space))
             FrameworkElement.ClickCombos.Add(new KeyCombo { PushedKey = Keys.Space });
         FrameworkElement.GamePadsForUiControl.AddRange(GumService.Default.Gamepads);

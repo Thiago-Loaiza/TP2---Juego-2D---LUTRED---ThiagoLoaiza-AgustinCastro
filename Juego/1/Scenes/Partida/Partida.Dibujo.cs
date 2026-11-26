@@ -127,6 +127,7 @@ public partial class Partida
             {
                 Rectangle visible = AreaVisible();
                 _decoraciones.DibujarPiso(Core.SpriteBatch, visible);
+                foreach (Delusion delusion in _delusions) delusion.DrawAvisos(Core.SpriteBatch);
                 DibujarPuertaFellDoor();
                 for (int i = 0; i < _jarJars.Count; i++)
                 {
@@ -140,14 +141,14 @@ public partial class Partida
                 {
                     _jarJars[i].Draw(Core.SpriteBatch);
                 }
-                _delusion?.Draw(Core.SpriteBatch);
+                foreach (Delusion delusion in _delusions) delusion.Draw(Core.SpriteBatch);
                 _erosionBird?.DrawLanzas(Core.SpriteBatch);
                 _shame.Draw(Core.SpriteBatch);
                 foreach (Dupe dupe in _dupes) dupe.Draw(Core.SpriteBatch);
                 _decoraciones.DibujarVerticales(Core.SpriteBatch, visible, _sinner.Colision.Centro.Y, delante: false);
                 _sinner.Draw(Core.SpriteBatch);
                 _decoraciones.DibujarVerticales(Core.SpriteBatch, visible, _sinner.Colision.Centro.Y, delante: true);
-                _delusion?.DrawBolas(Core.SpriteBatch);
+                foreach (Delusion delusion in _delusions) delusion.DrawBolas(Core.SpriteBatch);
                 for (int i = 0; i < _dukes.Count; i++)
                 {
                     _dukes[i].Draw(Core.SpriteBatch);
@@ -170,6 +171,16 @@ public partial class Partida
 
         if (!_derrotado)
         {
+            // Efectos en coordenadas de pantalla, independientes de la camara y detras del HUD.
+            if (!_enFellDoor && _tooManyParries?.Activo == true)
+            {
+                Core.SpriteBatch.Begin(samplerState: SamplerState.LinearClamp, blendState: BlendState.AlphaBlend);
+                _tooManyParries.DrawVineta(Core.SpriteBatch, Game1.VistaPartida);
+                Core.SpriteBatch.End();
+                Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp, blendState: BlendState.AlphaBlend);
+                _tooManyParries.DrawCadenas(Core.SpriteBatch, Game1.VistaPartida);
+                Core.SpriteBatch.End();
+            }
             Core.SpriteBatch.Begin(samplerState: SamplerState.PointClamp,
                 blendState: BlendState.AlphaBlend);
             DibujarIndicadorOrbes(transformacion);

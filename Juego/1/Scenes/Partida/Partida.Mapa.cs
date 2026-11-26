@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using _1.Colisiones;
+using _1.Entities;
 using _1.Mapa;
 using _1.Mapa.Decoraciones;
 using _1.Mapa.Estructuras;
@@ -40,7 +41,8 @@ public partial class Partida
         _posicionesLibres = GeneradorOrbes.PosicionesAccesibles(mapa.Limites,
             _sinner.Colision.Centro, _obstaculos);
         GenerarOrbes();
-        _delusion?.Ubicar(_sinner.Colision.Centro, _posicionesLibres);
+        foreach (Delusion delusion in _delusions)
+            delusion.Ubicar(_sinner.Colision.Centro, _posicionesLibres);
         PrepararFellDoor(mapa.Limites);
         _tintaAntigua.Parameters["TamanoTexel"].SetValue(
             new Vector2(1f / ladrillos.Width, 1f / ladrillos.Height));

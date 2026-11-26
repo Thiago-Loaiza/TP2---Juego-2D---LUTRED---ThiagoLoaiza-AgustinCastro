@@ -87,10 +87,11 @@ public partial class Partida
             _erosionBird = new ErosionBird(_mejoras.Cantidad("Paz") > 0);
             _erosionBird.LoadContent(Content);
         }
-        if (_delusionElegido)
+        for (int i = 0; i < _cantidadDelusion; i++)
         {
-            _delusion = new Delusion();
-            _delusion.LoadContent(Content);
+            var delusion = new Delusion();
+            delusion.LoadContent(Content);
+            _delusions.Add(delusion);
         }
         if (_tooManyParriesElegido)
         {
@@ -129,6 +130,9 @@ public partial class Partida
         }
         _zorak?.UnloadContent();
         _erosionBird?.UnloadContent();
+        foreach (Delusion delusion in _delusions) delusion.UnloadContent();
+        _delusions.Clear();
+        _tooManyParries?.UnloadContent();
         Core.Audio.StopSong();
         Core.Audio.ReleaseSoundEffect(_sonidoEntrada);
         Core.Audio.ReleaseSoundEffect(_sonidoSalida);

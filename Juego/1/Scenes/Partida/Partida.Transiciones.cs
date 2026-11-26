@@ -42,7 +42,7 @@ public partial class Partida
                 transicionReproducida: true,
                 cantidadDuke: _cantidadDuke, cantidadJarJar: _cantidadJarJar, sorakElegido: _sorakElegido,
                 duracionNivel: _duracionNivel, erosionBirdElegido: _erosionBirdElegido, mejoras: _mejoras,
-                delusionElegido: _delusionElegido, tooManyParriesElegido: _tooManyParriesElegido,
+                cantidadDelusion: _cantidadDelusion, tooManyParriesElegido: _tooManyParriesElegido,
                 cantidadDupe: _cantidadDupe, nivelDestino: _mejoras.SiguienteNivel(_numeroNivel)));
             if (_numeroNivel % 4 == 0 || (_mejoras.FastTrack && _numeroNivel < 16))
             {

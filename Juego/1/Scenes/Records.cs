@@ -25,6 +25,7 @@ public sealed class Records : Escena
     private Texture2D _pixel;
     private BotonAnimado _volver;
     private KeyboardState _tecladoAnterior = Keyboard.GetState();
+    private readonly RepeticionNavegacion _navegacion = new();
     private int _ruedaAnterior = Game1.RatonVirtual().ScrollWheelValue;
     private int _primeraFila;
     private bool _saliendo;
@@ -94,10 +95,13 @@ public sealed class Records : Escena
         var teclado = Keyboard.GetState();
         var raton = Game1.RatonVirtual();
         bool Pulsada(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
+        int direccion = _navegacion.Update(gameTime,
+            RepeticionNavegacion.Izquierda(teclado) || RepeticionNavegacion.Arriba(teclado),
+            RepeticionNavegacion.Derecha(teclado) || RepeticionNavegacion.Abajo(teclado),
+            !_saliendo && _volver.IsEnabled && Core.Instance.IsActive);
         if (!_saliendo && _volver.IsEnabled && Core.Instance.IsActive)
         {
-            if (Pulsada(Keys.Down) || Pulsada(Keys.S) || Pulsada(Keys.Right) || Pulsada(Keys.D)) _primeraFila++;
-            if (Pulsada(Keys.Up) || Pulsada(Keys.W) || Pulsada(Keys.Left) || Pulsada(Keys.A)) _primeraFila--;
+            _primeraFila += direccion;
             if (Pulsada(Keys.PageDown)) _primeraFila += FilasVisibles;
             if (Pulsada(Keys.PageUp)) _primeraFila -= FilasVisibles;
             if (Pulsada(Keys.Home)) _primeraFila = 0;

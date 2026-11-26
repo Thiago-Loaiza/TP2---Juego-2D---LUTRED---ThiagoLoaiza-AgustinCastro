@@ -24,7 +24,7 @@ public partial class Partida : Escena
     public Partida(Action<Escena> cambiarEscena, int numeroNivel = 1,
         bool transicionReproducida = false, int cantidadDuke = 0, int cantidadJarJar = 0, bool sorakElegido = false,
         double duracionNivel = RelojNivel.Duracion, bool erosionBirdElegido = false, EstadoMejoras mejoras = null,
-        bool delusionElegido = false, bool tooManyParriesElegido = false, int cantidadDupe = 0)
+        int cantidadDelusion = 0, bool tooManyParriesElegido = false, int cantidadDupe = 0)
     {
         _cambiarEscena = cambiarEscena ?? throw new ArgumentNullException(nameof(cambiarEscena));
         if (numeroNivel < 1)
@@ -50,7 +50,7 @@ public partial class Partida : Escena
         _cantidadDupe = cantidadDupe;
         _sorakElegido = sorakElegido;
         _erosionBirdElegido = erosionBirdElegido;
-        _delusionElegido = delusionElegido;
+        _cantidadDelusion = Math.Clamp(cantidadDelusion, 0, Delusion.MaximoInstancias);
         _tooManyParriesElegido = tooManyParriesElegido;
         if (!double.IsFinite(duracionNivel) || duracionNivel <= 0)
         {

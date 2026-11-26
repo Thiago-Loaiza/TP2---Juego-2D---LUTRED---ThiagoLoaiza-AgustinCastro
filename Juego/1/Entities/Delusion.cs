@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using _1.Colisiones;
+using LutredLibrary;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -11,27 +13,31 @@ public enum ResultadoDelusion { Nada, Parreado, Golpe }
 
 public sealed class Delusion
 {
+    public const int MaximoInstancias = 4;
     private const float EscalaDelusion = 0.6f;
     private const float EscalaTeletransporte = 1.2f;
     private const float EscalaBola = 1.5f;
-    // Dispara mientras Sinner este dentro de este alcance; mas lejos lo persigue teletransportandose.
-    private const float AlcanceDisparo = 600f;
     private const float DistanciaMinimaDestino = 160f;
     private const float DistanciaMaximaDestino = 280f;
-    private const float IntervaloDisparo = 1.8f;
+    private const int DisparosPorTanda = 3;
+    private const float DuracionAviso = 1f;
+    private const float DuracionFundidoAviso = 0.25f;
+    private const float EsperaAntesTeletransporte = 2f;
     private const float SegundosPorFramePreparacion = 0.12f;
     private const float VelocidadBola = 380f;
     private const float RadioBola = 18f;
-    private const float VidaBola = 3f;
+    private const float VidaBola = 4.5f;
+    private const float FundidoBola = 0.5f;
     private const float SegundosPorFrameRotura = 0.08f;
     private const float DuracionVuelo = 0.9f;
     private const float AlturaVuelo = 140f;
     private const float SegundosPorFrameCaida = 0.08f;
-    private const float EsperaTrasTeletransporte = 1f;
-    private const float IntervaloTeletransporte = 4f;
+    private const float EsperaTrasTeletransporte = 2f;
+    private const float EsperaTrasTeletransporteRepetido = 0.5f;
+    private const float DistanciaRepetirTeletransporte = 1000f;
     // La bola azul espera junto a Delusion, del lado contrario a Sinner.
     private static readonly Vector2 SeparacionFuegoAzul = new(85f, -10f);
-    private enum Estado { Acechando, Preparando, Volando, Cayendo }
+    private enum Estado { Acechando, Preparando, EsperandoTeletransporte, Volando, Cayendo }
 
     private sealed class Bola
     {
@@ -42,17 +48,30 @@ public sealed class Delusion
         public bool Rota;
     }
 
+    private sealed class Aviso
+    {
+        public Vector2 Inicio;
+        public Vector2 Direccion;
+        public float Longitud;
+        public float Tiempo;
+    }
+
     private Texture2D _cuerpo;
     private Texture2D _proyectil;
     private Texture2D _fuegoMovimiento;
     private Texture2D _fuegoCaido;
     private Texture2D _fuegoQuieto;
+    private Texture2D _gradienteAviso;
+    private readonly Dictionary<string, SoundEffectInstance> _sonidos = new();
+    private readonly List<Aviso> _avisos = new();
+    private Aviso _avisoActual;
+    private int _disparos;
     private readonly List<Bola> _bolas = new();
     private Estado _estado;
     private float _tiempo;
     private float _reloj;
     private float _espera = 2f;
-    private float _esperaTeletransporte;
+    private float _esperaTrasLlegada = EsperaTrasTeletransporte;
     private Vector2 _origenVuelo;
     private Vector2 _destino;
     private bool _mirandoIzquierda;
@@ -67,6 +86,24 @@ public sealed class Delusion
         _fuegoMovimiento = content.Load<Texture2D>(carpeta + "Sprite-Delusion-FuegoMovimientoTP-sheet");
         _fuegoCaido = content.Load<Texture2D>(carpeta + "Sprite-Delusion-FuegoCaidoTP-sheet");
         _fuegoQuieto = content.Load<Texture2D>(carpeta + "Sprite-Delusion-FuegoQuietoTP-sheet");
+        foreach (string nombre in new[] { "Aviso", "Disparo", "Fuego_Ambience", "FuegoAzul_Aterrizaje", "FuegoAzul_Lanzado" })
+            _sonidos.Add(nombre, Core.Audio.CreateSoundEffectInstance(
+                content.Load<SoundEffect>("SFX/Entities/Delusion/" + nombre),
+                volume: nombre == "Fuego_Ambience" ? 0.35f : 0.7f,
+                isLooped: nombre == "Fuego_Ambience"));
+
+        // Halo suave transversal y desvanecimiento gradual hacia la punta.
+        const int ancho = 128, alto = 32;
+        _gradienteAviso = new Texture2D(Core.GraphicsDevice, ancho, alto);
+        var colores = new Color[ancho * alto];
+        for (int y = 0; y < alto; y++)
+        for (int x = 0; x < ancho; x++)
+        {
+            float lateral = 1f - Math.Abs(2f * y / (alto - 1) - 1f);
+            float longitudinal = 1f - MathHelper.SmoothStep(0f, 1f, x / (float)(ancho - 1));
+            colores[y * ancho + x] = Color.White * (lateral * lateral * longitudinal);
+        }
+        _gradienteAviso.SetData(colores);
     }
 
     public void Ubicar(Vector2 centroSinner, IReadOnlyList<Vector2> posicionesLibres)
@@ -74,44 +111,58 @@ public sealed class Delusion
         Position = ElegirDestino(centroSinner, posicionesLibres, out Vector2 destino)
             ? destino : centroSinner + new Vector2(DistanciaMaximaDestino, 0f);
         _bolas.Clear();
+        _avisos.Clear();
+        _avisoActual = null;
+        _disparos = 0;
         _espera = 2f;
+        _esperaTrasLlegada = EsperaTrasTeletransporte;
         CambiarEstado(Estado.Acechando);
     }
 
     public ResultadoDelusion Update(GameTime gameTime, Sinner sinner, Vector2 centroAnterior,
-        IReadOnlyList<ColisionSolida> obstaculos, IReadOnlyList<Vector2> posicionesLibres)
+        IReadOnlyList<Vector2> posicionesLibres)
     {
         ParrysEsteFrame = 0;
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         _tiempo += dt;
         _reloj = (_reloj + dt) % 100f;
-        _esperaTeletransporte = Math.Max(0f, _esperaTeletransporte - dt);
+        if (_sonidos["Fuego_Ambience"].State == SoundState.Stopped)
+            Core.Audio.PlaySoundEffect(_sonidos["Fuego_Ambience"]);
+        for (int i = _avisos.Count - 1; i >= 0; i--)
+        {
+            _avisos[i].Tiempo += dt;
+            if (_avisos[i] != _avisoActual && _avisos[i].Tiempo >= DuracionAviso + DuracionFundidoAviso)
+                _avisos.RemoveAt(i);
+        }
         Vector2 objetivo = sinner.Colision.Centro;
         switch (_estado)
         {
             case Estado.Acechando:
                 _espera -= dt;
                 _mirandoIzquierda = objetivo.X < Position.X;
-                if (Vector2.DistanceSquared(Position, objetivo) > AlcanceDisparo * AlcanceDisparo)
+                if (_espera <= 0f)
                 {
-                    if (_esperaTeletransporte <= 0f
-                        && ElegirDestino(objetivo, posicionesLibres, out _destino))
-                    {
-                        _origenVuelo = PosicionFuegoAzul;
-                        CambiarEstado(Estado.Volando);
-                    }
-                }
-                else if (_espera <= 0f)
-                {
-                    CambiarEstado(Estado.Preparando);
+                    _disparos = 0;
+                    PrepararDisparo(objetivo, sinner.VelocidadActual);
                 }
                 break;
             case Estado.Preparando:
-                if (_tiempo >= SegundosPorFramePreparacion * 3f)
+                if (_tiempo >= DuracionAviso)
                 {
-                    Disparar(objetivo);
-                    _espera = IntervaloDisparo;
-                    CambiarEstado(Estado.Acechando);
+                    Disparar(_avisoActual);
+                    _avisoActual.Tiempo = DuracionAviso;
+                    _avisoActual = null;
+                    _disparos++;
+                    if (_disparos < DisparosPorTanda)
+                        PrepararDisparo(objetivo, sinner.VelocidadActual);
+                    else CambiarEstado(Estado.EsperandoTeletransporte);
+                }
+                break;
+            case Estado.EsperandoTeletransporte:
+                _mirandoIzquierda = objetivo.X < Position.X;
+                if (_tiempo >= EsperaAntesTeletransporte && ElegirDestino(objetivo, posicionesLibres, out _destino))
+                {
+                    IniciarTeletransporte(EsperaTrasTeletransporte);
                 }
                 break;
             case Estado.Volando:
@@ -119,15 +170,24 @@ public sealed class Delusion
                 if (_tiempo >= DuracionVuelo)
                 {
                     Position = _destino;
+                    Sonar("FuegoAzul_Aterrizaje");
                     CambiarEstado(Estado.Cayendo);
                 }
                 break;
             case Estado.Cayendo:
-                if (_tiempo >= SegundosPorFrameCaida * 4f)
+                if (_tiempo >= _esperaTrasLlegada)
                 {
-                    _espera = EsperaTrasTeletransporte;
-                    _esperaTeletransporte = IntervaloTeletransporte;
-                    CambiarEstado(Estado.Acechando);
+                    if (Vector2.DistanceSquared(Position, objetivo) >= DistanciaRepetirTeletransporte * DistanciaRepetirTeletransporte
+                        && ElegirDestino(objetivo, posicionesLibres, out _destino))
+                    {
+                        _mirandoIzquierda = objetivo.X < Position.X;
+                        IniciarTeletransporte(EsperaTrasTeletransporteRepetido);
+                    }
+                    else
+                    {
+                        _disparos = 0;
+                        PrepararDisparo(objetivo, sinner.VelocidadActual);
+                    }
                 }
                 break;
         }
@@ -143,8 +203,14 @@ public sealed class Delusion
                 if (bola.Tiempo >= SegundosPorFrameRotura * 4f) { _bolas.RemoveAt(i); }
                 continue;
             }
+            if (bola.Tiempo >= VidaBola + FundidoBola)
+            {
+                _bolas.RemoveAt(i);
+                continue;
+            }
             bola.PosicionAnterior = bola.Posicion;
             bola.Posicion += bola.Direccion * VelocidadBola * dt;
+            if (bola.Tiempo >= VidaBola) continue;
             CirculoColision colision = new(bola.Posicion, RadioBola);
             sinner.PredecirColision(colision, bola.PosicionAnterior, dt);
             if (sinner.Jabalina?.Toca(colision, bola.PosicionAnterior) == true || (sinner.PuedeParrear
@@ -158,37 +224,46 @@ public sealed class Delusion
             {
                 golpe = true;
             }
-            else if (bola.Tiempo >= VidaBola || ChocaConPared(colision, obstaculos))
-            {
-                Romper(bola);
-            }
         }
         return golpe ? ResultadoDelusion.Golpe
             : parreado ? ResultadoDelusion.Parreado : ResultadoDelusion.Nada;
     }
 
-    private void Disparar(Vector2 objetivo)
+    private void IniciarTeletransporte(float esperaTrasLlegada)
     {
-        Vector2 direccion = objetivo - Position;
+        _esperaTrasLlegada = esperaTrasLlegada;
+        _origenVuelo = PosicionFuegoAzul;
+        Sonar("FuegoAzul_Lanzado");
+        CambiarEstado(Estado.Volando);
+    }
+
+    private void PrepararDisparo(Vector2 objetivo, Vector2 velocidad)
+    {
+        // Estimacion independiente para cada aviso, incluyendo la espera y el viaje del fuego.
+        float horizonte = MathHelper.Clamp(DuracionAviso + Vector2.Distance(Position, objetivo) / VelocidadBola,
+            DuracionAviso, DuracionAviso + VidaBola);
+        Vector2 direccion = objetivo + velocidad * horizonte - Position;
         if (direccion.LengthSquared() < 0.0001f) { direccion = _mirandoIzquierda ? -Vector2.UnitX : Vector2.UnitX; }
         direccion.Normalize();
+        _mirandoIzquierda = direccion.X < 0f;
         Vector2 inicio = Position + direccion * 30f;
-        _bolas.Add(new Bola { Posicion = inicio, PosicionAnterior = inicio, Direccion = direccion });
+        float longitud = VelocidadBola * VidaBola;
+        _avisoActual = new Aviso { Inicio = inicio, Direccion = direccion, Longitud = longitud };
+        _avisos.Add(_avisoActual);
+        Sonar("Aviso");
+        CambiarEstado(Estado.Preparando);
+    }
+
+    private void Disparar(Aviso aviso)
+    {
+        _bolas.Add(new Bola { Posicion = aviso.Inicio, PosicionAnterior = aviso.Inicio, Direccion = aviso.Direccion });
+        Sonar("Disparo");
     }
 
     private static void Romper(Bola bola)
     {
         bola.Rota = true;
         bola.Tiempo = 0f;
-    }
-
-    private static bool ChocaConPared(CirculoColision colision, IReadOnlyList<ColisionSolida> obstaculos)
-    {
-        for (int i = 0; i < obstaculos.Count; i++)
-        {
-            if (obstaculos[i].Toca(colision)) { return true; }
-        }
-        return false;
     }
 
     private static bool ElegirDestino(Vector2 centroSinner, IReadOnlyList<Vector2> posicionesLibres,
@@ -223,7 +298,7 @@ public sealed class Delusion
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (_estado == Estado.Cayendo)
+        if (_estado == Estado.Cayendo && _tiempo < SegundosPorFrameCaida * 4f)
         {
             int frame = Math.Min(3, (int)(_tiempo / SegundosPorFrameCaida));
             DibujarFuego(spriteBatch, _fuegoCaido, frame, Position, 0f);
@@ -274,8 +349,43 @@ public sealed class Delusion
             float rotacion = bola.Rota ? 0f : MathF.Atan2(bola.Direccion.Y, bola.Direccion.X) + MathHelper.Pi;
             // La cabeza de la bola esta a la izquierda del cuadro: ahi se ubica la colision.
             Vector2 origen = bola.Rota ? new Vector2(25f) : new Vector2(14f, 25f);
-            spriteBatch.Draw(_proyectil, bola.Posicion, new Rectangle(frame * 50, 0, 50, 50), Color.White,
+            float opacidad = bola.Rota ? 1f : 1f - MathHelper.Clamp((bola.Tiempo - VidaBola) / FundidoBola, 0f, 1f);
+            spriteBatch.Draw(_proyectil, bola.Posicion, new Rectangle(frame * 50, 0, 50, 50), Color.White * opacidad,
                 rotacion, origen, EscalaBola, SpriteEffects.None, 0f);
         }
+    }
+
+    public void DrawAvisos(SpriteBatch spriteBatch)
+    {
+        foreach (Aviso aviso in _avisos)
+        {
+            float entrada = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(aviso.Tiempo / DuracionFundidoAviso, 0f, 1f));
+            float salida = 1f - MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp((aviso.Tiempo - DuracionAviso) / DuracionFundidoAviso, 0f, 1f));
+            float pulso = 0.8f + 0.2f * MathF.Sin(aviso.Tiempo * 12f);
+            float alfa = entrada * salida * pulso;
+            float rotacion = MathF.Atan2(aviso.Direccion.Y, aviso.Direccion.X);
+            Vector2 origen = new(0f, _gradienteAviso.Height * 0.5f);
+            float escalaX = aviso.Longitud / _gradienteAviso.Width;
+            spriteBatch.Draw(_gradienteAviso, aviso.Inicio, null, new Color(255, 100, 12) * (alfa * 0.6f),
+                rotacion, origen, new Vector2(escalaX, 32f / _gradienteAviso.Height), SpriteEffects.None, 0f);
+            spriteBatch.Draw(_gradienteAviso, aviso.Inicio, null, new Color(255, 195, 65) * alfa,
+                rotacion, origen, new Vector2(escalaX, 9f / _gradienteAviso.Height), SpriteEffects.None, 0f);
+        }
+    }
+
+    private void Sonar(string nombre) => Core.Audio.PlaySoundEffect(_sonidos[nombre], restart: true);
+
+    public void DetenerSonidos()
+    {
+        foreach (var sonido in _sonidos.Values) Core.Audio.StopSoundEffect(sonido);
+    }
+
+    public void UnloadContent()
+    {
+        foreach (var sonido in _sonidos.Values) Core.Audio.ReleaseSoundEffect(sonido);
+        _sonidos.Clear();
+        _gradienteAviso?.Dispose();
+        _avisos.Clear();
+        _bolas.Clear();
     }
 }

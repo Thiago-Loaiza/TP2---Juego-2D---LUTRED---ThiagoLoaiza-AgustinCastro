@@ -18,6 +18,7 @@ public sealed class Mejoras : Escena
     public void SincronizarEntrada()
     {
         _tecladoAnterior = Keyboard.GetState();
+        _navegacion.Reiniciar();
         _ratonAnterior = Game1.RatonVirtual();
     }
 
@@ -55,6 +56,7 @@ public sealed class Mejoras : Escena
     private MarcoNinePatchAnimado _marcoDescripcion;
     private SpriteFont _fuente;
     private KeyboardState _tecladoAnterior;
+    private readonly RepeticionNavegacion _navegacion = new();
     private MouseState _ratonAnterior;
     private float _tiempo;
     private int _seleccion;
@@ -170,13 +172,17 @@ public sealed class Mejoras : Escena
         var teclado = Keyboard.GetState();
         var raton = Game1.RatonVirtual();
         bool Pulsado(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
+        int direccion = _navegacion.Update(gameTime,
+            RepeticionNavegacion.Izquierda(teclado) || RepeticionNavegacion.Arriba(teclado),
+            RepeticionNavegacion.Derecha(teclado) || RepeticionNavegacion.Abajo(teclado),
+            _tiempo >= FinAparicion && Core.Instance.IsActive);
         if (_tiempo >= FinAparicion && Core.Instance.IsActive)
         {
-            if (_cantidadOpciones > 0 && (Pulsado(Keys.Left) || Pulsado(Keys.A) || Pulsado(Keys.Up) || Pulsado(Keys.W)))
+            if (_cantidadOpciones > 0 && direccion < 0)
             {
                 _seleccion = (_seleccion + _cantidadOpciones - 1) % _cantidadOpciones;
             }
-            if (_cantidadOpciones > 0 && (Pulsado(Keys.Right) || Pulsado(Keys.D) || Pulsado(Keys.Down) || Pulsado(Keys.S)))
+            if (_cantidadOpciones > 0 && direccion > 0)
             {
                 _seleccion = (_seleccion + 1) % _cantidadOpciones;
             }

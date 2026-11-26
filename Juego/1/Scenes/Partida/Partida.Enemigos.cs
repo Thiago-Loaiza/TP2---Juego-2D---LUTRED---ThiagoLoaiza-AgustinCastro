@@ -17,7 +17,7 @@ public partial class Partida
     private readonly EstadoEfectoDupe _efectoDupe = new();
     private readonly bool _sorakElegido;
     private readonly bool _erosionBirdElegido;
-    private readonly bool _delusionElegido;
+    private readonly int _cantidadDelusion;
     private readonly bool _tooManyParriesElegido;
     private Shame _shame;
     private SoundEffectInstance _avisoShame;
@@ -26,7 +26,7 @@ public partial class Partida
     private readonly List<JarJar> _jarJars = new();
     private Zorak _zorak;
     private ErosionBird _erosionBird;
-    private Delusion _delusion;
+    private readonly List<Delusion> _delusions = new();
     private TooManyParries _tooManyParries;
     private int _tandaLanzas;
 
@@ -134,17 +134,20 @@ public partial class Partida
             }
         }
 
-        ResultadoDelusion resultadoDelusion = _delusion?.Update(gameTime, _sinner,
-            centroAnteriorSinner, _obstaculos, _posicionesLibres) ?? ResultadoDelusion.Nada;
-        if (resultadoDelusion == ResultadoDelusion.Parreado)
+        foreach (Delusion delusion in _delusions)
         {
-            bool automatico = !_sinner.HaciendoParry;
-            for (int i = 0; i < _delusion.ParrysEsteFrame; i++)
-                RegistrarParry(TipoParry.Delusion, _delusion, automatico);
-        }
-        else if (resultadoDelusion == ResultadoDelusion.Golpe)
-        {
-            if (Perder()) return;
+            ResultadoDelusion resultadoDelusion = delusion.Update(gameTime, _sinner,
+                centroAnteriorSinner, _posicionesLibres);
+            if (resultadoDelusion == ResultadoDelusion.Parreado)
+            {
+                bool automatico = !_sinner.HaciendoParry;
+                for (int i = 0; i < delusion.ParrysEsteFrame; i++)
+                    RegistrarParry(TipoParry.Delusion, delusion, automatico);
+            }
+            else if (resultadoDelusion == ResultadoDelusion.Golpe)
+            {
+                if (Perder()) return;
+            }
         }
 
         if (!_derrotado && _faseEntrada == FaseEntrada.Jugando)
@@ -250,6 +253,8 @@ public partial class Partida
         foreach (Dupe dupe in _dupes) dupe.DetenerSonidos();
         _shame?.DetenerSonidos();
         _erosionBird?.DetenerSonidos();
+        foreach (Delusion delusion in _delusions) delusion.DetenerSonidos();
+        _tooManyParries?.DetenerSonidos();
         Core.Audio.StopSoundEffect(_avisoShame);
         for (int i = 0; i < _dukes.Count; i++)
         {

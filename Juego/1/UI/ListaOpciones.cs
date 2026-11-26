@@ -28,6 +28,8 @@ public sealed class ListaOpciones : IDisposable
     private readonly RasterizerState _recorte = new() { ScissorTestEnable = true };
     private MouseState _ratonAnterior = Game1.RatonVirtual();
     private KeyboardState _tecladoAnterior = Keyboard.GetState();
+    private readonly RepeticionNavegacion _vertical = new();
+    private readonly RepeticionNavegacion _horizontal = new();
     private float _scroll;
     private int _seleccion = -1;
     private int _arrastrando = -1;
@@ -86,6 +88,8 @@ public sealed class ListaOpciones : IDisposable
     {
         _ratonAnterior = Game1.RatonVirtual();
         _tecladoAnterior = Keyboard.GetState();
+        _vertical.Reiniciar();
+        _horizontal.Reiniciar();
         _arrastrando = -1;
     }
 
@@ -101,6 +105,9 @@ public sealed class ListaOpciones : IDisposable
         }
         var raton = Game1.RatonVirtual();
         var teclado = Keyboard.GetState();
+        bool entradaActiva = permitirEntrada && Core.Instance.IsActive;
+        int vertical = _vertical.Update(tiempo, RepeticionNavegacion.Arriba(teclado), RepeticionNavegacion.Abajo(teclado), entradaActiva);
+        int horizontal = _horizontal.Update(tiempo, RepeticionNavegacion.Izquierda(teclado), RepeticionNavegacion.Derecha(teclado), entradaActiva);
         bool pulsado(Keys tecla) => teclado.IsKeyDown(tecla) && _tecladoAnterior.IsKeyUp(tecla);
         bool clic = raton.LeftButton == ButtonState.Pressed && _ratonAnterior.LeftButton == ButtonState.Released;
         if (!permitirEntrada || !Core.Instance.IsActive || raton.LeftButton == ButtonState.Released)
@@ -136,10 +143,10 @@ public sealed class ListaOpciones : IDisposable
                 EstablecerSlider(_arrastrando, minimo + (int)MathF.Round((raton.X - pista.X) * (100f - minimo) / pista.Width));
             }
             int cantidad = CantidadOpciones + (incluirSalir ? 2 : usarTab ? 1 : 0);
-            bool izquierda = pulsado(Keys.Left) || pulsado(Keys.A);
-            bool derecha = pulsado(Keys.Right) || pulsado(Keys.D);
-            if (pulsado(Keys.Down) || pulsado(Keys.S) || (usarTab && pulsado(Keys.Tab))) Seleccionar((_seleccion + 1) % cantidad);
-            if (pulsado(Keys.Up) || pulsado(Keys.W)) Seleccionar(_seleccion < 0 ? cantidad - 1 : (_seleccion + cantidad - 1) % cantidad);
+            bool izquierda = horizontal < 0;
+            bool derecha = horizontal > 0;
+            if (vertical > 0 || (usarTab && pulsado(Keys.Tab))) Seleccionar((_seleccion + 1) % cantidad);
+            if (vertical < 0) Seleccionar(_seleccion < 0 ? cantidad - 1 : (_seleccion + cantidad - 1) % cantidad);
             bool ajustarVolumen = EsSlider(_seleccion);
             if (incluirSalir && _seleccion >= CantidadOpciones && (izquierda || derecha))
                 Seleccionar(izquierda ? CantidadOpciones + 1 : CantidadOpciones);

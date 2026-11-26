@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {}
+    "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {}
   },
   "projects": {
-    "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {
+    "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+        "projectUniqueName": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
         "projectName": "1",
-        "projectPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
+        "projectPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\1.csproj",
         "packagesPath": "C:\\Users\\juanl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\obj\\",
+        "outputPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\Juego\\1\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\juanl\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -29,8 +29,8 @@
             "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
-                "projectPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj"
+              "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
+                "projectPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj"
               }
             }
           }
@@ -41,7 +41,7 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "false",
+          "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
         },
@@ -82,10 +82,6 @@
               "version": "[9.0.17, 9.0.17]"
             },
             {
-              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-              "version": "[9.0.17, 9.0.17]"
-            },
-            {
               "name": "Microsoft.NETCore.App.Host.win-x64",
               "version": "[9.0.17, 9.0.17]"
             },
@@ -94,15 +90,7 @@
               "version": "[9.0.17, 9.0.17]"
             },
             {
-              "name": "Microsoft.NETCore.App.Runtime.win-x64",
-              "version": "[9.0.17, 9.0.17]"
-            },
-            {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[9.0.17, 9.0.17]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
               "version": "[9.0.17, 9.0.17]"
             }
           ],
@@ -113,21 +101,16 @@
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json"
         }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
-        }
       }
     },
-    "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
+    "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
+        "projectUniqueName": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
         "projectName": "LutredLibrary",
-        "projectPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
+        "projectPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\LutredLibrary.csproj",
         "packagesPath": "C:\\Users\\juanl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\obj\\",
+        "outputPath": "c:\\Users\\juanl\\OneDrive\\Desktop\\TP2---Juego-2D---LUTRED---ThiagoLoaiza-AgustinCastro\\LutredLibrary\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\juanl\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -153,7 +136,7 @@
           ]
         },
         "restoreAuditProperties": {
-          "enableAudit": "false",
+          "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
         },
@@ -187,23 +170,11 @@
               "version": "[9.0.17, 9.0.17]"
             },
             {
-              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
-              "version": "[9.0.17, 9.0.17]"
-            },
-            {
               "name": "Microsoft.NETCore.App.Ref",
               "version": "[9.0.17, 9.0.17]"
             },
             {
-              "name": "Microsoft.NETCore.App.Runtime.win-x64",
-              "version": "[9.0.17, 9.0.17]"
-            },
-            {
               "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[9.0.17, 9.0.17]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
               "version": "[9.0.17, 9.0.17]"
             }
           ],
@@ -213,11 +184,6 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "win-x64": {
-          "#import": []
         }
       }
     }
